@@ -2,7 +2,7 @@
  * utility.h
  *
  *  Created on: Jul 17, 2013
- *      Author: "Daniele Bellavista <daniele.bellavista@studio.unibo.it>
+ *      Author: Daniele Bellavista <daniele.bellavista@studio.unibo.it>
  */
 
 #ifndef UTILITY_H_

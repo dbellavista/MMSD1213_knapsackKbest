@@ -14,18 +14,14 @@ void kp_init_sol(KSolution* solution, KProblem problem, uint16 sol_count) {
 	(*solution)->problem = problem;
 	(*solution)->sol_count = sol_count;
 
-	allocate_matrix((void***) &((*solution)->solutions), sol_count, problem->n, sizeof(uint16));
+	allocate_matrix((void***) &((*solution)->solutions), sol_count, problem->n,
+			sizeof(uint16));
 }
 
 void kp_free_sol(KSolution solution) {
 	free(solution->solutions[0]);
 	free(solution->solutions);
 	free(solution);
-}
-
-KSolution kp_solve(KProblem problem, uint16 best_sol_count) {
-
-	return NULL;
 }
 
 void kp_init_kp(KProblem* problem, uint16 n, uint16* weights, uint16* values,
@@ -48,4 +44,20 @@ uint16 max_w) {
 void kp_free_kp(KProblem problem) {
 	free(problem->weights);
 	free(problem);
+}
+
+KSolution kp_solve(KProblem problem, uint16 best_sol_count) {
+	uint16 i,j;
+	uint16** matrix;
+	// Matrix bxn initialization
+	allocate_matrix((void ***) &matrix, problem->max_w, problem->n,
+			sizeof(uint16));
+
+	for(i = 0; i < problem->max_w; i++) {
+		for(j = 0; j < problem->n; j++) {
+			matrix[i][j] = -1;
+		}
+	}
+
+	return NULL;
 }

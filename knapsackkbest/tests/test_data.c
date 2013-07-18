@@ -13,8 +13,8 @@ bool problems_equal(KProblem p1, KProblem p2);
 
 char* results[] = { "failed", "successful" };
 bool (*test_list[])(
-		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, NULL
-		};
+		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, NULL
+};
 
 uint16 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
 uint16 values[N];
@@ -59,6 +59,7 @@ bool test_matrix_alloc() {
 			}
 		}
 	}
+	free_matrix((void **) matrix);
 	return true;
 }
 
@@ -83,29 +84,53 @@ bool test_problem_creation() {
 
 bool test_solution_creation() {
 	bool ret = true;
+
+	KSolution s;
+	kp_init_sol(&s, N);
+	ret &= s->vector_size == N;
+	uint16 i, j;
+
+	for (i = 0; i < s->vector_size; i++) {
+		s->solution_vector[i] = i;
+	}
+
+	for (i = 0; i < s->vector_size; i++) {
+		ret &= s->solution_vector[i] == i;
+	}
+
+	kp_free_sol(s);
+
+	return ret;
+}
+
+bool test_kbestsolutions_creation() {
+	bool ret = true;
+	uint16 sol_count = 10;
 	KProblem p;
 	kp_init_kp(&p, N, weights, values, 50);
 
-	KSolution s;
-	kp_init_sol(&s, p, 10);
+	KBestSolutions s;
+	kp_init_kbest_sols(&s, p, sol_count);
 
 	ret &= problems_equal(p, s->problem);
+	ret &= s->sol_count == sol_count;
 
 	uint16 i, j;
 
 	for (i = 0; i < s->sol_count; i++) {
 		for (j = 0; j < s->problem->n; j++) {
-			s->solutions[i][j] = i + (j << 4);
+			s->solutions[i]->solution_vector[j] = i + (j << 4);
 		}
 	}
 
 	for (i = 0; i < s->sol_count; i++) {
 		for (j = 0; j < s->problem->n; j++) {
-			ret &= s->solutions[i][j] == i + (j << 4);
+			ret &= s->solutions[i]->vector_size == N;
+			ret &= s->solutions[i]->solution_vector[j] == i + (j << 4);
 		}
 	}
 
-	kp_free_sol(s);
+	kp_free_kbest_sols(s);
 
 	return ret;
 }

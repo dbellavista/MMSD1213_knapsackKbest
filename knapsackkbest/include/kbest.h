@@ -41,24 +41,41 @@ uint16 maxW);
 void kp_free_kp(KProblem problem);
 
 struct kSolution {
-	KProblem problem;
-	uint16 sol_count;
-	uint16** solutions;
+	uint16 tot_value;
+	uint16 vector_size;
+	uint16* solution_vector;
 };
 typedef struct kSolution* KSolution;
+
+
+struct kBestSolutions {
+	KProblem problem;
+	uint16 sol_count;
+	KSolution* solutions;
+};
+typedef struct kBestSolutions* KBestSolutions;
 
 /*
  * Initialize a knapsack solution.
  */
-void kp_init_sol(KSolution* solution, KProblem problem, uint16 sol_count);
+void kp_init_sol(KSolution* solution, uint16 n);
 /*
  * Free a knapsack solution.
  */
 void kp_free_sol(KSolution solution);
 
 /*
- * Solve the knapsasck problem, finding best_sol_count solutions.
+ * Initialize a knapsack solution.
  */
-KSolution kp_solve(KProblem problem, uint16 best_sol_count);
+void kp_init_kbest_sols(KBestSolutions* solution, KProblem problem, uint16 sol_count);
+/*
+ * Free a knapsack solution.
+ */
+void kp_free_kbest_sols(KBestSolutions solution);
+
+/*
+ * Solve the knapsack problem, finding best_sol_count solutions.
+ */
+KBestSolutions kp_solve(KProblem problem, uint16 best_sol_count);
 
 #endif /* KBEST_H_ */

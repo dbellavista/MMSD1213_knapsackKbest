@@ -9,17 +9,36 @@
 #include "../include/kbest.h"
 #include "../include/kp_alg/utility.h"
 
-void kp_init_sol(KSolution* solution, KProblem problem, uint16 sol_count) {
+void kp_init_sol(KSolution* solution, uint16 n) {
 	*solution = (KSolution) malloc(sizeof(struct kSolution));
-	(*solution)->problem = problem;
-	(*solution)->sol_count = sol_count;
-
-	allocate_matrix((void***) &((*solution)->solutions), sol_count, problem->n,
-			sizeof(uint16));
+	(*solution)->vector_size = n;
+	(*solution)->solution_vector = (uint16*) malloc(n * sizeof(uint16));
 }
 
 void kp_free_sol(KSolution solution) {
-	free(solution->solutions[0]);
+	free(solution->solution_vector);
+	free(solution);
+}
+
+void kp_init_kbest_sols(KBestSolutions* solution, KProblem problem,
+uint16 sol_count) {
+	*solution = (KBestSolutions) malloc(sizeof(struct kBestSolutions));
+	(*solution)->problem = problem;
+	(*solution)->sol_count = sol_count;
+	uint16 i;
+	(*solution)->solutions = (KSolution *) malloc(
+			sol_count * sizeof(KSolution));
+	for (i = 0; i < sol_count; i++) {
+		kp_init_sol(&(*solution)->solutions[i], problem->n);
+	}
+
+}
+void kp_free_kbest_sols(KBestSolutions solution) {
+	uint16 i;
+
+	for (i = 0; i < solution->sol_count; i++) {
+		kp_free_sol(solution->solutions[i]);
+	}
 	free(solution->solutions);
 	free(solution);
 }
@@ -46,18 +65,16 @@ void kp_free_kp(KProblem problem) {
 	free(problem);
 }
 
-KSolution kp_solve(KProblem problem, uint16 best_sol_count) {
-	uint16 i,j;
-	uint16** matrix;
+KBestSolutions kp_solve(KProblem problem, uint16 best_sol_count) {
+
 	// Matrix bxn initialization
+	uint16** matrix;
 	allocate_matrix((void ***) &matrix, problem->max_w, problem->n,
 			sizeof(uint16));
 
-	for(i = 0; i < problem->max_w; i++) {
-		for(j = 0; j < problem->n; j++) {
-			matrix[i][j] = -1;
-		}
-	}
+	kp_forward_enumeration(matrix, problem);
+
+	kp_build_initial_best_k_list(matrix, problem, best_sol_count);
 
 	return NULL;
 }

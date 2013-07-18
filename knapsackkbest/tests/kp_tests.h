@@ -18,6 +18,7 @@ void do_tests();
 bool test_problem_creation();
 bool test_matrix_alloc();
 bool test_solution_creation();
+bool test_kbestsolutions_creation();
 
 
 #endif /* KP_TESTS_H_ */

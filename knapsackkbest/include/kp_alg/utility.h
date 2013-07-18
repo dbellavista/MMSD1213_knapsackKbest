@@ -11,6 +11,7 @@
 #include "../kbest.h"
 
 void sort_by_weights(KProblem problem);
-
+void allocate_matrix(void*** matrix, uint32 width, uint32 height, uint32 size);
+void free_matrix(void** matrix);
 
 #endif /* UTILITY_H_ */

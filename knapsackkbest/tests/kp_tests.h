@@ -16,6 +16,7 @@ void set_up();
 void tear_down();
 void do_tests();
 bool test_problem_creation();
+bool test_matrix_alloc();
 bool test_solution_creation();
 
 

@@ -10,17 +10,11 @@
 #include "../include/kp_alg/utility.h"
 
 void kp_init_sol(KSolution* solution, KProblem problem, uint16 sol_count) {
-	uint16 i;
 	*solution = (KSolution) malloc(sizeof(struct kSolution));
 	(*solution)->problem = problem;
 	(*solution)->sol_count = sol_count;
 
-	(*solution)->solutions = (uint16**) malloc(sol_count * sizeof(uint16*));
-	uint16* vals = (uint16*) malloc(sol_count * problem->n * sizeof(uint16));
-
-	for (i = 0; i < sol_count; i++) {
-		(*solution)->solutions[i] = &(vals[i * problem->n]);
-	}
+	allocate_matrix((void***) &((*solution)->solutions), sol_count, problem->n, sizeof(uint16));
 }
 
 void kp_free_sol(KSolution solution) {

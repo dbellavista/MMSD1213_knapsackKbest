@@ -6,13 +6,15 @@
  */
 
 #include "kp_tests.h"
+#include "../include/kp_alg/utility.h"
 #define N 10
 
 bool problems_equal(KProblem p1, KProblem p2);
 
 char* results[] = { "failed", "successful" };
 bool (*test_list[])(
-		void) = {&test_problem_creation, &test_solution_creation, NULL };
+		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, NULL
+		};
 
 uint16 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
 uint16 values[N];
@@ -40,6 +42,26 @@ void do_tests() {
 	}
 }
 
+bool test_matrix_alloc() {
+	uint16 i, j;
+	uint16** matrix;
+	uint16 w = 5, h = 5;
+	allocate_matrix((void***) &matrix, w, h, sizeof(uint16));
+	for (i = 0; i < w; i++) {
+		for (j = 0; j < h; j++) {
+			matrix[i][j] = (uint16) (i + (j << 4));
+		}
+	}
+	for (i = 0; i < w; i++) {
+		for (j = 0; j < h; j++) {
+			if (!(matrix[i][j] == (uint16) (i + (j << 4)))) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 bool test_problem_creation() {
 	bool ret = true;
 	uint16 i, mw = 50;
@@ -55,6 +77,7 @@ bool test_problem_creation() {
 		ret &= p->weights[i] * 10 == p->values[i];
 	}
 
+	kp_free_kp(p);
 	return ret;
 }
 
@@ -70,17 +93,19 @@ bool test_solution_creation() {
 
 	uint16 i, j;
 
-	for(i = 0; i < s->sol_count; i++) {
-		for(j = 0; j < s->problem->n; j++) {
-			s->solutions[i][j] = i + (j<<4);
+	for (i = 0; i < s->sol_count; i++) {
+		for (j = 0; j < s->problem->n; j++) {
+			s->solutions[i][j] = i + (j << 4);
 		}
 	}
 
-	for(i = 0; i < s->sol_count; i++) {
-		for(j = 0; j < s->problem->n; j++) {
-			ret &= s->solutions[i][j] == i + (j<<4);
+	for (i = 0; i < s->sol_count; i++) {
+		for (j = 0; j < s->problem->n; j++) {
+			ret &= s->solutions[i][j] == i + (j << 4);
 		}
 	}
+
+	kp_free_sol(s);
 
 	return ret;
 }

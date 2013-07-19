@@ -5,6 +5,7 @@
  *      Author: Daniele Bellavista <daniele.bellavista@studio.unibo.it>
  */
 
+#include <stdlib.h>
 #include "kp_tests.h"
 #include "../include/kp_alg/utility.h"
 #define N 10
@@ -13,7 +14,7 @@ bool problems_equal(KProblem p1, KProblem p2);
 
 char* results[] = { "failed", "successful" };
 bool (*test_list[])(
-		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, NULL
+		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, &test_innersol_join, NULL
 };
 
 uint16 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
@@ -40,6 +41,44 @@ void do_tests() {
 		printf("==== Test no %d %s\n\n", (i + 1), results[res]);
 		tear_down();
 	}
+}
+
+bool test_innersol_join() {
+	bool ret = true;
+	uint16 i, j = 2, t = 3, count1 = 5, count2 = 10;
+
+	InnerSolution* ss1 = (InnerSolution*) malloc(
+			count1 * sizeof(InnerSolution));
+	InnerSolution* ss2 = (InnerSolution*) malloc(
+			count2 * sizeof(InnerSolution));
+
+	for (i = 0; i < count1; i++) {
+		uint16 val = rand() % 65000;
+		kp_init_inn_sol(&ss1[i], N, j, t, val);
+	}
+	sort_by_values_non_inc(ss1, count1);
+	for (i = 0; i < count2; i++) {
+		uint16 val = rand() % 65000;
+		kp_init_inn_sol(&ss2[i], N, j, t, val);
+	}
+	sort_by_values_non_inc(ss2, count2);
+
+	InnerSolution* ss;
+	join_inner_solutions(&ss, ss1, ss2, count1, count2);
+
+	for (i = 0; i < max(count1, count2) - 1; i++) {
+		ret &= ss[i]->value >= ss[i + 1]->value;
+	}
+
+	for (i = 0; i < count1; i++) {
+		kp_free_inn_sol(ss1[i]);
+	}
+	for (i = 0; i < count2; i++) {
+		kp_free_inn_sol(ss2[i]);
+	}
+
+	return ret;
+
 }
 
 bool test_innersol_ordering() {

@@ -21,5 +21,6 @@ bool test_solution_creation();
 bool test_kbestsolutions_creation();
 bool test_innersol_creation();
 bool test_innersol_ordering();
+bool test_innersol_join();
 
 #endif /* KP_TESTS_H_ */

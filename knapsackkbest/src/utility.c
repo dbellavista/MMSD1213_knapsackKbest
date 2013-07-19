@@ -8,6 +8,23 @@
 #include <stdlib.h>
 #include "../include/kp_alg/utility.h"
 
+void sort_by_values_non_inc(InnerSolution* sol, uint16 count) {
+	byte done = 0;
+	uint16 i, tmp;
+	while (!done) {
+		done = 1;
+		for (i = 0; i < count - 1; i++) {
+			if (sol[i]->value < sol[i + 1]->value) {
+				done = 0;
+				tmp = sol[i]->value;
+				sol[i]->value = sol[i + 1]->value;
+				sol[i + 1]->value = tmp;
+			}
+		}
+	}
+
+}
+
 void sort_by_weights(KProblem problem) {
 
 	byte done = 0;
@@ -33,7 +50,7 @@ void allocate_matrix(void*** matrix, uint32 width, uint32 height, uint32 size) {
 	(*matrix) = (void**) malloc(width * sizeof(void*));
 	void* vals = (void*) malloc(width * height * size);
 	uint32 i;
-	for(i = 0; i < width; i++) {
+	for (i = 0; i < width; i++) {
 		(*matrix)[i] = &(vals[i * height * size]);
 	}
 }

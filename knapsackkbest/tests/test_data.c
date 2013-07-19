@@ -13,7 +13,7 @@ bool problems_equal(KProblem p1, KProblem p2);
 
 char* results[] = { "failed", "successful" };
 bool (*test_list[])(
-		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, NULL
+		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, NULL
 };
 
 uint16 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
@@ -40,6 +40,50 @@ void do_tests() {
 		printf("==== Test no %d %s\n\n", (i + 1), results[res]);
 		tear_down();
 	}
+}
+
+bool test_innersol_ordering() {
+	bool ret = true;
+	uint16 i, j = 2, t = 3, count = 20;
+
+	InnerSolution* ss = (InnerSolution*) malloc(count * sizeof(InnerSolution));
+	for (i = 0; i < count; i++) {
+		kp_init_inn_sol(&ss[i], N, j, t, i / 2);
+	}
+	sort_by_values_non_inc(ss, count);
+
+	for (i = 0; i < count - 1; i++) {
+		ret &= ss[i]->value >= ss[i + 1]->value;
+	}
+
+	for (i = 0; i < count; i++) {
+		kp_free_inn_sol(ss[i]);
+	}
+	free(ss);
+	return ret;
+}
+
+bool test_innersol_creation() {
+	bool ret = true;
+	uint16 i, j = 2, t = 3, v = 10;
+
+	InnerSolution s;
+	kp_init_inn_sol(&s, N, j, t, v);
+
+	ret &= s->dimension == N;
+	ret &= s->column_idx == j;
+	ret &= s->row_idx == t;
+	ret &= s->value == v;
+
+	for (i = 0; i < N; i++) {
+		s->sol_vector[i] = i;
+	}
+	for (i = 0; i < N; i++) {
+		ret &= s->sol_vector[i] == i;
+	}
+
+	kp_free_inn_sol(s);
+	return ret;
 }
 
 bool test_matrix_alloc() {

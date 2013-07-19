@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include "../include/kbest.h"
-
+#include "../include/kp_alg/kp_alg.h"
 
 void set_up();
 void tear_down();
@@ -19,6 +19,7 @@ bool test_problem_creation();
 bool test_matrix_alloc();
 bool test_solution_creation();
 bool test_kbestsolutions_creation();
-
+bool test_innersol_creation();
+bool test_innersol_ordering();
 
 #endif /* KP_TESTS_H_ */

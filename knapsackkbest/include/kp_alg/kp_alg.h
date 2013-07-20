@@ -36,7 +36,7 @@ void kp_forward_enumeration(uint16** matrix, KProblem problem);
 /*
  *
  */
-void kp_build_initial_best_k_list(uint16** matrix, KProblem problem, uint16 K);
+void kp_build_initial_best_k_list(InnerSolution** ret, uint16** matrix, KProblem problem, uint16 K);
 
 
 #endif /* KP_ALG_H_ */

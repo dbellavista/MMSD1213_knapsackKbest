@@ -9,20 +9,22 @@
 #include "../include/kp_alg/utility.h"
 
 void join_inner_solutions(InnerSolution** dest, InnerSolution* sol1,
-		InnerSolution* sol2, uint16 count1, uint16 count2) {
+		InnerSolution* sol2, uint16 count1, uint16 count2, uint16 K) {
 	*dest = (InnerSolution*) malloc(
-	max(count1, count2) * sizeof(InnerSolution));
-	uint16 i;
-	for (i = 0; i < min(count1, count2); i++) {
-		(*dest)[i] =
-				sol1[i]->value > sol2[i]->value ?
-						sol1[i]: sol2[i];
+	K * sizeof(InnerSolution));
+	uint16 i = 0, j = 0, k = 0;
+	while (i < count1 && j < count2 && k < K) {
+		InnerSolution val = sol1[i]->value > sol2[j]->value ? sol1[i++] : sol2[j++];
+		(*dest)[k++] = val;
 	}
-	for (; i < count1; i++) {
-		(*dest)[i] = sol1[i];
+	for (; i < count1 && k < K; i++) {
+		(*dest)[k++] = sol1[i];
 	}
-	for (; i < count2; i++) {
-		(*dest)[i] = sol2[i];
+	for (; j < count2 && k < K; j++) {
+		(*dest)[k++] = sol2[j];
+	}
+	for(; k < K; k++) {
+		(*dest)[k++] = NULL;
 	}
 }
 

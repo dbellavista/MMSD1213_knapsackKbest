@@ -22,7 +22,7 @@
      _a < _b ? _a : _b; })
 
 void join_inner_solutions(InnerSolution** dest, InnerSolution* sol1,
-		InnerSolution* sol2, uint16 count1, uint16 count2);
+		InnerSolution* sol2, uint16 count1, uint16 count2, uint16 K);
 void sort_by_values_non_inc(InnerSolution* sol, uint16 count);
 void sort_by_weights(KProblem problem);
 void allocate_matrix(void*** matrix, uint32 width, uint32 height, uint32 size);

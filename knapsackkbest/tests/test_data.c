@@ -64,8 +64,8 @@ bool test_innersol_join() {
 	}
 	sort_by_values_non_inc(ss2, count2);
 
-	InnerSolution* ss;
-	join_inner_solutions(&ss, ss1, ss2, count1, count2, K, true);
+	InnerSolution* ss = (InnerSolution*) malloc(K * sizeof(InnerSolution));
+	join_inner_solutions(ss, ss1, ss2, count1, count2, K, true);
 
 	for (k = K - 1; k >= (count1 + count2) && k >= 0; k--) {
 		ret &= ss[k] == NULL;

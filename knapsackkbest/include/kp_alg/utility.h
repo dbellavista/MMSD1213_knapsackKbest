@@ -21,7 +21,7 @@
        __typeof__ (b) _b = (b); \
      _a < _b ? _a : _b; })
 
-void join_inner_solutions(InnerSolution** dest, InnerSolution* sol1,
+void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
 		InnerSolution* sol2, uint16 count1, uint16 count2,
 		uint16 K, bool free_garbage);
 void sort_by_values_non_inc(InnerSolution* sol, uint16 count);

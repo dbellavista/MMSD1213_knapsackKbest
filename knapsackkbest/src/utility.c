@@ -8,32 +8,31 @@
 #include <stdlib.h>
 #include "../include/kp_alg/utility.h"
 
-void join_inner_solutions(InnerSolution** dest, InnerSolution* sol1,
+void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
 		InnerSolution* sol2, uint16 count1, uint16 count2, uint16 K,
 		bool free_garbage) {
-	*dest = (InnerSolution*) malloc(K * sizeof(InnerSolution));
 	uint16 i = 0, j = 0, k = 0;
 	while (i < count1 && j < count2 && k < K) {
 		InnerSolution val =
 				sol1[i]->value > sol2[j]->value ? sol1[i++] : sol2[j++];
-		(*dest)[k++] = val;
+		dest[k++] = val;
 	}
 	for (; i < count1; i++) {
 		if (k < K) {
-			(*dest)[k++] = sol1[i];
+			dest[k++] = sol1[i];
 		} else if (free_garbage) {
 			kp_free_inn_sol(sol1[i]);
 		}
 	}
 	for (; j < count2; j++) {
 		if (k < K) {
-			(*dest)[k++] = sol2[j];
+			dest[k++] = sol2[j];
 		} else if (free_garbage) {
 			kp_free_inn_sol(sol2[j]);
 		}
 	}
 	for (; k < K; k++) {
-		(*dest)[k++] = NULL;
+		dest[k++] = NULL;
 	}
 }
 

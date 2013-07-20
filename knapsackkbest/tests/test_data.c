@@ -115,6 +115,9 @@ bool test_innersol_creation() {
 	ret &= s->value == v;
 
 	for (i = 0; i < N; i++) {
+		ret &= s->sol_vector[i] == 0;
+	}
+	for (i = 0; i < N; i++) {
 		s->sol_vector[i] = i;
 	}
 	for (i = 0; i < N; i++) {

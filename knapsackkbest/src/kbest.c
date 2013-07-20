@@ -74,7 +74,11 @@ KBestSolutions kp_solve(KProblem problem, uint16 best_sol_count) {
 
 	kp_forward_enumeration(matrix, problem);
 
-	kp_build_initial_best_k_list(NULL, matrix, problem, best_sol_count);
+	InnerSolution* solutions;
+	uint16 solutions_size;
+
+	kp_build_initial_best_k_list(&solutions, &solutions_size, matrix, problem,
+			best_sol_count);
 
 	return NULL;
 }

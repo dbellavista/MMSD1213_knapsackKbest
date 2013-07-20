@@ -16,6 +16,7 @@ struct innerSolution {
 	uint16 row_idx;
 	uint16 column_idx;
 	uint16 value;
+	bool recovered;
 };
 typedef struct innerSolution* InnerSolution;
 
@@ -37,5 +38,10 @@ void kp_forward_enumeration(uint16** matrix, KProblem problem);
  *
  */
 void kp_build_initial_best_k_list(InnerSolution** ret, uint16* ret_size, uint16** matrix, KProblem problem, uint16 K);
+
+/*
+ *
+ */
+void recover_solution(InnerSolution* solutions, uint16 size, uint16 K);
 
 #endif /* KP_ALG_H_ */

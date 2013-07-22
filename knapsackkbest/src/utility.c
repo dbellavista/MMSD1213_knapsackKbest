@@ -8,6 +8,16 @@
 #include <stdlib.h>
 #include "../include/kp_alg/utility.h"
 
+int find_idx(uint16* vector, uint16 start, uint16 fin, uint16 value) {
+	uint16 i;
+	for (i = start; i < fin; i++) {
+		if (vector[i] == value) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
 		InnerSolution* sol2, uint16 count1, uint16 count2, uint16 K,
 		bool free_garbage) {

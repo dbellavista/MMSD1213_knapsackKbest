@@ -29,4 +29,6 @@ void sort_by_weights(KProblem problem);
 void allocate_matrix(void*** matrix, uint32 width, uint32 height, uint32 size);
 void free_matrix(void** matrix);
 
+int find_idx(uint16* vector, uint16 start, uint16 fin, uint16 value);
+
 #endif /* UTILITY_H_ */

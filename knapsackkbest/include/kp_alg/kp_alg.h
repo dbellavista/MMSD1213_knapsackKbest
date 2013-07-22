@@ -52,5 +52,9 @@ void recover_solution(InnerSolution* solutions, uint16 size, uint16 K, uint16** 
  *
  */
 void backtracking(InnerSolution* solutions, InnerSolution dest, uint16 index, uint16 sols_size, uint16 K, uint16** matrix, KProblem problem);
+/*
+ *
+ */
+void search_alternative_solutions(uint16 row_idx, uint16 column_idx, uint16 cumul_value, uint16 j1, uint16 index, InnerSolution* solutions, uint16 sols_size, uint16 K, uint16** matrix, KProblem problem);
 
 #endif /* KP_ALG_H_ */

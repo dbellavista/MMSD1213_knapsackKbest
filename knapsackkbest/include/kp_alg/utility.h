@@ -31,4 +31,7 @@ void free_matrix(void** matrix);
 
 int find_idx(uint16* vector, uint16 start, uint16 fin, uint16 value);
 
+int find_idx_insertion(InnerSolution* sol_list, uint16 sols_size, uint16 limit_idx,
+		uint16 value);
+
 #endif /* UTILITY_H_ */

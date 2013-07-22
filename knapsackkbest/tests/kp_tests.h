@@ -24,5 +24,6 @@ bool test_innersol_ordering();
 bool test_innersol_join();
 bool test_find();
 bool test_innersol_copy();
+bool test_find_innsol_idx();
 
 #endif /* KP_TESTS_H_ */

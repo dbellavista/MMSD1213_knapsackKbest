@@ -8,6 +8,25 @@
 #include <stdlib.h>
 #include "../include/kp_alg/utility.h"
 
+int find_idx_insertion(InnerSolution* sol_list, uint16 sols_size,
+uint16 limit_idx, uint16 value) {
+	int i = sols_size;
+
+	if (limit_idx == 0 && sol_list[0]->value < value) {
+		return 0;
+	}
+	if (sol_list[sols_size - 1]->value > value) {
+		return -1;
+	}
+
+	for (i = sols_size - 1; i >= limit_idx; i--) {
+		if (sol_list[i]->value >= value) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 int find_idx(uint16* vector, uint16 start, uint16 fin, uint16 value) {
 	uint16 i;
 	for (i = start; i < fin; i++) {

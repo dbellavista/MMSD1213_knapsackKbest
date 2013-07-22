@@ -28,6 +28,10 @@ void kp_init_inn_sol(InnerSolution* innerSol, uint16 n, uint16 j, uint16 t, uint
  * Free a knapsack inner solution.
  */
 void kp_free_inn_sol(InnerSolution innerSol);
+/*
+ * Create a copy of an innersolution
+ */
+void kp_copy_inn_sol(InnerSolution* dest, InnerSolution origin);
 
 /*
  * Performs the forward enumeration on the given problem, filling the matrix.

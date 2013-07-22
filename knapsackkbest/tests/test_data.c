@@ -14,7 +14,7 @@ bool problems_equal(KProblem p1, KProblem p2);
 
 char* results[] = { "failed", "successful" };
 bool (*test_list[])(
-		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, &test_innersol_join, &test_find, NULL
+		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, &test_innersol_join, &test_find, &test_innersol_copy, NULL
 };
 
 uint16 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
@@ -41,6 +41,32 @@ void do_tests() {
 		printf("==== Test no %d %s\n\n", (i + 1), results[res]);
 		tear_down();
 	}
+}
+
+bool test_innersol_copy() {
+	printf("%s\n", __FUNCTION__);
+	bool ret = true;
+	uint16 i, j = 2, t = 3, v = 10;
+	InnerSolution s, sc;
+	kp_init_inn_sol(&s, N, j, t, v);
+	for (i = 0; i < N; i++) {
+		s->sol_vector[i] = i;
+	}
+	s->recovered = true;
+	kp_copy_inn_sol(&sc, s);
+
+	ret &= sc->column_idx == s->column_idx;
+	ret &= sc->dimension == s->dimension;
+	ret &= sc->recovered == s->recovered;
+	ret &= sc->row_idx == s->row_idx;
+	ret &= sc->value == s->value;
+	for (i = 0; i < N; i++) {
+		ret &= sc->sol_vector[i] == s->sol_vector[i];
+	}
+
+	kp_free_inn_sol(s);
+	kp_free_inn_sol(sc);
+	return ret;
 }
 
 bool test_find() {

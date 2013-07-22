@@ -23,5 +23,6 @@ bool test_innersol_creation();
 bool test_innersol_ordering();
 bool test_innersol_join();
 bool test_find();
+bool test_innersol_copy();
 
 #endif /* KP_TESTS_H_ */

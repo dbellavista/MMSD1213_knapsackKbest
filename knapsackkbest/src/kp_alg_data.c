@@ -24,3 +24,13 @@ void kp_free_inn_sol(InnerSolution innerSol) {
 	free(innerSol->sol_vector);
 	free(innerSol);
 }
+
+void kp_copy_inn_sol(InnerSolution* dest, InnerSolution origin) {
+	kp_init_inn_sol(dest, origin->dimension, origin->column_idx,
+			origin->row_idx, origin->value);
+	(*dest)->recovered = origin->recovered;
+	uint16 i;
+	for (i = 0; i < origin->dimension; i++) {
+		(*dest)->sol_vector[i] = origin->sol_vector[i];
+	}
+}

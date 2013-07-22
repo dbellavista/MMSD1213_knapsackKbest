@@ -8,6 +8,14 @@
 #include <stdlib.h>
 #include "../include/kp_alg/utility.h"
 
+void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
+		InnerSolution s2) {
+	uint16 i;
+	for(i = 0; i < dest->dimension; i++) {
+		dest->sol_vector[i] = s1->sol_vector[i] + s2->sol_vector[i];
+	}
+}
+
 int find_idx_insertion(InnerSolution* sol_list, uint16 sols_size,
 uint16 limit_idx, uint16 value) {
 	int i = sols_size;

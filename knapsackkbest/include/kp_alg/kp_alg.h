@@ -42,6 +42,11 @@ void kp_build_initial_best_k_list(InnerSolution** ret, uint16* ret_size, uint16*
 /*
  *
  */
-void recover_solution(InnerSolution* solutions, uint16 size, uint16 K);
+void recover_solution(InnerSolution* solutions, uint16 size, uint16 K, uint16** matrix, KProblem problem);
+
+/*
+ *
+ */
+void backtracking(InnerSolution* solutions, InnerSolution dest, uint16 index, uint16 sols_size, uint16 K, uint16** matrix, KProblem problem);
 
 #endif /* KP_ALG_H_ */

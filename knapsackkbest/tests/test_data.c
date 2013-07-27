@@ -220,9 +220,9 @@ bool test_innersol_copy() {
 bool test_find() {
 	printf("%s\n", __FUNCTION__);
 	bool ret = true;
-	uint32 value = 134;
+	int value = 134;
 	uint32 idx = 4;
-	uint32 vector[] = { 10, 89, 12, 378, 291, 11, 29, 101, 22, 319 };
+	int vector[] = { 10, 89, 12, 378, 291, 11, 29, 101, 22, 319 };
 
 	vector[idx] = value;
 	ret &= find_idx(vector, 0, idx + 1, value) == idx;

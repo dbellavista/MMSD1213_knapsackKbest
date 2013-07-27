@@ -29,7 +29,7 @@ void sort_by_weights(KProblem problem);
 void allocate_matrix(void*** matrix, uint32 nrow, uint32 ncols, uint32 size);
 void free_matrix(void** matrix);
 
-int find_idx(uint32* vector, uint32 start, uint32 fin, uint32 value);
+int find_idx(int* vector, uint32 start, uint32 fin, int value);
 
 int find_idx_insertion(InnerSolution* sol_list, uint32 sols_size,
 		uint32 limit_idx,

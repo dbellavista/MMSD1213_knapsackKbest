@@ -36,25 +36,25 @@ void kp_copy_inn_sol(InnerSolution* dest, InnerSolution origin);
 /*
  * Performs the forward enumeration on the given problem, filling the matrix.
  */
-void kp_forward_enumeration(uint32** matrix, KProblem problem);
+void kp_forward_enumeration(int** matrix, KProblem problem);
 
 /*
  *
  */
-void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size, uint32** matrix, KProblem problem, uint32 K);
+void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size, int** matrix, KProblem problem, uint32 K);
 
 /*
  *
  */
-void recover_solution(InnerSolution* solutions, uint32 size, uint32 K, uint32** matrix, KProblem problem);
+void recover_solution(InnerSolution* solutions, uint32 size, uint32 K, int** matrix, KProblem problem);
 
 /*
  *
  */
-void backtracking(InnerSolution* solutions, InnerSolution dest, uint32 index, uint32 sols_size, uint32 K, uint32** matrix, KProblem problem);
+void backtracking(InnerSolution* solutions, InnerSolution dest, uint32 index, uint32 sols_size, uint32 K, int** matrix, KProblem problem);
 /*
  *
  */
-void search_alternative_solutions(uint32 row_idx, uint32 column_idx, uint32 cumul_value, uint32 j1, uint32 index, InnerSolution* solutions, uint32 sols_size, uint32 K, uint32** matrix, KProblem problem);
+void search_alternative_solutions(uint32 row_idx, uint32 column_idx, uint32 cumul_value, uint32 j1, uint32 index, InnerSolution* solutions, uint32 sols_size, uint32 K, int** matrix, KProblem problem);
 
 #endif /* KP_ALG_H_ */

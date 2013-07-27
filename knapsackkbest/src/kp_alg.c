@@ -11,7 +11,7 @@
 
 void search_alternative_solutions(uint32 row_idx, uint32 column_idx,
 uint32 cumul_value, uint32 j1, uint32 index, InnerSolution* solutions,
-uint32 sols_size, uint32 K, uint32** matrix, KProblem problem) {
+uint32 sols_size, uint32 K, int** matrix, KProblem problem) {
 	int tmp;
 	uint32 k, g, f;
 	uint32 s;
@@ -80,7 +80,7 @@ uint32 sols_size, uint32 K, uint32** matrix, KProblem problem) {
 }
 
 void backtracking(InnerSolution* solutions, InnerSolution dest, uint32 index,
-uint32 sols_size, uint32 K, uint32** matrix, KProblem problem) {
+uint32 sols_size, uint32 K, int** matrix, KProblem problem) {
 	uint32 t = dest->row_idx;
 	uint32 j = dest->column_idx;
 	uint32 z = dest->value;
@@ -108,7 +108,7 @@ uint32 sols_size, uint32 K, uint32** matrix, KProblem problem) {
 }
 
 void recover_solution(InnerSolution* solutions, uint32 size, uint32 K,
-uint32** matrix, KProblem problem) {
+		int** matrix, KProblem problem) {
 	InnerSolution auxl;
 	uint32 i = 0;
 	while (i < size) {
@@ -125,7 +125,7 @@ uint32** matrix, KProblem problem) {
 }
 
 void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size,
-uint32** matrix, KProblem problem, uint32 K) {
+		int** matrix, KProblem problem, uint32 K) {
 	InnerSolution* solutions = (InnerSolution*) malloc(
 			sizeof(InnerSolution) * K);
 	InnerSolution* solutions1 = (InnerSolution*) malloc(
@@ -201,12 +201,13 @@ uint32** matrix, KProblem problem, uint32 K) {
 	free(solutions1);
 }
 
-void kp_forward_enumeration(uint32** matrix, KProblem problem) {
-	uint32 var, weight, var_idx, value;
+void kp_forward_enumeration(int** matrix, KProblem problem) {
+	uint32 var, snode_idx, var_idx;
+	int value;
 
-	for (weight = 0; weight < problem->max_weigth; weight++) {
+	for (snode_idx = 0; snode_idx < problem->max_weigth; snode_idx++) {
 		for (var = 0; var < problem->num_var; var++) {
-			matrix[weight][var] = -1;
+			matrix[snode_idx][var] = -1;
 		}
 	}
 
@@ -217,27 +218,30 @@ void kp_forward_enumeration(uint32** matrix, KProblem problem) {
 	}
 
 	////Begin ramification of supernodes
-	for (weight = problem->weights[0] - 1;
-			weight < problem->max_weigth - problem->weights[0]; weight++) {
+	for (snode_idx = problem->weights[0] - 1;
+			snode_idx < problem->max_weigth - problem->weights[0];
+			snode_idx++) {
 		// Find an opened supernode
 		var_idx = problem->num_var;
 		for (var = 0; var < problem->num_var; var++) {
-			if (matrix[weight][var] >= 0) {
+			if (matrix[snode_idx][var] >= 0) {
+				var_idx = var;
 				break;
 			}
 		}
-		if (var_idx != problem->num_var) {
-			value = matrix[weight][var_idx];
-			for (var = var_idx; var < problem->num_var; var++) {
-				// Check feasibility
-				if (weight + problem->weights[var] <= problem->max_weigth) {
-					if (matrix[weight][var] > value) {
-						value = matrix[weight][var];
-					}
-					matrix[weight + problem->weights[var]][var] = value
-							+ problem->values[var];
-				}
+		if (var_idx == problem->num_var) {
+			continue;
+		}
+		// Update values
+		value = matrix[snode_idx][var_idx];
+		for (var = var_idx; var < problem->num_var; var++) {
+			// weight = (snode_idx + 1)
+			if ((snode_idx + 1) + problem->weights[var] <= problem->max_weigth) {
+				value = max(value, matrix[snode_idx][var]);
+				matrix[snode_idx + problem->weights[var]][var] = value
+						+ problem->values[var];
 			}
+
 		}
 	}
 }

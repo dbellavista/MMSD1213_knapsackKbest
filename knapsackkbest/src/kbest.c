@@ -68,9 +68,9 @@ void kp_free_kp(KProblem problem) {
 KBestSolutions kp_solve(KProblem problem, uint32 best_sol_count) {
 
 	// Matrix bxn initialization
-	uint32** matrix;
+	int** matrix;
 	allocate_matrix((void ***) &matrix, problem->max_weigth, problem->num_var,
-			sizeof(uint32));
+			sizeof(int));
 
 	kp_forward_enumeration(matrix, problem);
 

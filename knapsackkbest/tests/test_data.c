@@ -11,6 +11,7 @@
 #define N 10
 
 bool problems_equal(KProblem p1, KProblem p2);
+bool matrices_equal(int** m1, int** m2, uint32 nrow, uint32 ncols);
 
 char* results[] = { "failed", "successful" };
 bool (*test_list[])(
@@ -20,15 +21,40 @@ bool (*test_list[])(
 uint32 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
 uint32 values[N];
 
+KProblem test_problem;
+#define TEST_N 5
+#define TEST_MAXW 15
+uint32 test_weights[] = { 3, 4, 5, 6, 7 };
+uint32 test_values[] = { 4, 3, 5, 7, 8 };
+int target_matrix_forward[TEST_MAXW][TEST_N] = {
+		{ -1, -1, -1, -1, -1 }, // 1
+		{ -1, -1, -1, -1, -1 }, // 2
+		{  4, -1, -1, -1, -1 }, // 3
+		{ -1,  3, -1, -1, -1 }, // 4
+		{ -1, -1,  5, -1, -1 }, // 5
+		{  8, -1, -1,  7, -1 }, // 6
+		{ -1,  7, -1, -1,  8 }, // 7
+		{ -1,  6,  9, -1, -1 }, // 8
+		{ 12, -1,  8, 11, -1 }, // 9
+		{ -1, 11, 10, 10, 12 }, // 10
+		{ -1, 10, 13, 12, 11 }, // 11
+		{ 16,  9, 12, 15, 13 }, // 12
+		{ -1, 15, 14, 14, 16 }, // 13
+		{ -1, 14, 17, 16, 16 },  // 14
+		{ 20, 13, 16, 19, 17 } }; // 15
+
 void set_up() {
 	uint32 i;
 	for (i = 0; i < N; i++) {
 		values[i] = weights[i] * 10;
 	}
+
+	kp_init_kp(&test_problem, TEST_N, test_weights, test_values, TEST_MAXW);
+
 }
 
 void tear_down() {
-
+	kp_free_kp(test_problem);
 }
 
 void do_tests() {
@@ -43,7 +69,7 @@ void do_tests() {
 		tear_down();
 	}
 	printf("\n");
-	if(tot_res) {
+	if (tot_res) {
 		printf("*** Success: all tests passed!");
 	} else {
 		printf("*** Failure: some tests did not pass!");
@@ -53,6 +79,21 @@ void do_tests() {
 bool test_kp_forward_enumeration() {
 	printf("%s\n", __FUNCTION__);
 	bool ret = true;
+	int** matrix;
+	allocate_matrix((void ***) &matrix, test_problem->max_weigth,
+			test_problem->num_var, sizeof(uint32));
+	kp_forward_enumeration(matrix, test_problem);
+	printf("Starting checks..\n");
+
+	int** matrix2 = (int**) malloc(TEST_MAXW * sizeof(int *));
+	uint32 i;
+	for(i = 0; i < TEST_MAXW; i++) {
+		matrix2[i] = target_matrix_forward[i];
+	}
+	ret = matrices_equal(matrix, matrix2, TEST_MAXW, TEST_N);
+
+	free(matrix2);
+	free_matrix((void**)matrix);
 
 	return ret;
 }
@@ -89,8 +130,6 @@ bool test_find_innsol_idx() {
 	tv = 1000;
 	g = find_idx_insertion(ss, size, 0, tv);
 	ret &= g == 0;
-
-
 
 	return ret;
 }
@@ -246,15 +285,15 @@ bool test_matrix_alloc() {
 
 	uint32 i, j;
 	uint32** matrix;
-	uint32 w = 5, h = 5;
-	allocate_matrix((void***) &matrix, w, h, sizeof(uint32));
-	for (i = 0; i < w; i++) {
-		for (j = 0; j < h; j++) {
+	uint32 nr = 20, nc = 5;
+	allocate_matrix((void***) &matrix, nr, nc, sizeof(uint32));
+	for (i = 0; i < nr; i++) {
+		for (j = 0; j < nc; j++) {
 			matrix[i][j] = (uint32) (i + (j << 4));
 		}
 	}
-	for (i = 0; i < w; i++) {
-		for (j = 0; j < h; j++) {
+	for (i = 0; i < nr; i++) {
+		for (j = 0; j < nc; j++) {
 			if (!(matrix[i][j] == (uint32) (i + (j << 4)))) {
 				return false;
 			}
@@ -343,7 +382,6 @@ bool test_kbestsolutions_creation() {
 }
 
 bool problems_equal(KProblem p1, KProblem p2) {
-	printf("%s\n", __FUNCTION__);
 
 	uint32 i;
 	if (p1->max_weigth != p2->max_weigth || p1->num_var != p2->num_var) {
@@ -356,4 +394,29 @@ bool problems_equal(KProblem p1, KProblem p2) {
 		}
 	}
 	return true;
+}
+
+bool matrices_equal(int** m1, int** m2, uint32 nrow, uint32 ncols) {
+	uint32 i, j, k;
+	bool ret = true;
+
+	for(i = 0; i < nrow; i++) {
+		for(j = 0; j < ncols; j++) {
+			if(m1[i][j] != m2[i][j]) {
+				ret = false;
+				printf("R%d: ", i);
+				for(k = 0; k < ncols; k++) {
+					printf("%d ", m1[i][k]);
+				}
+				printf("| ");
+				for(k = 0; k < ncols; k++) {
+					printf("%d ", m2[i][k]);
+				}
+				printf("\n");
+				break;
+			}
+		}
+	}
+
+	return ret;
 }

@@ -126,61 +126,67 @@ void recover_solution(InnerSolution* solutions, uint32 size, uint32 K,
 
 void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size,
 		int** matrix, KProblem problem, uint32 K) {
-	InnerSolution* solutions = (InnerSolution*) malloc(
-			sizeof(InnerSolution) * K);
-	InnerSolution* solutions1 = (InnerSolution*) malloc(
-			sizeof(InnerSolution) * K);
+
+	InnerSolution** buffer_sol;
+	allocate_matrix((void***) &buffer_sol, 3, K, sizeof(InnerSolution));
+
+	InnerSolution* solutions = buffer_sol[0];
+	InnerSolution* solutions1 = buffer_sol[1];
+	InnerSolution* tmp_solutions = buffer_sol[2];
+
 	*ret = (InnerSolution*) malloc(sizeof(InnerSolution) * K);
 
-	uint32 counter, i, j, i1, j1, P, P1;
+	uint32 counter, P, P1;
+	int snode, var, last_snode, last_var;
 	bool fim = false, moreleft = false;
 	counter = 0;
-	i = problem->max_weigth;
-
-	while (i-- >= problem->weights[0]) {
-		j = problem->num_var;
-		while (j-- > 0) {
-			if (matrix[i][j] >= 0) {
-				kp_init_inn_sol(&solutions[counter], problem->num_var, j, i,
-						matrix[i][j]);
+	for (snode = problem->max_weigth - 1;
+			snode >= (int) problem->weights[0] - 1; snode--) {
+		for (var = problem->num_var - 1; var >= 0; var--) {
+			if (matrix[snode][var] >= 0) {
+				kp_init_inn_sol(&solutions[counter], problem->num_var, var,
+						snode, matrix[snode][var]);
 				counter++;
 				if (counter == K) {
-					i1 = i;
-					j1 = j;
+					last_snode = snode;
+					last_var = var;
 					moreleft = true;
-					i = -1;
-					j = -1;
+					snode = 0;
+					var = 0;
 				}
 			}
 		}
 	}
 	P = counter;
 	sort_by_values_non_inc(solutions, P);
-	if (P == K && (i1 > problem->weights[0] || j1 > 1)) {
+	// Last usable matrix index: problem->weights[0] - 1
+	if (P == K
+			&& (last_snode > (int) problem->weights[0] - 1 || last_var > 0)) {
 		fim = true;
 	}
 	while (fim) {
 		counter = 0;
-		i = i1 + 1;
 		fim = false;
-		while (i >= problem->weights[0]) {
-			i = i - 1;
-			j = problem->num_var;
+		for (snode = last_snode; snode >= (int) problem->weights[0] - 1;
+				snode--) {
 			if (moreleft) {
-				j = j1;
+				var = last_var - 1;
 				moreleft = false;
+			} else {
+				var = problem->num_var - 1;
 			}
-			while (j-- > 0) {
-				if (matrix[i][j] > solutions[K - 1]->value) {
-					kp_init_inn_sol(&solutions1[counter], problem->num_var, j,
-							i, matrix[i][j]);
+			for (; var >= 0; var--) {
+				// New value is better than last solution found
+				if (matrix[snode][var] > (int) solutions[K - 1]->value) {
+					kp_init_inn_sol(&solutions1[counter], problem->num_var, var,
+							snode, matrix[snode][var]);
 					counter++;
 					if (counter == K) {
-						i1 = i;
-						j1 = j;
+						last_snode = snode;
+						last_var = var;
 						moreleft = true;
-						i = -1;
-						j = -1;
+						snode = 0;
+						var = 0;
 					}
 				}
 			}
@@ -189,16 +195,21 @@ void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size,
 		P1 = counter;
 		sort_by_values_non_inc(solutions1, P1);
 		if (solutions1[0]->value > solutions[K - 1]->value) {
-			join_inner_solutions(*ret, solutions, solutions1, P, P1, K, true);
-			solutions = *ret;
+			join_inner_solutions(tmp_solutions, solutions, solutions1, P, P1, K,
+			true);
+			solutions = tmp_solutions;
 		}
-		if (i1 > problem->weights[0] || j1 > 0) {
+		if (P1 == K && (last_snode > problem->weights[0] - 1 || last_var > 0)) {
 			fim = true;
 		}
 	}
+
+	for (counter = 0; counter < P; counter++) {
+		(*ret)[counter] = solutions[counter];
+	}
+
 	*ret_size = P;
-	free(solutions);
-	free(solutions1);
+	free_matrix((void**) buffer_sol);
 }
 
 void kp_forward_enumeration(int** matrix, KProblem problem) {
@@ -236,7 +247,8 @@ void kp_forward_enumeration(int** matrix, KProblem problem) {
 		value = matrix[snode_idx][var_idx];
 		for (var = var_idx; var < problem->num_var; var++) {
 			// weight = (snode_idx + 1)
-			if ((snode_idx + 1) + problem->weights[var] <= problem->max_weigth) {
+			if ((snode_idx + 1) + problem->weights[var]
+					<= problem->max_weigth) {
 				value = max(value, matrix[snode_idx][var]);
 				matrix[snode_idx + problem->weights[var]][var] = value
 						+ problem->values[var];

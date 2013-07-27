@@ -25,6 +25,6 @@ bool test_innersol_join();
 bool test_find();
 bool test_innersol_copy();
 bool test_find_innsol_idx();
-bool test_kp_forward_enumeration();
+bool test_kp_algorithm();
 
 #endif /* KP_TESTS_H_ */

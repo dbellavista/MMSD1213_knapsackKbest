@@ -75,19 +75,19 @@ void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
 
 void sort_by_values_non_inc(InnerSolution* sol, uint32 count) {
 	byte done = 0;
-	uint32 i, tmp;
+	uint32 i;
+	InnerSolution tmp;
 	while (!done) {
 		done = 1;
-		for (i = 0; i < count - 1; i++) {
-			if (sol[i]->value < sol[i + 1]->value) {
+		for (i = 1; i < count; i++) {
+			if (sol[i - 1]->value < sol[i]->value) {
 				done = 0;
-				tmp = sol[i]->value;
-				sol[i]->value = sol[i + 1]->value;
-				sol[i + 1]->value = tmp;
+				tmp = sol[i - 1];
+				sol[i - 1] = sol[i];
+				sol[i] = tmp;
 			}
 		}
 	}
-
 }
 
 void sort_by_weights(KProblem problem) {

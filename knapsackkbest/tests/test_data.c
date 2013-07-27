@@ -15,7 +15,7 @@ bool matrices_equal(int** m1, int** m2, uint32 nrow, uint32 ncols);
 
 char* results[] = { "failed", "successful" };
 bool (*test_list[])(
-		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, &test_innersol_join, &test_find, &test_innersol_copy, &test_find_innsol_idx, &test_kp_forward_enumeration, NULL
+		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, &test_innersol_join, &test_find, &test_innersol_copy, &test_find_innsol_idx, &test_kp_algorithm, NULL
 };
 
 uint32 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
@@ -24,24 +24,27 @@ uint32 values[N];
 KProblem test_problem;
 #define TEST_N 5
 #define TEST_MAXW 15
+#define TEST_K 15
 uint32 test_weights[] = { 3, 4, 5, 6, 7 };
 uint32 test_values[] = { 4, 3, 5, 7, 8 };
-int target_matrix_forward[TEST_MAXW][TEST_N] = {
-		{ -1, -1, -1, -1, -1 }, // 1
+int target_matrix_forward[TEST_MAXW][TEST_N] = { { -1, -1, -1, -1, -1 }, // 1
 		{ -1, -1, -1, -1, -1 }, // 2
-		{  4, -1, -1, -1, -1 }, // 3
-		{ -1,  3, -1, -1, -1 }, // 4
-		{ -1, -1,  5, -1, -1 }, // 5
-		{  8, -1, -1,  7, -1 }, // 6
-		{ -1,  7, -1, -1,  8 }, // 7
-		{ -1,  6,  9, -1, -1 }, // 8
-		{ 12, -1,  8, 11, -1 }, // 9
+		{ 4, -1, -1, -1, -1 }, // 3
+		{ -1, 3, -1, -1, -1 }, // 4
+		{ -1, -1, 5, -1, -1 }, // 5
+		{ 8, -1, -1, 7, -1 }, // 6
+		{ -1, 7, -1, -1, 8 }, // 7
+		{ -1, 6, 9, -1, -1 }, // 8
+		{ 12, -1, 8, 11, -1 }, // 9
 		{ -1, 11, 10, 10, 12 }, // 10
 		{ -1, 10, 13, 12, 11 }, // 11
-		{ 16,  9, 12, 15, 13 }, // 12
+		{ 16, 9, 12, 15, 13 }, // 12
 		{ -1, 15, 14, 14, 16 }, // 13
 		{ -1, 14, 17, 16, 16 },  // 14
 		{ 20, 13, 16, 19, 17 } }; // 15
+
+uint32 test_initial_sol[] = { 20, 19, 17, 17, 16, 16, 16, 16, 16, 15, 15, 14,
+		14, 14, 13 };
 
 void set_up() {
 	uint32 i;
@@ -76,24 +79,38 @@ void do_tests() {
 	}
 }
 
-bool test_kp_forward_enumeration() {
+bool test_kp_algorithm() {
 	printf("%s\n", __FUNCTION__);
 	bool ret = true;
 	int** matrix;
 	allocate_matrix((void ***) &matrix, test_problem->max_weigth,
 			test_problem->num_var, sizeof(uint32));
 	kp_forward_enumeration(matrix, test_problem);
-	printf("Starting checks..\n");
+	printf("Starting checks...\n");
 
 	int** matrix2 = (int**) malloc(TEST_MAXW * sizeof(int *));
 	uint32 i;
-	for(i = 0; i < TEST_MAXW; i++) {
+	for (i = 0; i < TEST_MAXW; i++) {
 		matrix2[i] = target_matrix_forward[i];
 	}
 	ret = matrices_equal(matrix, matrix2, TEST_MAXW, TEST_N);
 
+	printf("Initial K solutions.\n");
+	InnerSolution* listSol;
+	uint32 size;
+	kp_build_initial_best_k_list(&listSol, &size, matrix, test_problem, TEST_K);
+	ret &= size == TEST_K;
+	printf("Starting checks...\n");
+	for (i = 0; i < size; i++) {
+		ret &= listSol[i]->value == test_initial_sol[i];
+	}
+
+	for (i = 0; i < size; i++) {
+		kp_free_inn_sol(listSol[i]);
+	}
+	free(listSol);
 	free(matrix2);
-	free_matrix((void**)matrix);
+	free_matrix((void**) matrix);
 
 	return ret;
 }
@@ -232,16 +249,19 @@ bool test_innersol_ordering() {
 	printf("%s\n", __FUNCTION__);
 
 	bool ret = true;
-	uint32 i, j = 2, t = 3, count = 20;
+	uint32 i, count = 20;
 
 	InnerSolution* ss = (InnerSolution*) malloc(count * sizeof(InnerSolution));
 	for (i = 0; i < count; i++) {
-		kp_init_inn_sol(&ss[i], N, j, t, i / 2);
+		kp_init_inn_sol(&ss[i], i / 2, i / 2, i / 2, i / 2);
 	}
 	sort_by_values_non_inc(ss, count);
 
 	for (i = 0; i < count - 1; i++) {
 		ret &= ss[i]->value >= ss[i + 1]->value;
+		uint32 v = ss[i]->value;
+		ret &= v == ss[i]->column_idx && v == ss[i]->dimension
+				&& v == ss[i]->row_idx;
 	}
 
 	for (i = 0; i < count; i++) {
@@ -400,16 +420,16 @@ bool matrices_equal(int** m1, int** m2, uint32 nrow, uint32 ncols) {
 	uint32 i, j, k;
 	bool ret = true;
 
-	for(i = 0; i < nrow; i++) {
-		for(j = 0; j < ncols; j++) {
-			if(m1[i][j] != m2[i][j]) {
+	for (i = 0; i < nrow; i++) {
+		for (j = 0; j < ncols; j++) {
+			if (m1[i][j] != m2[i][j]) {
 				ret = false;
 				printf("R%d: ", i);
-				for(k = 0; k < ncols; k++) {
+				for (k = 0; k < ncols; k++) {
 					printf("%d ", m1[i][k]);
 				}
 				printf("| ");
-				for(k = 0; k < ncols; k++) {
+				for (k = 0; k < ncols; k++) {
 					printf("%d ", m2[i][k]);
 				}
 				printf("\n");

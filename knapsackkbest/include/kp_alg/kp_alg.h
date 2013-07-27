@@ -46,7 +46,7 @@ void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size, int** m
 /*
  *
  */
-void recover_solution(InnerSolution* solutions, uint32 size, uint32 K, int** matrix, KProblem problem);
+void kp_recover_solution(InnerSolution* solutions, uint32 size, uint32 K, int** matrix, KProblem problem);
 
 /*
  *

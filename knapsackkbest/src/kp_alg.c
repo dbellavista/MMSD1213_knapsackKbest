@@ -107,7 +107,7 @@ uint32 sols_size, uint32 K, int** matrix, KProblem problem) {
 	dest->recovered = true;
 }
 
-void recover_solution(InnerSolution* solutions, uint32 size, uint32 K,
+void kp_recover_solution(InnerSolution* solutions, uint32 size, uint32 K,
 		int** matrix, KProblem problem) {
 	InnerSolution auxl;
 	uint32 i = 0;

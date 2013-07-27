@@ -11,7 +11,7 @@
 void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 		InnerSolution s2) {
 	uint32 i;
-	for(i = 0; i < dest->dimension; i++) {
+	for (i = 0; i < dest->dimension; i++) {
 		dest->sol_vector[i] = s1->sol_vector[i] + s2->sol_vector[i];
 	}
 }
@@ -19,20 +19,34 @@ void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 int find_idx_insertion(InnerSolution* sol_list, uint32 sols_size,
 uint32 limit_idx, uint32 value) {
 	int i = sols_size;
-
-	if (limit_idx == 0 && sol_list[0]->value < value) {
-		return 0;
-	}
-	if (sol_list[sols_size - 1]->value > value) {
-		return -1;
-	}
-
-	for (i = sols_size - 1; i >= limit_idx; i--) {
-		if (sol_list[i]->value >= value) {
+	for (i = 0; i <= limit_idx; i++) {
+		if (sol_list[i]->value < value) {
 			return i;
 		}
 	}
 	return -1;
+}
+
+int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32* sols_size,
+		uint32 limit_idx, uint32 value, uint32 K) {
+	uint32 i;
+	int idx = find_idx_insertion(sol_list, *sols_size, limit_idx, value);
+
+	if (idx == -1) {
+		return -1;
+	}
+
+	if (*sols_size == K) {
+		kp_free_inn_sol(sol_list[K - 1]);
+	} else {
+		*sols_size = *sols_size + 1;
+	}
+	for (i = *sols_size - 1; i > idx; i--) {
+		sol_list[i] = sol_list[i - 1];
+	}
+	sol_list[idx] = NULL;
+
+	return idx;
 }
 
 int find_idx(uint32* vector, uint32 start, uint32 fin, uint32 value) {

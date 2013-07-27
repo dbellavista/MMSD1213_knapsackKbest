@@ -35,6 +35,9 @@ int find_idx_insertion(InnerSolution* sol_list, uint32 sols_size,
 		uint32 limit_idx,
 		uint32 value);
 
+int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32* sols_size,
+		uint32 limit_idx, uint32 value, uint32 K);
+
 void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 		InnerSolution s2);
 

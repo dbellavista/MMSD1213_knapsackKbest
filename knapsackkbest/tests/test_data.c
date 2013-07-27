@@ -46,6 +46,9 @@ int target_matrix_forward[TEST_MAXW][TEST_N] = { { -1, -1, -1, -1, -1 }, // 1
 uint32 test_initial_sol[] = { 20, 19, 17, 17, 16, 16, 16, 16, 16, 15, 15, 14,
 		14, 14, 13 };
 
+uint32 test_final_sol[] = { 20, 19, 18, 17, 17, 16, 16, 16, 16, 16, 15, 15, 15,
+		15, 15 };
+
 void set_up() {
 	uint32 i;
 	for (i = 0; i < N; i++) {
@@ -105,6 +108,14 @@ bool test_kp_algorithm() {
 		ret &= listSol[i]->value == test_initial_sol[i];
 	}
 
+	printf("Recover solutions.\n");
+	kp_recover_solution(listSol, TEST_K, TEST_K, matrix, test_problem);
+	printf("Starting checks...\n");
+	for (i = 0; i < size; i++) {
+		ret &= listSol[i]->value == test_final_sol[i];
+	}
+
+	// Cleaning up the mess
 	for (i = 0; i < size; i++) {
 		kp_free_inn_sol(listSol[i]);
 	}
@@ -118,10 +129,10 @@ bool test_kp_algorithm() {
 bool test_find_innsol_idx() {
 	printf("%s\n", __FUNCTION__);
 	bool ret = true;
-	uint32 size = 30, i;
+	uint32 size = 30, i, tmp;
 	uint32 tv;
 	int g;
-	InnerSolution* ss = (InnerSolution*) malloc(size * sizeof(InnerSolution));
+	InnerSolution* ss = (InnerSolution*) malloc((size + 1) * sizeof(InnerSolution));
 
 	for (i = 0; i < size; i++) {
 		kp_init_inn_sol(&ss[i], N, 4, 4, i * 2 + 2);
@@ -129,15 +140,15 @@ bool test_find_innsol_idx() {
 	sort_by_values_non_inc(ss, size);
 
 	tv = 9;
-	g = find_idx_insertion(ss, size, 10, tv);
-	ret &= g == size - 1 - tv / 2;
+	g = find_idx_insertion(ss, size, size - 1, tv);
+	ret &= ss[g]->value == 8;
 
 	tv = 3;
-	g = find_idx_insertion(ss, size, 10, tv);
-	ret &= g == size - 1 - tv / 2;
+	g = find_idx_insertion(ss, size, size - 1, tv);
+	ret &= ss[g]->value == 2;
 
 	tv = 41;
-	g = find_idx_insertion(ss, size, 11, tv);
+	g = find_idx_insertion(ss, size, 9, tv);
 	ret &= g == -1;
 
 	tv = 0;
@@ -147,6 +158,35 @@ bool test_find_innsol_idx() {
 	tv = 1000;
 	g = find_idx_insertion(ss, size, 0, tv);
 	ret &= g == 0;
+
+	tv = 9;
+	tmp = size;
+	g = find_idx_and_prepare_insertion(ss, &tmp, size - 1, tv, size);
+	ret &= size == tmp;
+	ret &= ss[g] == NULL;
+	ret &= ss[g + 1]->value == 8;
+	ret &= ss[g - 1]->value == 10;
+	ret &= ss[size - 1]->value == 4;
+	ss[g] = ss[g + 1];
+
+	tv = 9;
+	tmp = size;
+	g = find_idx_and_prepare_insertion(ss, &tmp, size - 1, tv, size + 1);
+	ret &= tmp == size + 1;
+	ret &= ss[g] == NULL;
+	ret &= ss[g + 1]->value == 8;
+	ret &= ss[g - 1]->value == 10;
+	ret &= ss[size]->value == 4;
+
+	for (i = 0; i < size + 1; i++) {
+		if(ss[i] != NULL) {
+			kp_free_inn_sol(ss[i]);
+		} else {
+			// Trick for ss[g] = ss[g + 1]
+			i += 1;
+		}
+	}
+	free(ss);
 
 	return ret;
 }

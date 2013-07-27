@@ -18,6 +18,10 @@
 
 #define byte uint8
 
+#define int8 char
+#define int16 short int
+#define int64 long long
+
 #define bool byte
 #define false 0
 #define true 1

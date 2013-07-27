@@ -111,12 +111,12 @@ void sort_by_weights(KProblem problem) {
 
 }
 
-void allocate_matrix(void*** matrix, uint32 width, uint32 height, uint32 size) {
-	(*matrix) = (void**) malloc(width * sizeof(void*));
-	void* vals = (void*) malloc(width * height * size);
+void allocate_matrix(void*** matrix, uint32 n_row, uint32 n_cols, uint32 size) {
+	(*matrix) = (void**) malloc(n_row * sizeof(void*));
+	void* vals = (void*) malloc(n_row * n_cols * size);
 	uint32 i;
-	for (i = 0; i < width; i++) {
-		(*matrix)[i] = &(vals[i * height * size]);
+	for (i = 0; i < n_row; i++) {
+		(*matrix)[i] = &(vals[i * n_cols * size]);
 	}
 }
 void free_matrix(void** matrix) {

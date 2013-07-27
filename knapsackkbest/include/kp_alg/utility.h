@@ -26,7 +26,7 @@ void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
 		uint32 K, bool free_garbage);
 void sort_by_values_non_inc(InnerSolution* sol, uint32 count);
 void sort_by_weights(KProblem problem);
-void allocate_matrix(void*** matrix, uint32 width, uint32 height, uint32 size);
+void allocate_matrix(void*** matrix, uint32 nrow, uint32 ncols, uint32 size);
 void free_matrix(void** matrix);
 
 int find_idx(uint32* vector, uint32 start, uint32 fin, uint32 value);

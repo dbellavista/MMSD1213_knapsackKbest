@@ -14,14 +14,14 @@ bool problems_equal(KProblem p1, KProblem p2);
 
 char* results[] = { "failed", "successful" };
 bool (*test_list[])(
-		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, &test_innersol_join, &test_find, &test_innersol_copy, &test_find_innsol_idx, NULL
+		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, &test_innersol_join, &test_find, &test_innersol_copy, &test_find_innsol_idx, &test_kp_forward_enumeration, NULL
 };
 
-uint16 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
-uint16 values[N];
+uint32 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
+uint32 values[N];
 
 void set_up() {
-	uint16 i;
+	uint32 i;
 	for (i = 0; i < N; i++) {
 		values[i] = weights[i] * 10;
 	}
@@ -32,22 +32,36 @@ void tear_down() {
 }
 
 void do_tests() {
-	uint16 i = -1;
-	bool res;
+	uint32 i = -1;
+	bool res, tot_res = true;
 	while (test_list[++i] != NULL) {
 		set_up();
 		printf("==== Launching test no %d...\n", (i + 1));
 		res = (*test_list[i])();
+		tot_res &= res;
 		printf("==== Test no %d %s\n\n", (i + 1), results[res]);
 		tear_down();
 	}
+	printf("\n");
+	if(tot_res) {
+		printf("*** Success: all tests passed!");
+	} else {
+		printf("*** Failure: some tests did not pass!");
+	}
+}
+
+bool test_kp_forward_enumeration() {
+	printf("%s\n", __FUNCTION__);
+	bool ret = true;
+
+	return ret;
 }
 
 bool test_find_innsol_idx() {
 	printf("%s\n", __FUNCTION__);
 	bool ret = true;
-	uint16 size = 30, i;
-	uint16 tv;
+	uint32 size = 30, i;
+	uint32 tv;
 	int g;
 	InnerSolution* ss = (InnerSolution*) malloc(size * sizeof(InnerSolution));
 
@@ -84,7 +98,7 @@ bool test_find_innsol_idx() {
 bool test_innersol_copy() {
 	printf("%s\n", __FUNCTION__);
 	bool ret = true;
-	uint16 i, j = 2, t = 3, v = 10;
+	uint32 i, j = 2, t = 3, v = 10;
 	InnerSolution s, sc;
 	kp_init_inn_sol(&s, N, j, t, v);
 	for (i = 0; i < N; i++) {
@@ -110,9 +124,9 @@ bool test_innersol_copy() {
 bool test_find() {
 	printf("%s\n", __FUNCTION__);
 	bool ret = true;
-	uint16 value = 134;
-	uint16 idx = 4;
-	uint16 vector[] = { 10, 89, 12, 378, 291, 11, 29, 101, 22, 319 };
+	uint32 value = 134;
+	uint32 idx = 4;
+	uint32 vector[] = { 10, 89, 12, 378, 291, 11, 29, 101, 22, 319 };
 
 	vector[idx] = value;
 	ret &= find_idx(vector, 0, idx + 1, value) == idx;
@@ -127,7 +141,7 @@ bool test_innersol_join() {
 	printf("%s\n", __FUNCTION__);
 
 	bool ret = true;
-	uint16 j = 2, t = 3, count1 = 20, count2 = 20, K = 20;
+	uint32 j = 2, t = 3, count1 = 20, count2 = 20, K = 20;
 	int k, i;
 
 	InnerSolution* ss1 = (InnerSolution*) malloc(
@@ -179,7 +193,7 @@ bool test_innersol_ordering() {
 	printf("%s\n", __FUNCTION__);
 
 	bool ret = true;
-	uint16 i, j = 2, t = 3, count = 20;
+	uint32 i, j = 2, t = 3, count = 20;
 
 	InnerSolution* ss = (InnerSolution*) malloc(count * sizeof(InnerSolution));
 	for (i = 0; i < count; i++) {
@@ -202,7 +216,7 @@ bool test_innersol_creation() {
 	printf("%s\n", __FUNCTION__);
 
 	bool ret = true;
-	uint16 i, j = 2, t = 3, v = 10;
+	uint32 i, j = 2, t = 3, v = 10;
 
 	InnerSolution s;
 	kp_init_inn_sol(&s, N, j, t, v);
@@ -230,18 +244,18 @@ bool test_innersol_creation() {
 bool test_matrix_alloc() {
 	printf("%s\n", __FUNCTION__);
 
-	uint16 i, j;
-	uint16** matrix;
-	uint16 w = 5, h = 5;
-	allocate_matrix((void***) &matrix, w, h, sizeof(uint16));
+	uint32 i, j;
+	uint32** matrix;
+	uint32 w = 5, h = 5;
+	allocate_matrix((void***) &matrix, w, h, sizeof(uint32));
 	for (i = 0; i < w; i++) {
 		for (j = 0; j < h; j++) {
-			matrix[i][j] = (uint16) (i + (j << 4));
+			matrix[i][j] = (uint32) (i + (j << 4));
 		}
 	}
 	for (i = 0; i < w; i++) {
 		for (j = 0; j < h; j++) {
-			if (!(matrix[i][j] == (uint16) (i + (j << 4)))) {
+			if (!(matrix[i][j] == (uint32) (i + (j << 4)))) {
 				return false;
 			}
 		}
@@ -254,13 +268,13 @@ bool test_problem_creation() {
 	printf("%s\n", __FUNCTION__);
 
 	bool ret = true;
-	uint16 i, mw = 50;
+	uint32 i, mw = 50;
 
 	KProblem p;
 	kp_init_kp(&p, N, weights, values, mw);
 
-	ret &= p->n == N;
-	ret &= p->max_w == mw;
+	ret &= p->num_var == N;
+	ret &= p->max_weigth == mw;
 
 	for (i = 0; i < N - 1; i++) {
 		ret &= p->weights[i] <= p->weights[i + 1];
@@ -279,7 +293,7 @@ bool test_solution_creation() {
 	KSolution s;
 	kp_init_sol(&s, N);
 	ret &= s->vector_size == N;
-	uint16 i;
+	uint32 i;
 
 	for (i = 0; i < s->vector_size; i++) {
 		s->solution_vector[i] = i;
@@ -298,7 +312,7 @@ bool test_kbestsolutions_creation() {
 	printf("%s\n", __FUNCTION__);
 
 	bool ret = true;
-	uint16 sol_count = 10;
+	uint32 sol_count = 10;
 	KProblem p;
 	kp_init_kp(&p, N, weights, values, 50);
 
@@ -308,16 +322,16 @@ bool test_kbestsolutions_creation() {
 	ret &= problems_equal(p, s->problem);
 	ret &= s->sol_count == sol_count;
 
-	uint16 i, j;
+	uint32 i, j;
 
 	for (i = 0; i < s->sol_count; i++) {
-		for (j = 0; j < s->problem->n; j++) {
+		for (j = 0; j < s->problem->num_var; j++) {
 			s->solutions[i]->solution_vector[j] = i + (j << 4);
 		}
 	}
 
 	for (i = 0; i < s->sol_count; i++) {
-		for (j = 0; j < s->problem->n; j++) {
+		for (j = 0; j < s->problem->num_var; j++) {
 			ret &= s->solutions[i]->vector_size == N;
 			ret &= s->solutions[i]->solution_vector[j] == i + (j << 4);
 		}
@@ -331,11 +345,11 @@ bool test_kbestsolutions_creation() {
 bool problems_equal(KProblem p1, KProblem p2) {
 	printf("%s\n", __FUNCTION__);
 
-	uint16 i;
-	if (p1->max_w != p2->max_w || p1->n != p2->n) {
+	uint32 i;
+	if (p1->max_weigth != p2->max_weigth || p1->num_var != p2->num_var) {
 		return false;
 	}
-	for (i = 0; i < p1->n; i++) {
+	for (i = 0; i < p1->num_var; i++) {
 		if (p1->weights[i] != p2->weights[i]
 				|| p1->values[i] != p2->values[i]) {
 			return false;

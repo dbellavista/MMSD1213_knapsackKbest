@@ -9,18 +9,18 @@
 #include "../include/kp_alg/kp_alg.h"
 #include "../include/kp_alg/utility.h"
 
-void search_alternative_solutions(uint16 row_idx, uint16 column_idx,
-uint16 cumul_value, uint16 j1, uint16 index, InnerSolution* solutions,
-uint16 sols_size, uint16 K, uint16** matrix, KProblem problem) {
+void search_alternative_solutions(uint32 row_idx, uint32 column_idx,
+uint32 cumul_value, uint32 j1, uint32 index, InnerSolution* solutions,
+uint32 sols_size, uint32 K, uint32** matrix, KProblem problem) {
 	int tmp;
-	uint16 k, g, f;
-	uint16 s;
+	uint32 k, g, f;
+	uint32 s;
 	InnerSolution auxl1;
 
 	for (s = 0; s <= j1; s++) {
 		if (s != column_idx) {
 			if (matrix[row_idx][s] >= 0) {
-				uint16 newvalue = matrix[row_idx][s] + cumul_value;
+				uint32 newvalue = matrix[row_idx][s] + cumul_value;
 				if (newvalue >= solutions[sols_size - 1]->value) {
 					tmp = find_idx_insertion(solutions, sols_size, index,
 							newvalue);
@@ -28,7 +28,7 @@ uint16 sols_size, uint16 K, uint16** matrix, KProblem problem) {
 						// TODO
 						continue;
 					}
-					g = (uint16) tmp;
+					g = (uint32) tmp;
 					if (sols_size == K) {
 						kp_free_inn_sol(solutions[K - 1]);
 					} else {
@@ -40,25 +40,25 @@ uint16 sols_size, uint16 K, uint16** matrix, KProblem problem) {
 						solutions[f] = solutions[f - 1];
 						f--;
 					}
-					kp_init_inn_sol(&solutions[g], problem->n,
+					kp_init_inn_sol(&solutions[g], problem->num_var,
 							solutions[index]->column_idx,
 							solutions[index]->row_idx, newvalue);
 
-					kp_init_inn_sol(&auxl1, problem->n, s, row_idx,
+					kp_init_inn_sol(&auxl1, problem->num_var, s, row_idx,
 							matrix[row_idx][s]);
 					backtracking(solutions, auxl1, g, sols_size, K, matrix,
 							problem);
 
-					solutions[g].recovered = true;
+					solutions[g]->recovered = true;
 					sum_solution_vectors(solutions[g], solutions[index], auxl1);
-					if (matrix[row_idx][s] >= solutions[sols_size - 1].value) {
+					if (matrix[row_idx][s] >= solutions[sols_size - 1]->value) {
 						tmp = find_idx_insertion(solutions, sols_size, g,
 								matrix[row_idx][s]);
 						if (tmp == -1) {
 							// TODO
 							continue;
 						}
-						k = (uint16) tmp;
+						k = (uint32) tmp;
 						if (sols_size == K) {
 							kp_free_inn_sol(solutions[K - 1]);
 						} else {
@@ -79,13 +79,13 @@ uint16 sols_size, uint16 K, uint16** matrix, KProblem problem) {
 
 }
 
-void backtracking(InnerSolution* solutions, InnerSolution dest, uint16 index,
-uint16 sols_size, uint16 K, uint16** matrix, KProblem problem) {
-	uint16 t = dest->row_idx;
-	uint16 j = dest->column_idx;
-	uint16 z = dest->value;
-	uint16 zcum = 0;
-	uint16 j1;
+void backtracking(InnerSolution* solutions, InnerSolution dest, uint32 index,
+uint32 sols_size, uint32 K, uint32** matrix, KProblem problem) {
+	uint32 t = dest->row_idx;
+	uint32 j = dest->column_idx;
+	uint32 z = dest->value;
+	uint32 zcum = 0;
+	uint32 j1;
 
 	while (t >= 0) {
 		t -= problem->weights[j];
@@ -96,7 +96,7 @@ uint16 sols_size, uint16 K, uint16** matrix, KProblem problem) {
 		if (tmp < 0) {
 			// TODO
 		} else {
-			j = (uint16) tmp;
+			j = (uint32) tmp;
 		}
 		j1 = dest->column_idx;
 		if (t >= 0) {
@@ -107,10 +107,10 @@ uint16 sols_size, uint16 K, uint16** matrix, KProblem problem) {
 	dest->recovered = true;
 }
 
-void recover_solution(InnerSolution* solutions, uint16 size, uint16 K,
-uint16** matrix, KProblem problem) {
+void recover_solution(InnerSolution* solutions, uint32 size, uint32 K,
+uint32** matrix, KProblem problem) {
 	InnerSolution auxl;
-	uint16 i = 0;
+	uint32 i = 0;
 	while (i < size) {
 		if (!solutions[i]->recovered) {
 			kp_copy_inn_sol(&auxl, solutions[i]);
@@ -124,24 +124,24 @@ uint16** matrix, KProblem problem) {
 
 }
 
-void kp_build_initial_best_k_list(InnerSolution** ret, uint16* ret_size,
-uint16** matrix, KProblem problem, uint16 K) {
+void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size,
+uint32** matrix, KProblem problem, uint32 K) {
 	InnerSolution* solutions = (InnerSolution*) malloc(
 			sizeof(InnerSolution) * K);
 	InnerSolution* solutions1 = (InnerSolution*) malloc(
 			sizeof(InnerSolution) * K);
 	*ret = (InnerSolution*) malloc(sizeof(InnerSolution) * K);
 
-	uint16 counter, i, j, i1, j1, P, P1;
+	uint32 counter, i, j, i1, j1, P, P1;
 	bool fim = false, moreleft = false;
 	counter = 0;
-	i = problem->max_w;
+	i = problem->max_weigth;
 
 	while (i-- >= problem->weights[0]) {
-		j = problem->n;
+		j = problem->num_var;
 		while (j-- > 0) {
 			if (matrix[i][j] >= 0) {
-				kp_init_inn_sol(&solutions[counter], problem->n, j, i,
+				kp_init_inn_sol(&solutions[counter], problem->num_var, j, i,
 						matrix[i][j]);
 				counter++;
 				if (counter == K) {
@@ -165,15 +165,15 @@ uint16** matrix, KProblem problem, uint16 K) {
 		fim = false;
 		while (i >= problem->weights[0]) {
 			i = i - 1;
-			j = problem->n;
+			j = problem->num_var;
 			if (moreleft) {
 				j = j1;
 				moreleft = false;
 			}
 			while (j-- > 0) {
 				if (matrix[i][j] > solutions[K - 1]->value) {
-					kp_init_inn_sol(&solutions1[counter], problem->n, j, i,
-							matrix[i][j]);
+					kp_init_inn_sol(&solutions1[counter], problem->num_var, j,
+							i, matrix[i][j]);
 					counter++;
 					if (counter == K) {
 						i1 = i;
@@ -201,38 +201,41 @@ uint16** matrix, KProblem problem, uint16 K) {
 	free(solutions1);
 }
 
-void kp_forward_enumeration(uint16** matrix, KProblem problem) {
-	uint16 i, j, t, m, z;
+void kp_forward_enumeration(uint32** matrix, KProblem problem) {
+	uint32 var, weight, var_idx, value;
 
-	for (i = 0; i < problem->max_w; i++) {
-		for (j = 0; j < problem->n; j++) {
-			matrix[i][j] = -1;
+	for (weight = 0; weight < problem->max_weigth; weight++) {
+		for (var = 0; var < problem->num_var; var++) {
+			matrix[weight][var] = -1;
 		}
 	}
 
-// Begin forward enumeration
-//// Begin initial ramification
-	for (j = 0; j < problem->n; j++) {
-		matrix[problem->weights[j]][j] = problem->values[j];
+	// Begin initial ramification
+	//// Initial known solutions
+	for (var = 0; var < problem->num_var; var++) {
+		matrix[problem->weights[var] - 1][var] = problem->values[var];
 	}
-////Begin ramification of supernodes
-	for (t = problem->weights[0]; t <= problem->max_w - problem->weights[0];
-			t++) {
-		m = problem->n + 1;
-		for (i = 0; i < problem->n; i++) {
-			if (matrix[t][i] >= 0) {
-				m = matrix[t][i];
+
+	////Begin ramification of supernodes
+	for (weight = problem->weights[0] - 1;
+			weight < problem->max_weigth - problem->weights[0]; weight++) {
+		// Find an opened supernode
+		var_idx = problem->num_var;
+		for (var = 0; var < problem->num_var; var++) {
+			if (matrix[weight][var] >= 0) {
 				break;
 			}
 		}
-		if (m != problem->n + 1) {
-			z = matrix[t][m];
-			for (i = m; i <= problem->n; i++) {
-				if (t + problem->weights[i] <= problem->max_w) {
-					if (matrix[t][i] > z) {
-						z = matrix[t][i];
+		if (var_idx != problem->num_var) {
+			value = matrix[weight][var_idx];
+			for (var = var_idx; var < problem->num_var; var++) {
+				// Check feasibility
+				if (weight + problem->weights[var] <= problem->max_weigth) {
+					if (matrix[weight][var] > value) {
+						value = matrix[weight][var];
 					}
-					matrix[t + problem->weights[i]][i] = z + problem->values[i];
+					matrix[weight + problem->weights[var]][var] = value
+							+ problem->values[var];
 				}
 			}
 		}

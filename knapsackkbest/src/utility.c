@@ -10,14 +10,14 @@
 
 void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 		InnerSolution s2) {
-	uint16 i;
+	uint32 i;
 	for(i = 0; i < dest->dimension; i++) {
 		dest->sol_vector[i] = s1->sol_vector[i] + s2->sol_vector[i];
 	}
 }
 
-int find_idx_insertion(InnerSolution* sol_list, uint16 sols_size,
-uint16 limit_idx, uint16 value) {
+int find_idx_insertion(InnerSolution* sol_list, uint32 sols_size,
+uint32 limit_idx, uint32 value) {
 	int i = sols_size;
 
 	if (limit_idx == 0 && sol_list[0]->value < value) {
@@ -35,8 +35,8 @@ uint16 limit_idx, uint16 value) {
 	return -1;
 }
 
-int find_idx(uint16* vector, uint16 start, uint16 fin, uint16 value) {
-	uint16 i;
+int find_idx(uint32* vector, uint32 start, uint32 fin, uint32 value) {
+	uint32 i;
 	for (i = start; i < fin; i++) {
 		if (vector[i] == value) {
 			return i;
@@ -46,9 +46,9 @@ int find_idx(uint16* vector, uint16 start, uint16 fin, uint16 value) {
 }
 
 void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
-		InnerSolution* sol2, uint16 count1, uint16 count2, uint16 K,
+		InnerSolution* sol2, uint32 count1, uint32 count2, uint32 K,
 		bool free_garbage) {
-	uint16 i = 0, j = 0, k = 0;
+	uint32 i = 0, j = 0, k = 0;
 	while (i < count1 && j < count2 && k < K) {
 		InnerSolution val =
 				sol1[i]->value > sol2[j]->value ? sol1[i++] : sol2[j++];
@@ -73,9 +73,9 @@ void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
 	}
 }
 
-void sort_by_values_non_inc(InnerSolution* sol, uint16 count) {
+void sort_by_values_non_inc(InnerSolution* sol, uint32 count) {
 	byte done = 0;
-	uint16 i, tmp;
+	uint32 i, tmp;
 	while (!done) {
 		done = 1;
 		for (i = 0; i < count - 1; i++) {
@@ -93,10 +93,10 @@ void sort_by_values_non_inc(InnerSolution* sol, uint16 count) {
 void sort_by_weights(KProblem problem) {
 
 	byte done = 0;
-	uint16 i, tmp;
+	uint32 i, tmp;
 	while (!done) {
 		done = 1;
-		for (i = 0; i < problem->n - 1; i++) {
+		for (i = 0; i < problem->num_var - 1; i++) {
 			if (problem->weights[i] > problem->weights[i + 1]) {
 				done = 0;
 				tmp = problem->weights[i];

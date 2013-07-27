@@ -11,11 +11,11 @@
 #include "../kbest.h"
 
 struct innerSolution {
-	uint16* sol_vector;
-	uint16 dimension;
-	uint16 row_idx;
-	uint16 column_idx;
-	uint16 value;
+	uint32* sol_vector;
+	uint32 dimension;
+	uint32 row_idx;
+	uint32 column_idx;
+	uint32 value;
 	bool recovered;
 };
 typedef struct innerSolution* InnerSolution;
@@ -23,7 +23,7 @@ typedef struct innerSolution* InnerSolution;
 /*
  * Initialize a knapsack inner solution.
  */
-void kp_init_inn_sol(InnerSolution* innerSol, uint16 n, uint16 j, uint16 t, uint16 v);
+void kp_init_inn_sol(InnerSolution* innerSol, uint32 n, uint32 j, uint32 t, uint32 v);
 /*
  * Free a knapsack inner solution.
  */
@@ -36,25 +36,25 @@ void kp_copy_inn_sol(InnerSolution* dest, InnerSolution origin);
 /*
  * Performs the forward enumeration on the given problem, filling the matrix.
  */
-void kp_forward_enumeration(uint16** matrix, KProblem problem);
+void kp_forward_enumeration(uint32** matrix, KProblem problem);
 
 /*
  *
  */
-void kp_build_initial_best_k_list(InnerSolution** ret, uint16* ret_size, uint16** matrix, KProblem problem, uint16 K);
+void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size, uint32** matrix, KProblem problem, uint32 K);
 
 /*
  *
  */
-void recover_solution(InnerSolution* solutions, uint16 size, uint16 K, uint16** matrix, KProblem problem);
+void recover_solution(InnerSolution* solutions, uint32 size, uint32 K, uint32** matrix, KProblem problem);
 
 /*
  *
  */
-void backtracking(InnerSolution* solutions, InnerSolution dest, uint16 index, uint16 sols_size, uint16 K, uint16** matrix, KProblem problem);
+void backtracking(InnerSolution* solutions, InnerSolution dest, uint32 index, uint32 sols_size, uint32 K, uint32** matrix, KProblem problem);
 /*
  *
  */
-void search_alternative_solutions(uint16 row_idx, uint16 column_idx, uint16 cumul_value, uint16 j1, uint16 index, InnerSolution* solutions, uint16 sols_size, uint16 K, uint16** matrix, KProblem problem);
+void search_alternative_solutions(uint32 row_idx, uint32 column_idx, uint32 cumul_value, uint32 j1, uint32 index, InnerSolution* solutions, uint32 sols_size, uint32 K, uint32** matrix, KProblem problem);
 
 #endif /* KP_ALG_H_ */

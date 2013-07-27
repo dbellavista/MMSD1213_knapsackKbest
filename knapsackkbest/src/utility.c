@@ -17,9 +17,9 @@ void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 }
 
 int find_idx_insertion(InnerSolution* sol_list, uint32 sols_size,
-uint32 limit_idx, uint32 value) {
+uint32 lower_limit_idx, uint32 value) {
 	int i = sols_size;
-	for (i = 0; i <= limit_idx; i++) {
+	for (i = lower_limit_idx + 1; i < sols_size; i++) {
 		if (sol_list[i]->value < value) {
 			return i;
 		}
@@ -28,9 +28,9 @@ uint32 limit_idx, uint32 value) {
 }
 
 int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32* sols_size,
-		uint32 limit_idx, uint32 value, uint32 K) {
+		uint32 lower_limit_idx, uint32 value, uint32 K) {
 	uint32 i;
-	int idx = find_idx_insertion(sol_list, *sols_size, limit_idx, value);
+	int idx = find_idx_insertion(sol_list, *sols_size, lower_limit_idx, value);
 
 	if (idx == -1) {
 		return -1;

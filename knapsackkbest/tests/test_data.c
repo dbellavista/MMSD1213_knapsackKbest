@@ -113,6 +113,7 @@ bool test_kp_algorithm() {
 	printf("Starting checks...\n");
 	for (i = 0; i < size; i++) {
 		ret &= listSol[i]->value == test_final_sol[i];
+		printf("%d %d\n", listSol[i]->value, test_final_sol[i]);
 	}
 
 	// Cleaning up the mess
@@ -140,16 +141,12 @@ bool test_find_innsol_idx() {
 	sort_by_values_non_inc(ss, size);
 
 	tv = 9;
-	g = find_idx_insertion(ss, size, size - 1, tv);
+	g = find_idx_insertion(ss, size, 0, tv);
 	ret &= ss[g]->value == 8;
 
 	tv = 3;
-	g = find_idx_insertion(ss, size, size - 1, tv);
+	g = find_idx_insertion(ss, size, 0, tv);
 	ret &= ss[g]->value == 2;
-
-	tv = 41;
-	g = find_idx_insertion(ss, size, 9, tv);
-	ret &= g == -1;
 
 	tv = 0;
 	g = find_idx_insertion(ss, size, 0, tv);
@@ -157,11 +154,11 @@ bool test_find_innsol_idx() {
 
 	tv = 1000;
 	g = find_idx_insertion(ss, size, 0, tv);
-	ret &= g == 0;
+	ret &= g == 1;
 
 	tv = 9;
 	tmp = size;
-	g = find_idx_and_prepare_insertion(ss, &tmp, size - 1, tv, size);
+	g = find_idx_and_prepare_insertion(ss, &tmp, 0, tv, size);
 	ret &= size == tmp;
 	ret &= ss[g] == NULL;
 	ret &= ss[g + 1]->value == 8;
@@ -171,7 +168,7 @@ bool test_find_innsol_idx() {
 
 	tv = 9;
 	tmp = size;
-	g = find_idx_and_prepare_insertion(ss, &tmp, size - 1, tv, size + 1);
+	g = find_idx_and_prepare_insertion(ss, &tmp, 0, tv, size + 1);
 	ret &= tmp == size + 1;
 	ret &= ss[g] == NULL;
 	ret &= ss[g + 1]->value == 8;

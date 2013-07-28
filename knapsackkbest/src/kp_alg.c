@@ -6,120 +6,169 @@
  */
 
 #include <stdlib.h>
+#include "../include/kp_alg/debug.h"
 #include "../include/kp_alg/kp_alg.h"
 #include "../include/kp_alg/utility.h"
 
-void search_alternative_solutions(uint32 row_idx, uint32 column_idx,
-uint32 cumul_value, uint32 j1, uint32 index, InnerSolution* solutions,
-uint32 sols_size, uint32 K, int** matrix, KProblem problem) {
+void search_alternative_solutions(uint32 snode, uint32 cur_var,
+uint32 cum_val, uint32 limit_var, uint32 sol_index, InnerSolution* solutions,
+uint32 sols_size, uint32 K, int** matrix, KProblem problem, uint32 last_var) {
+	d_inc_indent();
+
 	int tmp;
-	uint32 k, g, f;
-	uint32 s;
+	uint32 insert_idx;
+	int64 var;
 	InnerSolution auxl1;
 
-	for (s = 0; s <= j1; s++) {
-		if (s != column_idx) {
-			if (matrix[row_idx][s] >= 0) {
-				uint32 newvalue = matrix[row_idx][s] + cumul_value;
-				if (newvalue >= solutions[sols_size - 1]->value) {
-					tmp = find_idx_insertion(solutions, sols_size, index,
-							newvalue);
-					if (tmp == -1) {
-						// TODO
-						continue;
-					}
-					g = (uint32) tmp;
-					if (sols_size == K) {
-						kp_free_inn_sol(solutions[K - 1]);
-					} else {
-						sols_size += 1;
-					}
-					f = sols_size - 1;
+	for (var = limit_var; var >= 0; var--) {
+		d_debug(
+				"Alternatives %d (%d): Start: (%d, %d). Limit: %d. Trying position (%d, %d) -> value: %d\n",
+				sol_index, solutions[sol_index]->value, snode, cur_var,
+				limit_var, snode, var, matrix[snode][var]);
+		if (var == cur_var || matrix[snode][var] < 0) {
+			d_debug(
+					"Alternatives %d (%d): Start: (%d, %d). Skipping position (%d, %d)\n",
+					sol_index, solutions[sol_index]->value, snode, cur_var,
+					snode, var);
+			continue;
+		}
+		uint32 newvalue = matrix[snode][var] + cum_val;
+		if (newvalue < solutions[sols_size - 1]->value) {
+			d_debug(
+					"Alternatives %d (%d): Start: (%d, %d). Skipping position (%d, %d) (value %d ok but not worth).\n",
+					sol_index, solutions[sol_index]->value, snode, cur_var,
+					snode, var, newvalue);
+			continue;
+		}
+		// Newvalue is worth to be backtracked!
+		// TODO Mine: checking if the step before exists in the matrix => already seen
+		if (find_idx(matrix[snode + problem->weights[last_var]], limit_var,
+				matrix[snode][var] + problem->values[last_var]) >= 0) {
+			// Solution already examined :) (maybe)
+			d_debug(
+					"Alternatives %d (%d): solution from position (%d, %d) %d already examined\n",
+					sol_index, solutions[sol_index]->value, snode, var,
+					newvalue);
+			continue;
+		}
+		d_debug(
+				"Alternatives %d (%d): new solution from position (%d, %d): %d by adding cum value %d to %d\n",
+				sol_index, solutions[sol_index]->value, snode, var, newvalue,
+				cum_val, matrix[snode][var]);
 
-					while (f > g) {
-						solutions[f] = solutions[f - 1];
-						f--;
-					}
-					kp_init_inn_sol(&solutions[g], problem->num_var,
-							solutions[index]->column_idx,
-							solutions[index]->row_idx, newvalue);
+		tmp = find_idx_and_prepare_insertion(solutions, &sols_size, sol_index,
+				newvalue, K);
+		if (tmp == -1) {
+			d_debug(
+					"Alternatives %d (%d): new solution %d not inserted, value equals to last solution and solution vector full.\n",
+					sol_index, solutions[sol_index]->value, newvalue);
+			continue;
+		}
+		insert_idx = (uint32) tmp;
 
-					kp_init_inn_sol(&auxl1, problem->num_var, s, row_idx,
-							matrix[row_idx][s]);
-					backtracking(solutions, auxl1, g, sols_size, K, matrix,
-							problem);
+		kp_init_inn_sol(&solutions[insert_idx], problem->num_var,
+				solutions[sol_index]->column_idx, solutions[sol_index]->row_idx,
+				newvalue);
 
-					solutions[g]->recovered = true;
-					sum_solution_vectors(solutions[g], solutions[index], auxl1);
-					if (matrix[row_idx][s] >= solutions[sols_size - 1]->value) {
-						tmp = find_idx_insertion(solutions, sols_size, g,
-								matrix[row_idx][s]);
-						if (tmp == -1) {
-							// TODO
-							continue;
-						}
-						k = (uint32) tmp;
-						if (sols_size == K) {
-							kp_free_inn_sol(solutions[K - 1]);
-						} else {
-							sols_size += 1;
-						}
-						f = sols_size - 1;
+		kp_init_inn_sol(&auxl1, problem->num_var, var, snode,
+				matrix[snode][var]);
+		backtracking(solutions, auxl1, insert_idx, sols_size, K, matrix,
+				problem);
 
-						while (f > k) {
-							solutions[f] = solutions[f - 1];
-							f--;
-						}
-						solutions[k] = auxl1;
-					}
-				}
+		solutions[insert_idx]->recovered = true;
+
+		sum_solution_vectors(solutions[insert_idx], solutions[sol_index],
+				auxl1);
+
+		if (matrix[snode][var] >= (int) solutions[sols_size - 1]->value) {
+			d_debug(
+					"Alternatives %d: [(%d, %d)]. Var %d,  Value in matrix %d better\n",
+					sol_index, snode, cur_var, matrix[snode][var]);
+
+			tmp = find_idx_and_prepare_insertion(solutions, &sols_size,
+					insert_idx, matrix[snode][var], K);
+			if (tmp == -1) {
+				d_error(
+						"cannot find an idx for second insertion! Value: %d, SolIndex: %d\n",
+						matrix[snode][var], insert_idx);
+				continue;
 			}
-		}
-	}
+			insert_idx = (uint32) tmp;
+			solutions[insert_idx] = auxl1;
 
-}
-
-void backtracking(InnerSolution* solutions, InnerSolution dest, uint32 index,
-uint32 sols_size, uint32 K, int** matrix, KProblem problem) {
-	uint32 t = dest->row_idx;
-	uint32 j = dest->column_idx;
-	uint32 z = dest->value;
-	uint32 zcum = 0;
-	uint32 j1;
-
-	while (t >= 0) {
-		t -= problem->weights[j];
-		z -= problem->values[j];
-		zcum += problem->values[j];
-		dest->sol_vector[j] += 1;
-		int tmp = find_idx(matrix[t], 0, j + 1, z);
-		if (tmp < 0) {
-			// TODO
 		} else {
-			j = (uint32) tmp;
+			kp_free_inn_sol(auxl1);
 		}
-		j1 = dest->column_idx;
-		if (t >= 0) {
-			search_alternative_solutions(t, j, zcum, j1, index, solutions,
-					sols_size, K, matrix, problem);
-		}
+
 	}
-	dest->recovered = true;
+	d_dec_indent();
 }
 
-void kp_recover_solution(InnerSolution* solutions, uint32 size, uint32 K,
-		int** matrix, KProblem problem) {
+void backtracking(InnerSolution* solutions, InnerSolution sol_dest,
+uint32 sol_index,
+uint32 sols_size, uint32 K, int** matrix, KProblem problem) {
+
+	d_inc_indent();
+
+	uint32 value = sol_dest->value;
+	uint32 cum_val = 0;
+	uint32 limit_var;
+
+	int64 snode = sol_dest->row_idx;
+	uint32 var = sol_dest->column_idx;
+	uint32 last_var;
+	d_debug("Backtracking %d (%d): [%d in (%d, %d)]\n", sol_index,
+			solutions[sol_index]->value, value, snode, var);
+	while (snode >= 0) {
+		snode -= problem->weights[var];
+		value -= problem->values[var];
+		cum_val += problem->values[var];
+		sol_dest->sol_vector[var] += 1;
+		limit_var = sol_dest->column_idx;
+		last_var = var;
+		if (snode < 0) {
+			d_debug("Backtracking %d (%d): terminated with var %d\n", sol_index,
+					solutions[sol_index]->value, var);
+			break;
+		}
+		int tmp = find_idx(matrix[snode], var, (int) value);
+		if (tmp < 0) {
+			d_debug("Backtracking %d (%d): NOT Found in snode %d, value %d\n",
+					sol_index, solutions[sol_index]->value, snode, value);
+			continue;
+		} else {
+			d_debug(
+					"Backtracking %d (%d): Found [%d in (%d, %d)] by subtracting var %d (w:%d, v:%d), cum_val: %d, limit: %d\n",
+					sol_index, solutions[sol_index]->value, value, snode, tmp,
+					var, problem->weights[var], problem->values[var], cum_val,
+					limit_var);
+			var = (uint32) tmp;
+			search_alternative_solutions(snode, var, cum_val, limit_var,
+					sol_index, solutions, sols_size, K, matrix, problem,
+					last_var);
+
+		}
+	}
+	sol_dest->recovered = true;
+
+	d_dec_indent();
+}
+
+void kp_recover_solution(InnerSolution* solutions, uint32 size,
+uint32 K, int** matrix, KProblem problem) {
 	InnerSolution auxl;
-	uint32 i = 0;
-	while (i < size) {
+	uint32 i;
+	for (i = 0; i < size; i++) {
+		d_debug("Recovering for solution %d [%d in (%d, %d)]\n", i,
+				solutions[i]->value, solutions[i]->row_idx,
+				solutions[i]->column_idx);
 		if (!solutions[i]->recovered) {
-			kp_copy_inn_sol(&auxl, solutions[i]);
+			auxl = solutions[i];
 			backtracking(solutions, auxl, i, size, K, matrix, problem);
 
-			kp_free_inn_sol(solutions[i]);
-			solutions[i] = auxl;
+			// kp_free_inn_sol(solutions[i]);
+			// solutions[i] = auxl;
 		}
-		i++;
 	}
 
 }

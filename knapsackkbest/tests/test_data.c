@@ -46,8 +46,8 @@ int target_matrix_forward[TEST_MAXW][TEST_N] = { { -1, -1, -1, -1, -1 }, // 1
 uint32 test_initial_sol[] = { 20, 19, 17, 17, 16, 16, 16, 16, 16, 15, 15, 14,
 		14, 14, 13 };
 
-uint32 test_final_sol[] = { 20, 19, 18, 17, 17, 16, 16, 16, 16, 16, 15, 15, 15,
-		15, 15 };
+uint32 test_final_solutions[] = { 20, 19, 18, 17, 17, 16, 16, 16, 16, 16, 15,
+		15, 15, 15, 15 };
 
 void set_up() {
 	uint32 i;
@@ -92,7 +92,7 @@ bool test_kp_algorithm() {
 	printf("Starting checks...\n");
 
 	int** matrix2 = (int**) malloc(TEST_MAXW * sizeof(int *));
-	uint32 i;
+	uint32 i, j, k, v;
 	for (i = 0; i < TEST_MAXW; i++) {
 		matrix2[i] = target_matrix_forward[i];
 	}
@@ -111,9 +111,28 @@ bool test_kp_algorithm() {
 	printf("Recover solutions.\n");
 	kp_recover_solution(listSol, TEST_K, TEST_K, matrix, test_problem);
 	printf("Starting checks...\n");
+	ret &= size == TEST_K;
+
 	for (i = 0; i < size; i++) {
-		ret &= listSol[i]->value == test_final_sol[i];
-		printf("%d %d\n", listSol[i]->value, test_final_sol[i]);
+		// Check values correspondence
+		ret &= test_final_solutions[i] == listSol[i]->value;
+		v = 0;
+		// Check consistency
+		for (j = 0; j < TEST_N; j++) {
+			v += listSol[i]->sol_vector[j] * test_problem->values[j];
+		}
+		// Check unique.
+		ret &= v == listSol[i]->value;
+		for (j = i + 1; j < size; j++) {
+			if (listSol[j]->value == listSol[i]->value) {
+				k = 0;
+				while (listSol[i]->sol_vector[k] == listSol[j]->sol_vector[k] && ++k < TEST_N)
+					;
+				if(k == TEST_N) {
+					ret = false;
+				}
+			}
+		}
 	}
 
 	// Cleaning up the mess
@@ -133,7 +152,8 @@ bool test_find_innsol_idx() {
 	uint32 size = 30, i, tmp;
 	uint32 tv;
 	int g;
-	InnerSolution* ss = (InnerSolution*) malloc((size + 1) * sizeof(InnerSolution));
+	InnerSolution* ss = (InnerSolution*) malloc(
+			(size + 1) * sizeof(InnerSolution));
 
 	for (i = 0; i < size; i++) {
 		kp_init_inn_sol(&ss[i], N, 4, 4, i * 2 + 2);
@@ -176,7 +196,7 @@ bool test_find_innsol_idx() {
 	ret &= ss[size]->value == 4;
 
 	for (i = 0; i < size + 1; i++) {
-		if(ss[i] != NULL) {
+		if (ss[i] != NULL) {
 			kp_free_inn_sol(ss[i]);
 		} else {
 			// Trick for ss[g] = ss[g + 1]

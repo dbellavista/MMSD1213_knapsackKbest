@@ -18,6 +18,7 @@ void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 
 int find_idx_insertion(InnerSolution* sol_list, uint32 sols_size,
 uint32 lower_limit_idx, uint32 value) {
+	// TODO implements dicotomic search
 	int i = sols_size;
 	for (i = lower_limit_idx + 1; i < sols_size; i++) {
 		if (sol_list[i]->value < value) {

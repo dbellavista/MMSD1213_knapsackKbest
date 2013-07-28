@@ -55,6 +55,6 @@ void backtracking(InnerSolution* solutions, InnerSolution dest, uint32 index, ui
 /*
  *
  */
-void search_alternative_solutions(uint32 row_idx, uint32 column_idx, uint32 cumul_value, uint32 j1, uint32 index, InnerSolution* solutions, uint32 sols_size, uint32 K, int** matrix, KProblem problem);
+void search_alternative_solutions(uint32 row_idx, uint32 column_idx, uint32 cumul_value, uint32 j1, uint32 index, InnerSolution* solutions, uint32 sols_size, uint32 K, int** matrix, KProblem problem, uint32 last_var);
 
 #endif /* KP_ALG_H_ */

@@ -6,7 +6,7 @@
  */
 
 #include <stdlib.h>
-#include "../include/kp_alg/debug.h"
+#include "../include/debug.h"
 #include "../include/kp_alg/kp_alg.h"
 #include "../include/kp_alg/utility.h"
 

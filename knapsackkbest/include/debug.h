@@ -8,8 +8,6 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-#include "kp_alg.h"
-
 enum debug_level {
 	NOTICE = 0x1,
 	WARNING = 0x2,
@@ -17,7 +15,7 @@ enum debug_level {
 	DEBUG = 0x8
 };
 
-void set_debug_level(uint32 debug);
+void set_debug_level(unsigned int debug);
 void d_notice(char* format, ...);
 void d_warning(char* format, ...);
 void d_error(char* format, ...);

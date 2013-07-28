@@ -7,9 +7,9 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include "../include/kp_alg/debug.h"
+#include "../include/debug.h"
 
-static int debug_level = NOTICE ^ WARNING ^ ERROR ^ DEBUG;
+static unsigned int debug_level = NOTICE ^ WARNING ^ ERROR ^ DEBUG;
 static int indent = 0;
 
 void printIndent(FILE* stream) {
@@ -19,7 +19,7 @@ void printIndent(FILE* stream) {
 	}
 }
 
-void set_debug_level(uint32 debug) {
+void set_debug_level(unsigned int debug) {
 	debug_level = debug;
 }
 

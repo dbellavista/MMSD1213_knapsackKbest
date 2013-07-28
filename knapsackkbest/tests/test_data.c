@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include "kp_tests.h"
 #include "../include/kp_alg/utility.h"
-#include "../include/kp_alg/debug.h"
+#include "../include/debug.h"
 #define N 10
 
 bool problems_equal(KProblem p1, KProblem p2);

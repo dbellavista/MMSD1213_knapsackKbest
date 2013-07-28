@@ -80,5 +80,12 @@ KBestSolutions kp_solve(KProblem problem, uint32 best_sol_count) {
 	kp_build_initial_best_k_list(&solutions, &solutions_size, matrix, problem,
 			best_sol_count);
 
-	return NULL;
+	kp_recover_solution(solutions, solutions_size, best_sol_count, matrix,
+			problem);
+
+	KBestSolutions best_solutions;
+	create_kbest_solutions_from_inner(&best_solutions, solutions, solutions_size, problem, true);
+
+
+	return best_solutions;
 }

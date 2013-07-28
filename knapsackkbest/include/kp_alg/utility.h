@@ -21,6 +21,10 @@
        __typeof__ (b) _b = (b); \
      _a < _b ? _a : _b; })
 
+void create_kbest_solutions_from_inner(KBestSolutions* dest,
+		InnerSolution* solutions, uint32 solutions_size, KProblem problem,
+		bool free_inner);
+
 void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
 		InnerSolution* sol2, uint32 count1, uint32 count2,
 		uint32 K, bool free_garbage);
@@ -32,11 +36,11 @@ void free_matrix(void** matrix);
 int find_idx(int* vector, uint32 fin, int value);
 
 int find_idx_insertion(InnerSolution* sol_list, uint32 sols_size,
-		uint32 lower_limit_idx,
-		uint32 value);
+uint32 lower_limit_idx,
+uint32 value);
 
 int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32* sols_size,
-		uint32 lower_limit_idx, uint32 value, uint32 K);
+uint32 lower_limit_idx, uint32 value, uint32 K);
 
 void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 		InnerSolution s2);

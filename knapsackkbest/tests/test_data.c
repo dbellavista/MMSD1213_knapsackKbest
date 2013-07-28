@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include "kp_tests.h"
 #include "../include/kp_alg/utility.h"
+#include "../include/kp_alg/debug.h"
 #define N 10
 
 bool problems_equal(KProblem p1, KProblem p2);
@@ -15,7 +16,7 @@ bool matrices_equal(int** m1, int** m2, uint32 nrow, uint32 ncols);
 
 char* results[] = { "failed", "successful" };
 bool (*test_list[])(
-		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, &test_innersol_join, &test_find, &test_innersol_copy, &test_find_innsol_idx, &test_kp_algorithm, NULL
+		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, &test_innersol_join, &test_find, &test_innersol_copy, &test_find_innsol_idx, &test_create_kbest_from_inner, &test_kp_algorithm, NULL
 };
 
 uint32 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
@@ -84,6 +85,9 @@ void do_tests() {
 
 bool test_kp_algorithm() {
 	printf("%s\n", __FUNCTION__);
+
+	set_debug_level(NOTICE ^ ERROR ^ WARNING);
+
 	bool ret = true;
 	int** matrix;
 	allocate_matrix((void ***) &matrix, test_problem->max_weigth,
@@ -126,9 +130,10 @@ bool test_kp_algorithm() {
 		for (j = i + 1; j < size; j++) {
 			if (listSol[j]->value == listSol[i]->value) {
 				k = 0;
-				while (listSol[i]->sol_vector[k] == listSol[j]->sol_vector[k] && ++k < TEST_N)
+				while (listSol[i]->sol_vector[k] == listSol[j]->sol_vector[k]
+						&& ++k < TEST_N)
 					;
-				if(k == TEST_N) {
+				if (k == TEST_N) {
 					ret = false;
 				}
 			}
@@ -142,6 +147,38 @@ bool test_kp_algorithm() {
 	free(listSol);
 	free(matrix2);
 	free_matrix((void**) matrix);
+
+	return ret;
+}
+
+bool test_create_kbest_from_inner() {
+	printf("%s\n", __FUNCTION__);
+	bool ret = true;
+	uint32 size = 30, i, k;
+	KProblem problem;
+	kp_init_kp(&problem, N, weights, values, 20);
+	InnerSolution* ss = (InnerSolution*) malloc(size * sizeof(InnerSolution));
+
+	for (i = 0; i < size; i++) {
+		kp_init_inn_sol(&ss[i], N, 4, 4, i);
+		for (k = 0; k < N; k++) {
+			ss[i]->sol_vector[k] = i;
+		}
+	}
+	sort_by_values_non_inc(ss, size);
+	KBestSolutions solutions;
+	create_kbest_solutions_from_inner(&solutions, ss, size, problem, true);
+	ret &= solutions->sol_count == size;
+	ret &= problems_equal(solutions->problem, problem);
+	for (i = 0; i < size; i++) {
+		ret &= solutions->solutions[i]->tot_value == size - 1 - i;
+		ret &= solutions->solutions[i]->vector_size == N;
+		for (k = 0; k < N; k++) {
+			ret &= solutions->solutions[i]->solution_vector[k] == size - 1 - i;
+		}
+	}
+
+	kp_free_kbest_sols(solutions);
 
 	return ret;
 }

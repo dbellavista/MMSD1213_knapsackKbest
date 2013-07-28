@@ -8,6 +8,31 @@
 #include <stdlib.h>
 #include "../include/kp_alg/utility.h"
 
+void create_kbest_solutions_from_inner(KBestSolutions* bestSolutions,
+		InnerSolution* solutions, uint32 solutions_size, KProblem problem,
+		bool free_inner) {
+	uint32 i, k;
+	kp_init_kbest_sols(bestSolutions, problem, solutions_size);
+	for (i = 0; i < solutions_size; i++) {
+		InnerSolution is = solutions[i];
+		KSolution sol;
+		kp_init_sol(&sol, problem->num_var);
+
+		sol->tot_value = is->value;
+		for (k = 0; k < problem->num_var; k++) {
+			sol->solution_vector[k] = is->sol_vector[k];
+		}
+		(*bestSolutions)->solutions[i] = sol;
+	}
+
+	if (free_inner) {
+		for (i = 0; i < solutions_size; i++) {
+			kp_free_inn_sol(solutions[i]);
+		}
+		free(solutions);
+	}
+}
+
 void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 		InnerSolution s2) {
 	uint32 i;
@@ -29,7 +54,7 @@ uint32 lower_limit_idx, uint32 value) {
 }
 
 int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32* sols_size,
-		uint32 lower_limit_idx, uint32 value, uint32 K) {
+uint32 lower_limit_idx, uint32 value, uint32 K) {
 	uint32 i;
 	int idx = find_idx_insertion(sol_list, *sols_size, lower_limit_idx, value);
 

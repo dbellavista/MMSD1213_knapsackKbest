@@ -222,10 +222,8 @@ bool test_find() {
 	int vector[] = { 10, 89, 12, 378, 291, 11, 29, 101, 22, 319 };
 
 	vector[idx] = value;
-	ret &= find_idx(vector, 0, idx + 1, value) == idx;
-	ret &= find_idx(vector, idx - 1, idx + 1, value) == idx;
-	ret &= find_idx(vector, idx + 1, idx + 2, value) == -1;
-	ret &= find_idx(vector, 0, idx, value) == -1;
+	ret &= find_idx(vector, idx, value) == idx;
+	ret &= find_idx(vector, idx - 1, value) == -1;
 
 	return ret;
 }

@@ -49,9 +49,9 @@ int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32* sols_size,
 	return idx;
 }
 
-int find_idx(int* vector, uint32 start, uint32 fin, int value) {
+int find_idx(int* vector, uint32 fin, int value) {
 	uint32 i;
-	for (i = start; i < fin; i++) {
+	for (i = 0; i <= fin; i++) {
 		if (vector[i] == value) {
 			return i;
 		}

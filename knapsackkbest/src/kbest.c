@@ -65,7 +65,6 @@ uint32 max_w) {
 void kp_free_kp(KProblem problem) {
 	free(problem->weights);
 	problem->weights = NULL;
-	free(problem->values);
 	problem->values = NULL;
 	free(problem);
 }

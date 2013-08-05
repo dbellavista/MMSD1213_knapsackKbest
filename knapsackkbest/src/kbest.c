@@ -65,7 +65,7 @@ void kp_free_kp(KProblem problem) {
 	free(problem);
 }
 
-KBestSolutions kp_solve(KProblem problem, uint32 best_sol_count) {
+void kp_solve(KBestSolutions* dest, KProblem problem, uint32 best_sol_count) {
 
 	// Matrix bxn initialization
 	int** matrix;
@@ -83,9 +83,5 @@ KBestSolutions kp_solve(KProblem problem, uint32 best_sol_count) {
 	kp_recover_solution(solutions, solutions_size, best_sol_count, matrix,
 			problem);
 
-	KBestSolutions best_solutions;
-	create_kbest_solutions_from_inner(&best_solutions, solutions, solutions_size, problem, true);
-
-
-	return best_solutions;
+	create_kbest_solutions_from_inner(dest, solutions, solutions_size, problem, true);
 }

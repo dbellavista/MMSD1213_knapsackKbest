@@ -26,5 +26,6 @@ bool test_innersol_copy();
 bool test_find_innsol_idx();
 bool test_create_kbest_from_inner();
 bool test_kp_algorithm();
+bool test_kp_solver();
 
 #endif /* KP_TESTS_H_ */

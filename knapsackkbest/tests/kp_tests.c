@@ -69,7 +69,7 @@ void do_kp_tests() {
 	tests("Data utility", &test_innersol_ordering, &test_innersol_join,
 			&test_find, &test_innersol_copy, &test_find_innsol_idx,
 			&test_create_kbest_from_inner, NULL);
-	tests("KP Algorithm", &test_kp_algorithm, NULL);
+	tests("KP Algorithm", &test_kp_algorithm, &test_kp_solver, NULL);
 
 	tests("Test input", &test_input_file, NULL);
 }
@@ -87,6 +87,45 @@ bool test_input_file() {
 	for (i = 0; i < 5; i++) {
 		ret &= problem->weights[i] == i + 1 && problem->values[i] == 5 - i;
 	}
+
+	return ret;
+}
+
+bool test_kp_solver() {
+	printf("%s\n", __FUNCTION__);
+
+	bool ret = true;
+	uint32 i, v, j, k;
+	KBestSolutions solutions;
+	kp_solve(&solutions, test_problem, TEST_K);
+
+	for (i = 0; i < solutions->sol_count; i++) {
+		KSolution sol = solutions->solutions[i];
+		ret &= sol->vector_size == TEST_N;
+		// Check values correspondence
+		ret &= test_final_solutions[i] == sol->tot_value;
+		v = 0;
+		// Check consistency
+		for (j = 0; j < TEST_N; j++) {
+			v += sol->solution_vector[j] * test_problem->values[j];
+		}
+		// Check unique.
+		ret &= v == sol->tot_value;
+		for (j = i + 1; j < solutions->sol_count; j++) {
+			KSolution sol2 = solutions->solutions[j];
+			if (sol2->tot_value == sol->tot_value) {
+				k = 0;
+				while (sol->solution_vector[k] == sol2->solution_vector[k]
+						&& ++k < TEST_N)
+					;
+				if (k == TEST_N) {
+					ret = false;
+				}
+			}
+		}
+	}
+
+	kp_free_kbest_sols(solutions);
 
 	return ret;
 }

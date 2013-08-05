@@ -67,6 +67,6 @@ void kp_free_kbest_sols(KBestSolutions solution);
 /*
  * Solve the knapsack problem, finding best_sol_count solutions.
  */
-KBestSolutions kp_solve(KProblem problem, uint32 best_sol_count);
+void kp_solve(KBestSolutions* dest, KProblem problem, uint32 best_sol_count);
 
 #endif /* KBEST_H_ */

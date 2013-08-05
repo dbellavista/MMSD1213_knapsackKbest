@@ -80,7 +80,7 @@ uint32 sols_size, uint32 K, int** matrix, KProblem problem, uint32 last_var) {
 		sum_solution_vectors(solutions[insert_idx], solutions[sol_index],
 				auxl1);
 
-		if (matrix[snode][var] >= (int) solutions[sols_size - 1]->value) {
+		if (matrix[snode][var] > (int) solutions[sols_size - 1]->value) {
 			d_debug(
 					"Alternatives %d: [(%d, %d)]. Var %d,  Value in matrix %d better\n",
 					sol_index, snode, cur_var, matrix[snode][var]);

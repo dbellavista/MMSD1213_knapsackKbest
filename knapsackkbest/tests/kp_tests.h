@@ -13,6 +13,7 @@
 #include "../include/data.h"
 
 void do_kp_tests();
+bool test_input_file();
 bool test_problem_creation();
 bool test_matrix_alloc();
 bool test_solution_creation();

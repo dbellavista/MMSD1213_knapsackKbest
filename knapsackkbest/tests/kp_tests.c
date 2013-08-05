@@ -9,6 +9,7 @@
 #include "kp_tests.h"
 #include "../include/kp_alg/utility.h"
 #include "../include/debug.h"
+#include "../include/input.h"
 #define N 10
 
 bool problems_equal(KProblem p1, KProblem p2);
@@ -60,6 +61,8 @@ void tear_down() {
 }
 
 void do_kp_tests() {
+	set_debug_level(NOTICE ^ ERROR ^ WARNING);
+
 	tests("Data creation", &test_matrix_alloc, &test_problem_creation,
 			&test_solution_creation, &test_kbestsolutions_creation,
 			&test_innersol_creation, NULL);
@@ -67,12 +70,29 @@ void do_kp_tests() {
 			&test_find, &test_innersol_copy, &test_find_innsol_idx,
 			&test_create_kbest_from_inner, NULL);
 	tests("KP Algorithm", &test_kp_algorithm, NULL);
+
+	tests("Test input", &test_input_file, NULL);
+}
+
+bool test_input_file() {
+	printf("%s\n", __FUNCTION__);
+
+	bool ret = true;
+	int i;
+
+	KProblem problem;
+	ret &= read_problem(&problem, "test.txt");
+	ret &= problem->max_weigth == 20;
+	ret &= problem->num_var == 5;
+	for (i = 0; i < 5; i++) {
+		ret &= problem->weights[i] == i + 1 && problem->values[i] == 5 - i;
+	}
+
+	return ret;
 }
 
 bool test_kp_algorithm() {
 	printf("%s\n", __FUNCTION__);
-
-	set_debug_level(NOTICE ^ ERROR ^ WARNING);
 
 	bool ret = true;
 	int** matrix;

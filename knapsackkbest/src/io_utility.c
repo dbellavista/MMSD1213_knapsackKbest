@@ -19,7 +19,7 @@
 void print_array(uint32* array, int size) {
 	uint32 i;
 	printf("[ ");
-	for(i = 0; i < size; i++) {
+	for (i = 0; i < size; i++) {
 		printf("%u ", array[i]);
 	}
 	printf("]\n");
@@ -34,8 +34,8 @@ void print_kbest_solution(KBestSolutions solution) {
 	print_array(solution->problem->weights, size);
 	printf("Solutions:\n");
 	uint32 i;
-	for(i = 0; i < solution->sol_count; i++) {
-		printf("\t%d)\t%d\t-> ", i+1, solution->solutions[i]->tot_value);
+	for (i = 0; i < solution->sol_count; i++) {
+		printf("\t%d)\t%d\t-> ", i + 1, solution->solutions[i]->tot_value);
 		print_array(solution->solutions[i]->solution_vector, size);
 	}
 	printf("\n");
@@ -54,10 +54,10 @@ bool read_problem(KProblem* dest, char* file) {
 	 * Format:
 	 * <Num Var>
 	 * <Max W>
-	 * <W1> <V1>
-	 * <W2> <V2>
+	 * <V1> <W1>
+	 * <V2> <W2>
 	 * ...
-	 * <Wn> <Vn>
+	 * <Vn> <Wn>
 	 */
 	uint32 N, W, i;
 	uint32 *weights, *values;
@@ -75,9 +75,9 @@ bool read_problem(KProblem* dest, char* file) {
 
 	for (i = 0; i < N; i++) {
 		d_debug("Reading var %u... ", (i + 1));
-		check(fscanf(fp, "%u %u", &weights[i], &values[i]), 2, fp);
-		d_debug("W%d = %d; V%d = %d\n", (i + 1), weights[i], (i + 1),
-				values[i]);
+		check(fscanf(fp, "%u %u", &values[i], &weights[i]), 2, fp);
+		d_debug("V%d = %d; W%d = %d\n", (i + 1), values[i], (i + 1),
+				weights[i]);
 	}
 
 	kp_init_kp(dest, N, weights, values, W);

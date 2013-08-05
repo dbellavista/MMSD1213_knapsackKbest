@@ -9,8 +9,7 @@
 #define KP_TESTS_H_
 
 #include <stdio.h>
-#include "../include/kbest.h"
-#include "../include/kp_alg/kp_alg.h"
+#include "../include/data.h"
 
 void set_up();
 void tear_down();

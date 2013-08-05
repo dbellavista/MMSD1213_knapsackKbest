@@ -11,20 +11,7 @@
 #ifndef KBEST_H_
 #define KBEST_H_
 
-#define uint8 unsigned char
-#define uint16 unsigned short int
-#define uint32 unsigned int
-#define uint64 unsigned long long
-
-#define byte uint8
-
-#define int8 char
-#define int16 short int
-#define int64 long long
-
-#define bool byte
-#define false 0
-#define true 1
+#include "data.h"
 
 struct kProblem {
 	uint32 num_var;

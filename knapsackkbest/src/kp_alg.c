@@ -278,6 +278,9 @@ void kp_forward_enumeration(int** matrix, KProblem problem) {
 	// Begin initial ramification
 	//// Initial known solutions
 	for (var = 0; var < problem->num_var; var++) {
+		if(problem->weights[var] > problem->max_weigth) {
+			continue;
+		}
 		matrix[problem->weights[var] - 1][var] = problem->values[var];
 	}
 

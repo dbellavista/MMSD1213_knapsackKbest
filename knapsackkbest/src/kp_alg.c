@@ -183,6 +183,8 @@ void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size,
 	InnerSolution* solutions1 = buffer_sol[1];
 	InnerSolution* tmp_solutions = buffer_sol[2];
 
+	InnerSolution* pIS;
+
 	*ret = (InnerSolution*) malloc(sizeof(InnerSolution) * K);
 
 	uint32 counter, P, P1;
@@ -248,7 +250,9 @@ void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size,
 				join_inner_solutions(tmp_solutions, solutions, solutions1, P,
 						P1, K,
 						true);
+				pIS = solutions;
 				solutions = tmp_solutions;
+				tmp_solutions = pIS;
 			}
 			if (P1 == K
 					&& (last_snode > problem->weights[0] - 1 || last_var > 0)) {

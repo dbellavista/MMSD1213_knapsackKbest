@@ -12,7 +12,7 @@
 int main(int argc, char **argv) {
 
 
-	// set_debug_level(WARNING ^ ERROR ^ NOTICE);
+	set_debug_level(WARNING ^ ERROR ^ NOTICE);
 
 	KProblem problem;
 	KBestSolutions solutions;

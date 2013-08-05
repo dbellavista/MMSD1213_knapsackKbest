@@ -200,8 +200,8 @@ void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size,
 					last_snode = snode;
 					last_var = var;
 					moreleft = true;
-					snode = 0;
-					var = 0;
+					snode = -1;
+					var = -1;
 				}
 			}
 		}
@@ -234,22 +234,26 @@ void kp_build_initial_best_k_list(InnerSolution** ret, uint32* ret_size,
 						last_snode = snode;
 						last_var = var;
 						moreleft = true;
-						snode = 0;
-						var = 0;
+						snode = -1;
+						var = -1;
 					}
 				}
 			}
 		}
 
 		P1 = counter;
-		sort_by_values_non_inc(solutions1, P1);
-		if (solutions1[0]->value > solutions[K - 1]->value) {
-			join_inner_solutions(tmp_solutions, solutions, solutions1, P, P1, K,
-			true);
-			solutions = tmp_solutions;
-		}
-		if (P1 == K && (last_snode > problem->weights[0] - 1 || last_var > 0)) {
-			fim = true;
+		if (P1 > 0) {
+			sort_by_values_non_inc(solutions1, P1);
+			if (solutions1[0]->value > solutions[K - 1]->value) {
+				join_inner_solutions(tmp_solutions, solutions, solutions1, P,
+						P1, K,
+						true);
+				solutions = tmp_solutions;
+			}
+			if (P1 == K
+					&& (last_snode > problem->weights[0] - 1 || last_var > 0)) {
+				fim = true;
+			}
 		}
 	}
 

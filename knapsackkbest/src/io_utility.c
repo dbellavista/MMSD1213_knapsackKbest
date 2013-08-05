@@ -25,13 +25,17 @@ void print_array(uint32* array, int size) {
 	printf("]\n");
 }
 
+void print_kproblem(KProblem problem) {
+	uint32 size = problem->num_var;
+	printf("Problem with %d variables, max weight: %d\n", problem->num_var, problem->max_weigth);
+	printf("\tValues ");
+	print_array(problem->values, size);
+	printf("\tWeights ");
+	print_array(problem->weights, size);
+}
+
 void print_kbest_solution(KBestSolutions solution) {
 	uint32 size = solution->problem->num_var;
-	printf("Problem:\n");
-	printf("\tValues ");
-	print_array(solution->problem->values, size);
-	printf("\tWeights ");
-	print_array(solution->problem->weights, size);
 	printf("Solutions:\n");
 	uint32 i;
 	for (i = 0; i < solution->sol_count; i++) {
@@ -80,6 +84,7 @@ bool read_problem(KProblem* dest, char* file) {
 				weights[i]);
 	}
 
+	d_debug("Problem read\n\n");
 	kp_init_kp(dest, N, weights, values, W);
 
 	exit(fp, true);

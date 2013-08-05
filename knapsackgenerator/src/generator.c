@@ -120,7 +120,7 @@ void error(char *str, ...)
   va_start(args, str);
   vprintf(str, args); printf("\n");
   va_end(args);
-  printf("STOP !!!\n\n"); 
+  printf("STOP !!!\n\n");
   exit(-1);
 }
 
@@ -156,17 +156,32 @@ void * palloc(size_t no, size_t each)
 
 void showitems(item *f, item *l, stype c)
 {
+/*
   item *i;
   stype ps, ws;
   FILE *out;
- 
-  out = fopen("test.in", "w"); 
+
+  out = fopen("test.in", "w");
   if (out == NULL) error("no file");
   fprintf(out,"%d\n", NO(f,l));
   for (i = f; i <= l; i++) {
     fprintf(out, "%5d %5d %5d\n", NO(f,i), i->p, i->w);
   }
   fprintf(out,"%d\n", c);
+  fclose(out);
+*/
+
+  item *i;
+  stype ps, ws;
+  FILE *out;
+
+  out = fopen("test.in", "w");
+  if (out == NULL) error("no file");
+  fprintf(out,"%d\n", NO(f,l));
+  fprintf(out,"%d\n", c);
+  for (i = f; i <= l; i++) {
+    fprintf(out, "%5d %5d\n", i->p, i->w);
+  }
   fclose(out);
 }
 
@@ -216,7 +231,7 @@ int main(int argc, char *argv[])
   item *f, *l;
   int n, r, type, i, S;
   stype c;
- 
+
   if (argc == 6) {
     n = atoi(argv[1]);
     r = atoi(argv[2]);
@@ -226,21 +241,21 @@ int main(int argc, char *argv[])
     printf("generator %d %d %d %d %d\n", n, r, type, i, S);
   } else {
     printf("generator\n");
-    printf("n = ");
+    printf("num_items = ");
     scanf("%d", &n);
-    printf("r = ");
+    printf("coeff_range = ");
     scanf("%d", &r);
-    printf("t = ");
+    printf("type (1=uncorr., 2=weakly corr., 3=strongly corr., 4=subset sum)  = ");
     scanf("%d", &type);
-    printf("i = ");
+    printf("instance_no = ");
     scanf("%d", &i);
-    printf("S = ");
+    printf("number of tests in series (typically 1000) = ");
     scanf("%d", &S);
   }
 
   f = palloc(n, sizeof(item));
   l = f + n-1;
-  c = maketest(f, l, r, type, i, S); 
+  c = maketest(f, l, r, type, i, S);
   showitems(f, l, c);
   pfree(f);
   return 0;

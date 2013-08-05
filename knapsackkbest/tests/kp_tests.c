@@ -256,7 +256,7 @@ bool test_find_innsol_idx() {
 
 	tv = 1000;
 	g = find_idx_insertion(ss, size, 0, tv);
-	ret &= g == 1;
+	ret &= g == 0;
 
 	tv = 9;
 	tmp = size;

@@ -43,14 +43,34 @@ void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 
 int find_idx_insertion(InnerSolution* sol_list, uint32 sols_size,
 uint32 lower_limit_idx, uint32 value) {
-	// TODO implements dicotomic search
-	int i = sols_size;
-	for (i = lower_limit_idx + 1; i < sols_size; i++) {
-		if (sol_list[i]->value < value) {
-			return i;
+	uint32 middle;
+	uint32 lower = lower_limit_idx + 1;
+	uint32 upper = sols_size - 1;
+
+	if(sol_list[lower_limit_idx]->value < value) {
+		return 0;
+	}
+
+	while (true) {
+		middle = (lower + upper) / 2;
+		if (sol_list[middle]->value >= value) {
+			if (sol_list[middle + 1]->value < value) {
+				return middle + 1;
+			} else if (lower != middle) {
+				lower = middle;
+			} else {
+				return -1;
+			}
+		} else if (sol_list[middle]->value < value) {
+			if (sol_list[middle - 1]->value >= value) {
+				return middle;
+			} else if (middle != upper) {
+				upper = middle;
+			} else {
+				return -1;
+			}
 		}
 	}
-	return -1;
 }
 
 int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32* sols_size,

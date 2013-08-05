@@ -5,6 +5,7 @@
  *      Author: Daniele Bellavista <daniele.bellavista@studio.unibo.it>
  */
 
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>

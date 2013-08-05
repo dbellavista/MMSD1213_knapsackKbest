@@ -22,6 +22,7 @@ uint32 v) {
 
 void kp_free_inn_sol(InnerSolution innerSol) {
 	free(innerSol->sol_vector);
+	innerSol->sol_vector = NULL;
 	free(innerSol);
 }
 

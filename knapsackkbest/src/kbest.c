@@ -17,6 +17,7 @@ void kp_init_sol(KSolution* solution, uint32 n) {
 
 void kp_free_sol(KSolution solution) {
 	free(solution->solution_vector);
+	solution->solution_vector = NULL;
 	free(solution);
 }
 
@@ -40,6 +41,7 @@ void kp_free_kbest_sols(KBestSolutions solution) {
 		kp_free_sol(solution->solutions[i]);
 	}
 	free(solution->solutions);
+	solution->solutions = NULL;
 	free(solution);
 }
 
@@ -62,6 +64,9 @@ uint32 max_w) {
 
 void kp_free_kp(KProblem problem) {
 	free(problem->weights);
+	problem->weights = NULL;
+	free(problem->values);
+	problem->values = NULL;
 	free(problem);
 }
 

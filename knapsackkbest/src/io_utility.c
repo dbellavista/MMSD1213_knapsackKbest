@@ -15,6 +15,31 @@
 #define exit(X, Y) fclose(X); return Y;
 #define check(X, Y, Z) if (X != Y) { d_error("Error reading from file\n"); exit(Z, false); }
 
+void print_array(uint32* array, int size) {
+	uint32 i;
+	printf("[ ");
+	for(i = 0; i < size; i++) {
+		printf("%u ", array[i]);
+	}
+	printf("]\n");
+}
+
+void print_kbest_solution(KBestSolutions solution) {
+	uint32 size = solution->problem->num_var;
+	printf("Problem:\n");
+	printf("\tValues ");
+	print_array(solution->problem->values, size);
+	printf("\tWeights ");
+	print_array(solution->problem->weights, size);
+	printf("Solutions:\n");
+	uint32 i;
+	for(i = 0; i < solution->sol_count; i++) {
+		printf("\t%d)\t%d\t-> ", i+1, solution->solutions[i]->tot_value);
+		print_array(solution->solutions[i]->solution_vector, size);
+	}
+	printf("\n");
+}
+
 bool read_problem(KProblem* dest, char* file) {
 
 	*dest = NULL;

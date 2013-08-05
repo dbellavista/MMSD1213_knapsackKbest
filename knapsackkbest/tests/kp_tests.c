@@ -9,7 +9,7 @@
 #include "kp_tests.h"
 #include "../include/kp_alg/utility.h"
 #include "../include/debug.h"
-#include "../include/input.h"
+#include "../include/io_utility.h"
 #define N 10
 
 bool problems_equal(KProblem p1, KProblem p2);

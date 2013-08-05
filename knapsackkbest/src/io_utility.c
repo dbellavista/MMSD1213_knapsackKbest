@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "../include/kp_alg/utility.h"
-#include "../include/input.h"
+#include "../include/io_utility.h"
 #include "../include/debug.h"
 
 #define exit(X, Y) fclose(X); return Y;

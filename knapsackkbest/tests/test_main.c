@@ -10,8 +10,7 @@
 
 int main(int argc, char **argv) {
 
-	printf("----Knapsack k-best testing----\n\n");
-	do_tests();
+	do_kp_tests();
 
 	return 0;
 }

@@ -14,11 +14,6 @@
 bool problems_equal(KProblem p1, KProblem p2);
 bool matrices_equal(int** m1, int** m2, uint32 nrow, uint32 ncols);
 
-char* results[] = { "failed", "successful" };
-bool (*test_list[])(
-		void) = {&test_matrix_alloc, &test_problem_creation, &test_solution_creation, &test_kbestsolutions_creation, &test_innersol_creation, &test_innersol_ordering, &test_innersol_join, &test_find, &test_innersol_copy, &test_find_innsol_idx, &test_create_kbest_from_inner, &test_kp_algorithm, NULL
-};
-
 uint32 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
 uint32 values[N];
 
@@ -64,23 +59,14 @@ void tear_down() {
 	kp_free_kp(test_problem);
 }
 
-void do_tests() {
-	uint32 i = -1;
-	bool res, tot_res = true;
-	while (test_list[++i] != NULL) {
-		set_up();
-		printf("==== Launching test no %d...\n", (i + 1));
-		res = (*test_list[i])();
-		tot_res &= res;
-		printf("==== Test no %d %s\n\n", (i + 1), results[res]);
-		tear_down();
-	}
-	printf("\n");
-	if (tot_res) {
-		printf("*** Success: all tests passed!");
-	} else {
-		printf("*** Failure: some tests did not pass!");
-	}
+void do_kp_tests() {
+	tests("Data creation", &test_matrix_alloc, &test_problem_creation,
+			&test_solution_creation, &test_kbestsolutions_creation,
+			&test_innersol_creation, NULL);
+	tests("Data utility", &test_innersol_ordering, &test_innersol_join,
+			&test_find, &test_innersol_copy, &test_find_innsol_idx,
+			&test_create_kbest_from_inner, NULL);
+	tests("KP Algorithm", &test_kp_algorithm, NULL);
 }
 
 bool test_kp_algorithm() {

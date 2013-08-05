@@ -9,11 +9,10 @@
 #define KP_TESTS_H_
 
 #include <stdio.h>
+#include "test_suite.h"
 #include "../include/data.h"
 
-void set_up();
-void tear_down();
-void do_tests();
+void do_kp_tests();
 bool test_problem_creation();
 bool test_matrix_alloc();
 bool test_solution_creation();

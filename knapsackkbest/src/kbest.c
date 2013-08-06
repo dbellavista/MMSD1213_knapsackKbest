@@ -24,7 +24,7 @@ void kp_free_sol(KSolution solution) {
 void kp_init_kbest_sols(KBestSolutions* solution, KProblem problem,
 uint32 sol_count) {
 	*solution = (KBestSolutions) malloc(sizeof(struct kBestSolutions));
-	(*solution)->problem = problem;
+	kp_init_kp(&(*solution)->problem, problem->num_var, problem->weights, problem->values, problem->max_weigth);
 	(*solution)->sol_count = sol_count;
 	uint32 i;
 	(*solution)->solutions = (KSolution *) malloc(
@@ -36,7 +36,8 @@ uint32 sol_count) {
 }
 void kp_free_kbest_sols(KBestSolutions solution) {
 	uint32 i;
-
+	kp_free_kp(solution->problem);
+	solution->problem = NULL;
 	for (i = 0; i < solution->sol_count; i++) {
 		kp_free_sol(solution->solutions[i]);
 	}

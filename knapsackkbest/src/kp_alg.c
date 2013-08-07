@@ -41,16 +41,8 @@ uint32 sols_size, uint32 K, int** matrix, KProblem problem, uint32 last_var) {
 			continue;
 		}
 		// Newvalue is worth to be backtracked!
-		// TODO Mine: checking if the step before exists in the matrix => already seen
-		if (find_idx(matrix[snode + problem->weights[last_var]], limit_var,
-				matrix[snode][var] + problem->values[last_var]) >= 0) {
-			// Solution already examined :) (maybe)
-			d_debug(
-					"Alternatives %d (%d): solution from position (%d, %d) %d already examined\n",
-					sol_index, solutions[sol_index]->value, snode, var,
-					newvalue);
-			continue;
-		}
+		// TODO check if the solution already exists
+
 		d_debug(
 				"Alternatives %d (%d): new solution from position (%d, %d): %d by adding cum value %d to %d\n",
 				sol_index, solutions[sol_index]->value, snode, var, newvalue,
@@ -80,6 +72,7 @@ uint32 sols_size, uint32 K, int** matrix, KProblem problem, uint32 last_var) {
 		sum_solution_vectors(solutions[insert_idx], solutions[sol_index],
 				auxl1);
 
+		// TODO: why?
 		if (matrix[snode][var] > (int) solutions[sols_size - 1]->value) {
 			d_debug(
 					"Alternatives %d: [(%d, %d)]. Var %d,  Value in matrix %d better\n",

@@ -9,15 +9,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include "../include/kp_alg/utility.h"
-#include "../include/io_utility.h"
-#include "../include/debug.h"
+#include "utility.h"
+#include "io_utility.h"
+#include "debug.h"
 
 #define exit(X, Y) fclose(X); return Y;
 #define check(X, Y, Z) if (X != Y) { d_error("Error reading from file\n"); exit(Z, false); }
 
-void print_array(uint32* array, int size) {
-	uint32 i;
+void print_array(uint32_t* array, int size) {
+	uint32_t i;
 	printf("[ ");
 	for (i = 0; i < size; i++) {
 		printf("%u ", array[i]);
@@ -26,7 +26,7 @@ void print_array(uint32* array, int size) {
 }
 
 void print_kproblem(KProblem problem) {
-	uint32 size = problem->num_var;
+	uint32_t size = problem->num_var;
 	printf("Problem with %d variables, max weight: %d\n", problem->num_var, problem->max_weigth);
 	printf("\tValues ");
 	print_array(problem->values, size);
@@ -35,9 +35,9 @@ void print_kproblem(KProblem problem) {
 }
 
 void print_kbest_solution(KBestSolutions solution) {
-	uint32 size = solution->problem->num_var;
+	uint32_t size = solution->problem->num_var;
 	printf("Solutions:\n");
-	uint32 i;
+	uint32_t i;
 	for (i = 0; i < solution->sol_count; i++) {
 		printf("\t%d)\t%d\t-> ", i + 1, solution->solutions[i]->tot_value);
 		print_array(solution->solutions[i]->solution_vector, size);
@@ -63,8 +63,8 @@ bool read_problem(KProblem* dest, char* file) {
 	 * ...
 	 * <Vn> <Wn>
 	 */
-	uint32 N, W, i;
-	uint32 *weights, *values;
+	uint32_t N, W, i;
+	uint32_t *weights, *values;
 
 	d_debug("Reading N... ");
 	check(fscanf(fp, "%u", &N), 1, fp);
@@ -74,8 +74,8 @@ bool read_problem(KProblem* dest, char* file) {
 	check(fscanf(fp, "%u", &W), 1, fp);
 	d_debug("W = %d\n", W);
 
-	weights = (uint32*) malloc(N * sizeof(uint32));
-	values = (uint32*) malloc(N * sizeof(uint32));
+	weights = (uint32_t*) malloc(N * sizeof(uint32_t));
+	values = (uint32_t*) malloc(N * sizeof(uint32_t));
 
 	for (i = 0; i < N; i++) {
 		d_debug("Reading var %u... ", (i + 1));

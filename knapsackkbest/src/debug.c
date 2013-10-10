@@ -7,7 +7,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include "../include/debug.h"
+#include "debug.h"
 
 static unsigned int debug_level = NOTICE ^ WARNING ^ ERROR ^ DEBUG;
 static int indent = 0;

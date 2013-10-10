@@ -8,7 +8,9 @@
 #ifndef TEST_SUITE_H_
 #define TEST_SUITE_H_
 
-#include "../include/data.h"
+#include "data.h"
+
+#define PRINT_INTRO(S) printf("%s%s\n", S, __FUNCTION__)
 
 void set_up();
 void tear_down();

@@ -9,7 +9,7 @@
 #define UTILITY_H_
 
 #include "kp_alg.h"
-#include "../kbest.h"
+#include "kbest.h"
 
 #define max(a,b) \
    ({ __typeof__ (a) _a = (a); \
@@ -22,25 +22,25 @@
      _a < _b ? _a : _b; })
 
 void create_kbest_solutions_from_inner(KBestSolutions* dest,
-		InnerSolution* solutions, uint32 solutions_size, KProblem problem,
+		InnerSolution* solutions, uint32_t solutions_size, KProblem problem,
 		bool free_inner);
 
 void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
-		InnerSolution* sol2, uint32 count1, uint32 count2,
-		uint32 K, bool free_garbage);
-void sort_by_values_non_inc(InnerSolution* sol, uint32 count);
+		InnerSolution* sol2, uint32_t count1, uint32_t count2,
+		uint32_t K, bool free_garbage);
+void sort_by_values_non_inc(InnerSolution* sol, uint32_t count);
 void sort_by_weights(KProblem problem);
-void allocate_matrix(void*** matrix, uint32 nrow, uint32 ncols, uint32 size);
+void allocate_matrix(void*** matrix, uint32_t nrow, uint32_t ncols, uint32_t size);
 void free_matrix(void** matrix);
 
-int find_idx(int* vector, uint32 fin, int value);
+int find_idx(int* vector, uint32_t fin, int value);
 
-int find_idx_insertion(InnerSolution* sol_list, uint32 sols_size,
-uint32 lower_limit_idx,
-uint32 value);
+int find_idx_insertion(InnerSolution* sol_list, uint32_t sols_size,
+uint32_t lower_limit_idx,
+uint32_t value);
 
-int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32* sols_size,
-uint32 lower_limit_idx, uint32 value, uint32 K);
+int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32_t* sols_size,
+uint32_t lower_limit_idx, uint32_t value, uint32_t K);
 
 void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 		InnerSolution s2);

@@ -6,10 +6,10 @@
  */
 
 #include <stdlib.h>
-#include "../include/kp_alg/kp_alg.h"
+#include "kp_alg.h"
 
-void kp_init_inn_sol(InnerSolution* iSol, uint32 n, uint32 j, uint32 t,
-uint32 v) {
+void kp_init_inn_sol(InnerSolution* iSol, uint32_t n, uint32_t j, uint32_t t,
+uint32_t v) {
 	*iSol = (InnerSolution) malloc(sizeof(struct innerSolution));
 	(*iSol)->dimension = n;
 	(*iSol)->column_idx = j;
@@ -17,7 +17,7 @@ uint32 v) {
 	(*iSol)->value = v;
 	(*iSol)->recovered = false;
 	// Sets the value to 0
-	(*iSol)->sol_vector = (uint32*) calloc(n, sizeof(uint32));
+	(*iSol)->sol_vector = (uint32_t*) calloc(n, sizeof(uint32_t));
 }
 
 void kp_free_inn_sol(InnerSolution innerSol) {
@@ -30,7 +30,7 @@ void kp_copy_inn_sol(InnerSolution* dest, InnerSolution origin) {
 	kp_init_inn_sol(dest, origin->dimension, origin->column_idx,
 			origin->row_idx, origin->value);
 	(*dest)->recovered = origin->recovered;
-	uint32 i;
+	uint32_t i;
 	for (i = 0; i < origin->dimension; i++) {
 		(*dest)->sol_vector[i] = origin->sol_vector[i];
 	}

@@ -7,23 +7,23 @@
 
 #include <stdlib.h>
 #include "kp_tests.h"
-#include "../include/kp_alg/utility.h"
-#include "../include/debug.h"
-#include "../include/io_utility.h"
+#include "utility.h"
+#include "debug.h"
+#include "io_utility.h"
 #define N 10
 
 bool problems_equal(KProblem p1, KProblem p2);
-bool matrices_equal(int** m1, int** m2, uint32 nrow, uint32 ncols);
+bool matrices_equal(int** m1, int** m2, uint32_t nrow, uint32_t ncols);
 
-uint32 weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
-uint32 values[N];
+uint32_t weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
+uint32_t values[N];
 
 KProblem test_problem;
 #define TEST_N 5
 #define TEST_MAXW 15
 #define TEST_K 15
-uint32 test_weights[] = { 3, 4, 5, 6, 7 };
-uint32 test_values[] = { 4, 3, 5, 7, 8 };
+uint32_t test_weights[] = { 3, 4, 5, 6, 7 };
+uint32_t test_values[] = { 4, 3, 5, 7, 8 };
 int target_matrix_forward[TEST_MAXW][TEST_N] = { { -1, -1, -1, -1, -1 }, // 1
 		{ -1, -1, -1, -1, -1 }, // 2
 		{ 4, -1, -1, -1, -1 }, // 3
@@ -40,14 +40,14 @@ int target_matrix_forward[TEST_MAXW][TEST_N] = { { -1, -1, -1, -1, -1 }, // 1
 		{ -1, 14, 17, 16, 16 },  // 14
 		{ 20, 13, 16, 19, 17 } }; // 15
 
-uint32 test_initial_sol[] = { 20, 19, 17, 17, 16, 16, 16, 16, 16, 15, 15, 14,
+uint32_t test_initial_sol[] = { 20, 19, 17, 17, 16, 16, 16, 16, 16, 15, 15, 14,
 		14, 14, 13 };
 
-uint32 test_final_solutions[] = { 20, 19, 18, 17, 17, 16, 16, 16, 16, 16, 15,
+uint32_t test_final_solutions[] = { 20, 19, 18, 17, 17, 16, 16, 16, 16, 16, 15,
 		15, 15, 15, 15 };
 
 void set_up() {
-	uint32 i;
+	uint32_t i;
 	for (i = 0; i < N; i++) {
 		values[i] = weights[i] * 10;
 	}
@@ -75,13 +75,16 @@ void do_kp_tests() {
 }
 
 bool test_input_file() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 
 	bool ret = true;
-	int i;
+	uint32_t i;
 
 	KProblem problem;
 	ret &= read_problem(&problem, "test.txt");
+	if(!problem) {
+    return ret;
+  }
 	ret &= problem->max_weigth == 20;
 	ret &= problem->num_var == 5;
 	for (i = 0; i < 5; i++) {
@@ -92,10 +95,10 @@ bool test_input_file() {
 }
 
 bool test_kp_solver() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 
 	bool ret = true;
-	uint32 i, v, j, k;
+	uint32_t i, v, j, k;
 	KBestSolutions solutions;
 	kp_solve(&solutions, test_problem, TEST_K);
 
@@ -131,17 +134,17 @@ bool test_kp_solver() {
 }
 
 bool test_kp_algorithm() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 
-	bool ret = true;
+	bool ret = true, tmp;
 	int** matrix;
 	allocate_matrix((void ***) &matrix, test_problem->max_weigth,
-			test_problem->num_var, sizeof(uint32));
+			test_problem->num_var, sizeof(uint32_t));
 	kp_forward_enumeration(matrix, test_problem);
 	printf("Starting checks...\n");
 
 	int** matrix2 = (int**) malloc(TEST_MAXW * sizeof(int *));
-	uint32 i, j, k, v;
+	uint32_t i, j, k, v;
 	for (i = 0; i < TEST_MAXW; i++) {
 		matrix2[i] = target_matrix_forward[i];
 	}
@@ -149,7 +152,7 @@ bool test_kp_algorithm() {
 
 	printf("Initial K solutions.\n");
 	InnerSolution* listSol;
-	uint32 size;
+	uint32_t size;
 	kp_build_initial_best_k_list(&listSol, &size, matrix, test_problem, TEST_K);
 	ret &= size == TEST_K;
 	printf("Starting checks...\n");
@@ -160,18 +163,30 @@ bool test_kp_algorithm() {
 	printf("Recover solutions.\n");
 	kp_recover_solution(listSol, TEST_K, TEST_K, matrix, test_problem);
 	printf("Starting checks...\n");
-	ret &= size == TEST_K;
-
+	tmp = size == TEST_K;
+	if(!tmp) {
+    printf("\tNumber of solutions is %d, expected %d\n", tmp, TEST_K);
+    ret = false;
+  }
+	printf("\tChecking consistency...\n");
 	for (i = 0; i < size; i++) {
 		// Check values correspondence
-		ret &= test_final_solutions[i] == listSol[i]->value;
+		tmp = test_final_solutions[i] == listSol[i]->value;
+    if(!tmp) {
+      printf("\t\tSol %d Different values expected: %u, got: %u\n", i, test_final_solutions[i], listSol[i]->value);
+      ret = false;
+    }
 		v = 0;
 		// Check consistency
 		for (j = 0; j < TEST_N; j++) {
 			v += listSol[i]->sol_vector[j] * test_problem->values[j];
 		}
+		tmp = v == listSol[i]->value;
+    if(!tmp) {
+      printf("\t\tSol %d inconsistent value (expected: %u, got: %u)\n", i, listSol[i]->value, v);
+      ret = false;
+    }
 		// Check unique.
-		ret &= v == listSol[i]->value;
 		for (j = i + 1; j < size; j++) {
 			if (listSol[j]->value == listSol[i]->value) {
 				k = 0;
@@ -179,6 +194,7 @@ bool test_kp_algorithm() {
 						&& ++k < TEST_N)
 					;
 				if (k == TEST_N) {
+          printf("\t\tSolution %d and solution %d are equals\n", i, j);
 					ret = false;
 				}
 			}
@@ -197,9 +213,9 @@ bool test_kp_algorithm() {
 }
 
 bool test_create_kbest_from_inner() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 	bool ret = true;
-	uint32 size = 30, i, k;
+	uint32_t size = 30, i, k;
 	KProblem problem;
 	kp_init_kp(&problem, N, weights, values, 20);
 	InnerSolution* ss = (InnerSolution*) malloc(size * sizeof(InnerSolution));
@@ -229,10 +245,10 @@ bool test_create_kbest_from_inner() {
 }
 
 bool test_find_innsol_idx() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 	bool ret = true;
-	uint32 size = 30, i, tmp;
-	uint32 tv;
+	uint32_t size = 30, i, tmp;
+	uint32_t tv;
 	int g;
 	InnerSolution* ss = (InnerSolution*) malloc(
 			(size + 1) * sizeof(InnerSolution));
@@ -291,9 +307,9 @@ bool test_find_innsol_idx() {
 }
 
 bool test_innersol_copy() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 	bool ret = true;
-	uint32 i, j = 2, t = 3, v = 10;
+	uint32_t i, j = 2, t = 3, v = 10;
 	InnerSolution s, sc;
 	kp_init_inn_sol(&s, N, j, t, v);
 	for (i = 0; i < N; i++) {
@@ -317,10 +333,10 @@ bool test_innersol_copy() {
 }
 
 bool test_find() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 	bool ret = true;
 	int value = 134;
-	uint32 idx = 4;
+	int idx = 4;
 	int vector[] = { 10, 89, 12, 378, 291, 11, 29, 101, 22, 319 };
 
 	vector[idx] = value;
@@ -331,11 +347,11 @@ bool test_find() {
 }
 
 bool test_innersol_join() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 
 	bool ret = true;
-	uint32 j = 2, t = 3, count1 = 20, count2 = 20, K = 20;
-	int k, i;
+	uint32_t j = 2, t = 3, count1 = 20, count2 = 20, K = 20;
+	int64_t i, k;
 
 	InnerSolution* ss1 = (InnerSolution*) malloc(
 			count1 * sizeof(InnerSolution));
@@ -383,10 +399,10 @@ bool test_innersol_join() {
 }
 
 bool test_innersol_ordering() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 
 	bool ret = true;
-	uint32 i, count = 20;
+	uint32_t i, count = 20;
 
 	InnerSolution* ss = (InnerSolution*) malloc(count * sizeof(InnerSolution));
 	for (i = 0; i < count; i++) {
@@ -396,7 +412,7 @@ bool test_innersol_ordering() {
 
 	for (i = 0; i < count - 1; i++) {
 		ret &= ss[i]->value >= ss[i + 1]->value;
-		uint32 v = ss[i]->value;
+		uint32_t v = ss[i]->value;
 		ret &= v == ss[i]->column_idx && v == ss[i]->dimension
 				&& v == ss[i]->row_idx;
 	}
@@ -409,10 +425,10 @@ bool test_innersol_ordering() {
 }
 
 bool test_innersol_creation() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 
 	bool ret = true;
-	uint32 i, j = 2, t = 3, v = 10;
+	uint32_t i, j = 2, t = 3, v = 10;
 
 	InnerSolution s;
 	kp_init_inn_sol(&s, N, j, t, v);
@@ -438,20 +454,20 @@ bool test_innersol_creation() {
 }
 
 bool test_matrix_alloc() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 
-	uint32 i, j;
-	uint32** matrix;
-	uint32 nr = 20, nc = 5;
-	allocate_matrix((void***) &matrix, nr, nc, sizeof(uint32));
+	uint32_t i, j;
+	uint32_t** matrix;
+	uint32_t nr = 20, nc = 5;
+	allocate_matrix((void***) &matrix, nr, nc, sizeof(uint32_t));
 	for (i = 0; i < nr; i++) {
 		for (j = 0; j < nc; j++) {
-			matrix[i][j] = (uint32) (i + (j << 4));
+			matrix[i][j] = (uint32_t) (i + (j << 4));
 		}
 	}
 	for (i = 0; i < nr; i++) {
 		for (j = 0; j < nc; j++) {
-			if (!(matrix[i][j] == (uint32) (i + (j << 4)))) {
+			if (!(matrix[i][j] == (uint32_t) (i + (j << 4)))) {
 				return false;
 			}
 		}
@@ -461,10 +477,10 @@ bool test_matrix_alloc() {
 }
 
 bool test_problem_creation() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 
 	bool ret = true;
-	uint32 i, mw = 50;
+	uint32_t i, mw = 50;
 
 	KProblem p;
 	kp_init_kp(&p, N, weights, values, mw);
@@ -482,14 +498,14 @@ bool test_problem_creation() {
 }
 
 bool test_solution_creation() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 
 	bool ret = true;
 
 	KSolution s;
 	kp_init_sol(&s, N);
 	ret &= s->vector_size == N;
-	uint32 i;
+	uint32_t i;
 
 	for (i = 0; i < s->vector_size; i++) {
 		s->solution_vector[i] = i;
@@ -505,10 +521,10 @@ bool test_solution_creation() {
 }
 
 bool test_kbestsolutions_creation() {
-	printf("%s\n", __FUNCTION__);
+	PRINT_INTRO("");
 
 	bool ret = true;
-	uint32 sol_count = 10;
+	uint32_t sol_count = 10;
 	KProblem p;
 	kp_init_kp(&p, N, weights, values, 50);
 
@@ -518,7 +534,7 @@ bool test_kbestsolutions_creation() {
 	ret &= problems_equal(p, s->problem);
 	ret &= s->sol_count == sol_count;
 
-	uint32 i, j;
+	uint32_t i, j;
 
 	for (i = 0; i < s->sol_count; i++) {
 		for (j = 0; j < s->problem->num_var; j++) {
@@ -540,7 +556,7 @@ bool test_kbestsolutions_creation() {
 
 bool problems_equal(KProblem p1, KProblem p2) {
 
-	uint32 i;
+	uint32_t i;
 	if (p1->max_weigth != p2->max_weigth || p1->num_var != p2->num_var) {
 		return false;
 	}
@@ -553,8 +569,8 @@ bool problems_equal(KProblem p1, KProblem p2) {
 	return true;
 }
 
-bool matrices_equal(int** m1, int** m2, uint32 nrow, uint32 ncols) {
-	uint32 i, j, k;
+bool matrices_equal(int** m1, int** m2, uint32_t nrow, uint32_t ncols) {
+	uint32_t i, j, k;
 	bool ret = true;
 
 	for (i = 0; i < nrow; i++) {

@@ -6,12 +6,12 @@
  */
 
 #include <stdlib.h>
-#include "../include/kp_alg/utility.h"
+#include "utility.h"
 
 void create_kbest_solutions_from_inner(KBestSolutions* bestSolutions,
-		InnerSolution* solutions, uint32 solutions_size, KProblem problem,
+		InnerSolution* solutions, uint32_t solutions_size, KProblem problem,
 		bool free_inner) {
-	uint32 i, k;
+	uint32_t i, k;
 	kp_init_kbest_sols(bestSolutions, problem, solutions_size);
 	for (i = 0; i < solutions_size; i++) {
 		InnerSolution is = solutions[i];
@@ -35,17 +35,17 @@ void create_kbest_solutions_from_inner(KBestSolutions* bestSolutions,
 
 void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 		InnerSolution s2) {
-	uint32 i;
+	uint32_t i;
 	for (i = 0; i < dest->dimension; i++) {
 		dest->sol_vector[i] = s1->sol_vector[i] + s2->sol_vector[i];
 	}
 }
 
-int find_idx_insertion(InnerSolution* sol_list, uint32 sols_size,
-uint32 lower_limit_idx, uint32 value) {
-	uint32 middle;
-	uint32 lower = lower_limit_idx + 1;
-	uint32 upper = sols_size - 1;
+int find_idx_insertion(InnerSolution* sol_list, uint32_t sols_size,
+uint32_t lower_limit_idx, uint32_t value) {
+	uint32_t middle;
+	uint32_t lower = lower_limit_idx + 1;
+	uint32_t upper = sols_size - 1;
 
 	if(sol_list[lower_limit_idx]->value < value) {
 		return 0;
@@ -73,9 +73,9 @@ uint32 lower_limit_idx, uint32 value) {
 	}
 }
 
-int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32* sols_size,
-uint32 lower_limit_idx, uint32 value, uint32 K) {
-	uint32 i;
+int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32_t* sols_size,
+uint32_t lower_limit_idx, uint32_t value, uint32_t K) {
+	uint32_t i;
 	int idx = find_idx_insertion(sol_list, *sols_size, lower_limit_idx, value);
 
 	if (idx == -1) {
@@ -95,8 +95,8 @@ uint32 lower_limit_idx, uint32 value, uint32 K) {
 	return idx;
 }
 
-int find_idx(int* vector, uint32 fin, int value) {
-	uint32 i;
+int find_idx(int* vector, uint32_t fin, int value) {
+	uint32_t i;
 	for (i = 0; i <= fin; i++) {
 		if (vector[i] == value) {
 			return i;
@@ -106,9 +106,9 @@ int find_idx(int* vector, uint32 fin, int value) {
 }
 
 void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
-		InnerSolution* sol2, uint32 count1, uint32 count2, uint32 K,
+		InnerSolution* sol2, uint32_t count1, uint32_t count2, uint32_t K,
 		bool free_garbage) {
-	uint32 i = 0, j = 0, k = 0;
+	uint32_t i = 0, j = 0, k = 0;
 	while (i < count1 && j < count2 && k < K) {
 		InnerSolution val =
 				sol1[i]->value > sol2[j]->value ? sol1[i++] : sol2[j++];
@@ -133,9 +133,9 @@ void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
 	}
 }
 
-void sort_by_values_non_inc(InnerSolution* sol, uint32 count) {
+void sort_by_values_non_inc(InnerSolution* sol, uint32_t count) {
 	byte done = 0;
-	uint32 i;
+	uint32_t i;
 	InnerSolution tmp;
 	while (!done) {
 		done = 1;
@@ -153,7 +153,7 @@ void sort_by_values_non_inc(InnerSolution* sol, uint32 count) {
 void sort_by_weights(KProblem problem) {
 
 	byte done = 0;
-	uint32 i, tmp;
+	uint32_t i, tmp;
 	while (!done) {
 		done = 1;
 		for (i = 0; i < problem->num_var - 1; i++) {
@@ -171,12 +171,12 @@ void sort_by_weights(KProblem problem) {
 
 }
 
-void allocate_matrix(void*** matrix, uint32 n_row, uint32 n_cols, uint32 size) {
+void allocate_matrix(void*** matrix, uint32_t n_row, uint32_t n_cols, uint32_t size) {
 	(*matrix) = (void**) malloc(n_row * sizeof(void*));
 	void* vals = (void*) malloc(n_row * n_cols * size);
-	uint32 i;
+	uint32_t i;
 	for (i = 0; i < n_row; i++) {
-		(*matrix)[i] = &(vals[i * n_cols * size]);
+		(*(char***)matrix)[i] = &(((char*)vals)[i * n_cols * size]);
 	}
 }
 void free_matrix(void** matrix) {

@@ -9,14 +9,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/io_utility.h"
-#include "../include/debug.h"
-#include "../include/kbest.h"
+#include "io_utility.h"
+#include "debug.h"
+#include "kbest.h"
 
 #define NO_TESTS 20
 
-void print_array2(uint32* array, int size) {
-	uint32 i;
+void print_array2(uint32_t* array, int size) {
+	uint32_t i;
 	printf("[ ");
 	for (i = 0; i < size; i++) {
 		printf("%u ", array[i]);
@@ -24,7 +24,7 @@ void print_array2(uint32* array, int size) {
 	printf("]\n");
 }
 
-KBestSolutions singleTest(char* filename, uint32 K, double* test_ticks,
+KBestSolutions singleTest(char* filename, uint32_t K, double* test_ticks,
 		double* test_time) {
 	time_t start, stop;
 	clock_t ticksStart, ticksStop;
@@ -48,13 +48,13 @@ KBestSolutions singleTest(char* filename, uint32 K, double* test_ticks,
 	return solutions;
 }
 
-void timeTest(uint32 K, double* rAverageTick, double* rAverageTime,
+void timeTest(uint32_t K, double* rAverageTick, double* rAverageTime,
 		double* rTotalTick, double* rTotalTime) {
 
 	double averageTick, averageTime, test_ticks, test_time, totalTime,
 			totalTicks;
 	char filename[100];
-	uint32 test;
+	uint32_t test;
 	for (test = 1; test <= NO_TESTS; test++) {
 
 		sprintf(filename, "problems/test_%d.txt", test);
@@ -93,7 +93,7 @@ void checkForDuplicate(KBestSolutions solutions) {
 			if (sol1->tot_value != sol2->tot_value) {
 				break;
 			}
-			if (!memcmp(sol1->solution_vector, sol2->solution_vector, size * sizeof(uint32))) {
+			if (!memcmp(sol1->solution_vector, sol2->solution_vector, size * sizeof(uint32_t))) {
 				printf("Equals [%d, %d] and [%d, %d]\n", (i+1), sol1->tot_value, (j+1),
 						sol2->tot_value);
 				printf("\t");

@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include "test_suite.h"
-#include "../include/data.h"
+#include "data.h"
 
 void do_kp_tests();
 bool test_input_file();

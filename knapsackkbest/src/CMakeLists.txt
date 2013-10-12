@@ -7,6 +7,6 @@
 ADD_SUBDIRECTORY(tests)
 
 ADD_EXECUTABLE(kbest debug.c io_utility.c kbest.c kp_alg.c kp_alg_data.c
-  main_debug.c utility.c)
+  main.c utility.c)
 
 INSTALL (TARGETS kbest DESTINATION ${BellavistaKBest_BIN_DIR})

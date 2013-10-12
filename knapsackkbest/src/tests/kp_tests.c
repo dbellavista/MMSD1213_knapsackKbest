@@ -61,7 +61,7 @@ void tear_down() {
 }
 
 void do_kp_tests() {
-	set_debug_level(NOTICE ^ ERROR ^ WARNING);
+	set_debug_level(DEBUG ^ NOTICE ^ ERROR ^ WARNING);
 
 	tests("Data creation", &test_matrix_alloc, &test_problem_creation,
 			&test_solution_creation, &test_kbestsolutions_creation,
@@ -136,23 +136,26 @@ bool test_kp_solver() {
 bool test_kp_algorithm() {
 	PRINT_INTRO("");
 
-	bool ret = true, tmp;
+	uint32_t i, j, k, v;
+	bool ret, tmp;
 	int** matrix;
+  int** matrix2;
+	size_t size;
+	InnerSolution* listSol;
+
+	ret = true;
 	allocate_matrix((void ***) &matrix, test_problem->max_weigth,
 			test_problem->num_var, sizeof(uint32_t));
 	kp_forward_enumeration(matrix, test_problem);
 	printf("Starting checks...\n");
 
-	int** matrix2 = (int**) malloc(TEST_MAXW * sizeof(int *));
-	uint32_t i, j, k, v;
+	matrix2 = (int**) malloc(TEST_MAXW * sizeof(int *));
 	for (i = 0; i < TEST_MAXW; i++) {
 		matrix2[i] = target_matrix_forward[i];
 	}
 	ret = matrices_equal(matrix, matrix2, TEST_MAXW, TEST_N);
 
 	printf("Initial K solutions.\n");
-	InnerSolution* listSol;
-	uint32_t size;
 	kp_build_initial_best_k_list(&listSol, &size, matrix, test_problem, TEST_K);
 	ret &= size == TEST_K;
 	printf("Starting checks...\n");
@@ -247,7 +250,8 @@ bool test_create_kbest_from_inner() {
 bool test_find_innsol_idx() {
 	PRINT_INTRO("");
 	bool ret = true;
-	uint32_t size = 30, i, tmp;
+	uint32_t size = 30, i;
+	size_t tmp;
 	uint32_t tv;
 	int g;
 	InnerSolution* ss = (InnerSolution*) malloc(
@@ -276,7 +280,7 @@ bool test_find_innsol_idx() {
 
 	tv = 9;
 	tmp = size;
-	g = find_idx_and_prepare_insertion(ss, &tmp, 0, tv, size);
+	g = find_idx_and_prepare_insertion(ss, &tmp, NULL, 0, tv, size);
 	ret &= size == tmp;
 	ret &= ss[g] == NULL;
 	ret &= ss[g + 1]->value == 8;
@@ -286,7 +290,7 @@ bool test_find_innsol_idx() {
 
 	tv = 9;
 	tmp = size;
-	g = find_idx_and_prepare_insertion(ss, &tmp, 0, tv, size + 1);
+	g = find_idx_and_prepare_insertion(ss, &tmp, NULL, 0, tv, size + 1);
 	ret &= tmp == size + 1;
 	ret &= ss[g] == NULL;
 	ret &= ss[g + 1]->value == 8;
@@ -313,7 +317,7 @@ bool test_innersol_copy() {
 	InnerSolution s, sc;
 	kp_init_inn_sol(&s, N, j, t, v);
 	for (i = 0; i < N; i++) {
-		s->sol_vector[i] = i;
+		SET_SOL_ELEMENT(s, i, i);
 	}
 	s->recovered = true;
 	kp_copy_inn_sol(&sc, s);
@@ -323,9 +327,15 @@ bool test_innersol_copy() {
 	ret &= sc->recovered == s->recovered;
 	ret &= sc->row_idx == s->row_idx;
 	ret &= sc->value == s->value;
+
 	for (i = 0; i < N; i++) {
 		ret &= sc->sol_vector[i] == s->sol_vector[i];
 	}
+
+	ret &= sc->last_zero == s->last_zero;
+	for (i = 0; i < BITMAP_DYNAMIC_SIZE(sc); i++) {
+    ret &= sc->bitmap_sol_vector[i] == sc->bitmap_sol_vector[i];
+  }
 
 	kp_free_inn_sol(s);
 	kp_free_inn_sol(sc);
@@ -375,7 +385,7 @@ bool test_innersol_join() {
 	}
 	i = count1 + count2 - K;
 	i = (i < 0) ? 0 : i;
-	for (; k >= (count1 + count2) - 2 * min(count1, count2) && k >= 0;
+	for (; k >= (count1 + count2) - 2 * MIN(count1, count2) && k >= 0;
 			i++, k--) {
 		ret &= ss[k]->value == i;
 	}
@@ -424,13 +434,23 @@ bool test_innersol_ordering() {
 	return ret;
 }
 
+void print_arrayl(bitmap_t* array, size_t size) {
+	uint32_t i;
+	printf("[ ");
+	for (i = 0; i < size; i++) {
+		printf("%llx ", array[i]);
+	}
+	printf("]\n");
+}
+
 bool test_innersol_creation() {
 	PRINT_INTRO("");
 
-	bool ret = true;
-	uint32_t i, j = 2, t = 3, v = 10;
-
 	InnerSolution s;
+  bitmap_t val;
+	uint32_t i, j = 2, t = 3, v = 10;
+	bool ret = true;
+
 	kp_init_inn_sol(&s, N, j, t, v);
 
 	ret &= s->dimension == N;
@@ -440,14 +460,22 @@ bool test_innersol_creation() {
 
 	for (i = 0; i < N; i++) {
 		ret &= s->sol_vector[i] == 0 && !s->recovered;
+	}
+	ret &= s->last_zero == 0;
+	for (i = 0; i < BITMAP_DYNAMIC_SIZE(s); i++) {
+		ret &= s->bitmap_sol_vector[i] == 0;
+	}
 
-	}
 	for (i = 0; i < N; i++) {
-		s->sol_vector[i] = i;
+		SET_SOL_ELEMENT(s, i, i);
 	}
+
 	for (i = 0; i < N; i++) {
 		ret &= s->sol_vector[i] == i;
+		val = s->bitmap_sol_vector[i / (8 * sizeof(bitmap_t))] & 1 << (i % (8 * sizeof(bitmap_t)));
+		ret &= (i) ? val != 0 : val == 0;
 	}
+	ret &= s->last_zero == N - 1;
 
 	kp_free_inn_sol(s);
 	return ret;

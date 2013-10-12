@@ -9,7 +9,8 @@
 #include "kbest.h"
 #include "utility.h"
 
-void kp_init_sol(KSolution* solution, uint32_t n) {
+void kp_init_sol(KSolution* solution, size_t n)
+{
 	*solution = (KSolution) malloc(sizeof(struct kSolution));
 	(*solution)->vector_size = n;
 	(*solution)->solution_vector = (uint32_t*) malloc(n * sizeof(uint32_t));
@@ -21,12 +22,12 @@ void kp_free_sol(KSolution solution) {
 	free(solution);
 }
 
-void kp_init_kbest_sols(KBestSolutions* solution, KProblem problem,
-uint32_t sol_count) {
+void kp_init_kbest_sols(KBestSolutions* solution, KProblem problem, size_t sol_count)
+{
+	size_t i;
 	*solution = (KBestSolutions) malloc(sizeof(struct kBestSolutions));
 	kp_init_kp(&(*solution)->problem, problem->num_var, problem->weights, problem->values, problem->max_weigth);
 	(*solution)->sol_count = sol_count;
-	uint32_t i;
 	(*solution)->solutions = (KSolution *) malloc(
 			sol_count * sizeof(KSolution));
 	for (i = 0; i < sol_count; i++) {
@@ -46,12 +47,13 @@ void kp_free_kbest_sols(KBestSolutions solution) {
 	free(solution);
 }
 
-void kp_init_kp(KProblem* problem, uint32_t n, uint32_t* weights, uint32_t* values,
-uint32_t max_w) {
+void kp_init_kp(KProblem* problem, size_t n, uint32_t* weights, uint32_t* values, uint32_t max_w)
+{
 	uint32_t i;
+	uint32_t* vals = (uint32_t*) malloc(n * 2 * sizeof(uint32_t));
+
 	*problem = (KProblem) malloc(sizeof(struct kProblem));
 	(*problem)->num_var = n;
-	uint32_t* vals = (uint32_t*) malloc(n * 2 * sizeof(uint32_t));
 	(*problem)->weights = vals;
 	(*problem)->values = &(vals[n]);
 	(*problem)->max_weigth = max_w;
@@ -63,24 +65,26 @@ uint32_t max_w) {
 	sort_by_weights(*problem);
 }
 
-void kp_free_kp(KProblem problem) {
+void kp_free_kp(KProblem problem)
+{
 	free(problem->weights);
 	problem->weights = NULL;
 	problem->values = NULL;
 	free(problem);
 }
 
-void kp_solve(KBestSolutions* dest, KProblem problem, uint32_t best_sol_count) {
+void kp_solve(KBestSolutions* dest, KProblem problem, size_t best_sol_count)
+{
+	InnerSolution* solutions;
+	size_t solutions_size;
+	int** matrix;
 
 	// Matrix bxn initialization
-	int** matrix;
 	allocate_matrix((void ***) &matrix, problem->max_weigth, problem->num_var,
 			sizeof(int));
 
 	kp_forward_enumeration(matrix, problem);
 
-	InnerSolution* solutions;
-	uint32_t solutions_size;
 
 	kp_build_initial_best_k_list(&solutions, &solutions_size, matrix, problem,
 			best_sol_count);

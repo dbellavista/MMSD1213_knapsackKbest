@@ -6,11 +6,27 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "utility.h"
 
+bool inner_solutions_equals(InnerSolution sol1, InnerSolution sol2)
+{
+  if(sol1->last_zero != sol2->last_zero) {
+    return false;
+  }
+  if(memcmp(sol1->bitmap_sol_vector, sol2->bitmap_sol_vector, BITMAP_DYNAMIC_BYTE_SIZE(sol1))) {
+    return false;
+  }
+  if(memcmp(sol1->sol_vector, sol2->sol_vector, sol1->last_zero * sizeof(*sol1))) {
+    return false;
+  }
+  return true;
+}
+
 void create_kbest_solutions_from_inner(KBestSolutions* bestSolutions,
-		InnerSolution* solutions, uint32_t solutions_size, KProblem problem,
-		bool free_inner) {
+		InnerSolution* solutions, size_t solutions_size, KProblem problem,
+		bool free_inner)
+{
 	uint32_t i, k;
 	kp_init_kbest_sols(bestSolutions, problem, solutions_size);
 	for (i = 0; i < solutions_size; i++) {
@@ -34,15 +50,16 @@ void create_kbest_solutions_from_inner(KBestSolutions* bestSolutions,
 }
 
 void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
-		InnerSolution s2) {
+		InnerSolution s2)
+{
 	uint32_t i;
 	for (i = 0; i < dest->dimension; i++) {
 		dest->sol_vector[i] = s1->sol_vector[i] + s2->sol_vector[i];
 	}
 }
 
-int find_idx_insertion(InnerSolution* sol_list, uint32_t sols_size,
-uint32_t lower_limit_idx, uint32_t value) {
+ssize_t find_idx_insertion(InnerSolution* sol_list, size_t sols_size, size_t lower_limit_idx, uint32_t value)
+{
 	uint32_t middle;
 	uint32_t lower = lower_limit_idx + 1;
 	uint32_t upper = sols_size - 1;
@@ -73,8 +90,9 @@ uint32_t lower_limit_idx, uint32_t value) {
 	}
 }
 
-int find_idx_and_prepare_insertion(InnerSolution* sol_list, uint32_t* sols_size,
-uint32_t lower_limit_idx, uint32_t value, uint32_t K) {
+ssize_t find_idx_and_prepare_insertion(InnerSolution* sol_list, size_t*
+    sols_size, InnerSolution* removed, size_t lower_limit_idx, uint32_t value, size_t K)
+{
 	uint32_t i;
 	int idx = find_idx_insertion(sol_list, *sols_size, lower_limit_idx, value);
 
@@ -83,7 +101,11 @@ uint32_t lower_limit_idx, uint32_t value, uint32_t K) {
 	}
 
 	if (*sols_size == K) {
-		kp_free_inn_sol(sol_list[K - 1]);
+	  if(removed == NULL) {
+      kp_free_inn_sol(sol_list[K - 1]);
+    } else {
+      *removed = sol_list[K - 1];
+    }
 	} else {
 		*sols_size = *sols_size + 1;
 	}
@@ -95,7 +117,8 @@ uint32_t lower_limit_idx, uint32_t value, uint32_t K) {
 	return idx;
 }
 
-int find_idx(int* vector, uint32_t fin, int value) {
+ssize_t find_idx(int* vector, size_t fin, int value)
+{
 	uint32_t i;
 	for (i = 0; i <= fin; i++) {
 		if (vector[i] == value) {
@@ -106,8 +129,9 @@ int find_idx(int* vector, uint32_t fin, int value) {
 }
 
 void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
-		InnerSolution* sol2, uint32_t count1, uint32_t count2, uint32_t K,
-		bool free_garbage) {
+		InnerSolution* sol2, size_t count1, size_t count2, size_t K,
+		bool free_garbage)
+{
 	uint32_t i = 0, j = 0, k = 0;
 	while (i < count1 && j < count2 && k < K) {
 		InnerSolution val =
@@ -133,7 +157,8 @@ void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
 	}
 }
 
-void sort_by_values_non_inc(InnerSolution* sol, uint32_t count) {
+void sort_by_values_non_inc(InnerSolution* sol, uint32_t count)
+{
 	byte done = 0;
 	uint32_t i;
 	InnerSolution tmp;
@@ -150,7 +175,8 @@ void sort_by_values_non_inc(InnerSolution* sol, uint32_t count) {
 	}
 }
 
-void sort_by_weights(KProblem problem) {
+void sort_by_weights(KProblem problem)
+{
 
 	byte done = 0;
 	uint32_t i, tmp;
@@ -171,7 +197,8 @@ void sort_by_weights(KProblem problem) {
 
 }
 
-void allocate_matrix(void*** matrix, uint32_t n_row, uint32_t n_cols, uint32_t size) {
+void allocate_matrix(void*** matrix, uint32_t n_row, uint32_t n_cols, uint32_t size)
+{
 	(*matrix) = (void**) malloc(n_row * sizeof(void*));
 	void* vals = (void*) malloc(n_row * n_cols * size);
 	uint32_t i;
@@ -179,7 +206,9 @@ void allocate_matrix(void*** matrix, uint32_t n_row, uint32_t n_cols, uint32_t s
 		(*(char***)matrix)[i] = &(((char*)vals)[i * n_cols * size]);
 	}
 }
-void free_matrix(void** matrix) {
+
+void free_matrix(void** matrix)
+{
 	free(matrix[0]);
 	free(matrix);
 }

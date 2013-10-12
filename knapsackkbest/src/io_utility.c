@@ -16,7 +16,7 @@
 #define exit(X, Y) fclose(X); return Y;
 #define check(X, Y, Z) if (X != Y) { d_error("Error reading from file\n"); exit(Z, false); }
 
-void print_array(uint32_t* array, int size) {
+void print_array(uint32_t* array, size_t size) {
 	uint32_t i;
 	printf("[ ");
 	for (i = 0; i < size; i++) {
@@ -27,7 +27,7 @@ void print_array(uint32_t* array, int size) {
 
 void print_kproblem(KProblem problem) {
 	uint32_t size = problem->num_var;
-	printf("Problem with %d variables, max weight: %d\n", problem->num_var, problem->max_weigth);
+	printf("Problem with %zu variables, max weight: %d\n", problem->num_var, problem->max_weigth);
 	printf("\tValues ");
 	print_array(problem->values, size);
 	printf("\tWeights ");
@@ -66,21 +66,18 @@ bool read_problem(KProblem* dest, char* file) {
 	uint32_t N, W, i;
 	uint32_t *weights, *values;
 
-	d_debug("Reading N... ");
 	check(fscanf(fp, "%u", &N), 1, fp);
-	d_debug("N = %d\n", N);
+	d_debug("Read N = %d\n", N);
 
-	d_debug("Reading W... ");
 	check(fscanf(fp, "%u", &W), 1, fp);
-	d_debug("W = %d\n", W);
+	d_debug("Read W = %d\n", W);
 
 	weights = (uint32_t*) malloc(N * sizeof(uint32_t));
 	values = (uint32_t*) malloc(N * sizeof(uint32_t));
 
 	for (i = 0; i < N; i++) {
-		d_debug("Reading var %u... ", (i + 1));
 		check(fscanf(fp, "%u %u", &values[i], &weights[i]), 2, fp);
-		d_debug("V%d = %d; W%d = %d\n", (i + 1), values[i], (i + 1),
+		d_debug("Read var V%d = %d; W%d = %d\n", (i + 1), values[i], (i + 1),
 				weights[i]);
 	}
 

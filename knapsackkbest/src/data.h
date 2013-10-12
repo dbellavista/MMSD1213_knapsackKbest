@@ -9,7 +9,7 @@
 #define DATA_H_
 
 #include <stdint.h>
-#include <stddef.h>
+#include <stdio.h>
 #include <stdbool.h>
 
 #define byte unsigned char

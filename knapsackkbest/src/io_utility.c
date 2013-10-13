@@ -37,9 +37,10 @@ void print_kproblem(KProblem problem) {
 void print_kbest_solution(KBestSolutions solution) {
 	uint32_t size = solution->problem->num_var;
 	printf("Solutions:\n");
-	uint32_t i;
+	size_t i;
 	for (i = 0; i < solution->sol_count; i++) {
-		printf("\t%d)\t%d\t-> ", i + 1, solution->solutions[i]->tot_value);
+
+		printf("\t%zu)\t%u\t-> ", i + 1, solution->solutions[i]->tot_value);
 		print_array(solution->solutions[i]->solution_vector, size);
 	}
 	printf("\n");

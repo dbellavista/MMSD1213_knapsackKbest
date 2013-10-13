@@ -12,6 +12,8 @@
 #include "io_utility.h"
 #define N 10
 
+extern KProblem static_problem;
+
 bool problems_equal(KProblem p1, KProblem p2);
 bool matrices_equal(int** m1, int** m2, uint32_t nrow, uint32_t ncols);
 
@@ -53,7 +55,7 @@ void set_up() {
 	}
 
 	kp_init_kp(&test_problem, TEST_N, test_weights, test_values, TEST_MAXW);
-
+	static_problem = test_problem;
 }
 
 void tear_down() {
@@ -61,14 +63,15 @@ void tear_down() {
 }
 
 void do_kp_tests() {
-	set_debug_level(DEBUG ^ NOTICE ^ ERROR ^ WARNING);
+	set_debug_level(//DEBUG ^
+	    NOTICE ^ ERROR ^ WARNING);
 
 	tests("Data creation", &test_matrix_alloc, &test_problem_creation,
 			&test_solution_creation, &test_kbestsolutions_creation,
 			&test_innersol_creation, NULL);
 	tests("Data utility", &test_innersol_ordering, &test_innersol_join,
 			&test_find, &test_innersol_copy, &test_find_innsol_idx,
-			&test_create_kbest_from_inner, NULL);
+			&test_create_kbest_from_inner, &test_innersols_equal, NULL);
 	tests("KP Algorithm", &test_kp_algorithm, &test_kp_solver, NULL);
 
 	tests("Test input", &test_input_file, NULL);
@@ -164,7 +167,7 @@ bool test_kp_algorithm() {
 	}
 
 	printf("Recover solutions.\n");
-	kp_recover_solution(listSol, TEST_K, TEST_K, matrix, test_problem);
+	kp_recover_solution(listSol, &size, TEST_K, matrix, test_problem);
 	printf("Starting checks...\n");
 	tmp = size == TEST_K;
 	if(!tmp) {
@@ -250,10 +253,11 @@ bool test_create_kbest_from_inner() {
 bool test_find_innsol_idx() {
 	PRINT_INTRO("");
 	bool ret = true;
-	uint32_t size = 30, i;
-	size_t tmp;
-	uint32_t tv;
-	int g;
+	size_t size = 30;
+	size_t i, tmp;
+	uint32_t value_to_insert;
+	ssize_t g;
+
 	InnerSolution* ss = (InnerSolution*) malloc(
 			(size + 1) * sizeof(InnerSolution));
 
@@ -262,25 +266,30 @@ bool test_find_innsol_idx() {
 	}
 	sort_by_values_non_inc(ss, size);
 
-	tv = 9;
-	g = find_idx_insertion(ss, size, 0, tv);
+	value_to_insert = 9;
+	g = find_idx_insertion(ss, size, -1, value_to_insert);
 	ret &= ss[g]->value == 8;
 
-	tv = 3;
-	g = find_idx_insertion(ss, size, 0, tv);
+	value_to_insert = 3;
+	g = find_idx_insertion(ss, size, -1, value_to_insert);
 	ret &= ss[g]->value == 2;
 
-	tv = 0;
-	g = find_idx_insertion(ss, size, 0, tv);
+	value_to_insert = 0;
+	g = find_idx_insertion(ss, size, -1, value_to_insert);
 	ret &= g == -1;
 
-	tv = 1000;
-	g = find_idx_insertion(ss, size, 0, tv);
+	value_to_insert = 1000;
+	g = find_idx_insertion(ss, size, -1, value_to_insert);
 	ret &= g == 0;
 
-	tv = 9;
+	value_to_insert = 1000;
+	g = find_idx_insertion(ss, size, 0, value_to_insert);
+	ret &= g == -1;
+
+
+	value_to_insert = 9;
 	tmp = size;
-	g = find_idx_and_prepare_insertion(ss, &tmp, NULL, 0, tv, size);
+	g = find_idx_and_prepare_insertion(ss, &tmp, NULL, 0, value_to_insert, size);
 	ret &= size == tmp;
 	ret &= ss[g] == NULL;
 	ret &= ss[g + 1]->value == 8;
@@ -288,9 +297,9 @@ bool test_find_innsol_idx() {
 	ret &= ss[size - 1]->value == 4;
 	ss[g] = ss[g + 1];
 
-	tv = 9;
+	value_to_insert = 9;
 	tmp = size;
-	g = find_idx_and_prepare_insertion(ss, &tmp, NULL, 0, tv, size + 1);
+	g = find_idx_and_prepare_insertion(ss, &tmp, NULL, 0, value_to_insert, size + 1);
 	ret &= tmp == size + 1;
 	ret &= ss[g] == NULL;
 	ret &= ss[g + 1]->value == 8;
@@ -310,6 +319,64 @@ bool test_find_innsol_idx() {
 	return ret;
 }
 
+bool test_innersols_equal()
+{
+	PRINT_INTRO("");
+	InnerSolution s1, s2;
+	bool ret;
+	uint32_t i, j = 2, t = 3, v = 10;
+  size_t size = 10000;
+	kp_init_inn_sol(&s1, size, j, t, v);
+	kp_init_inn_sol(&s2, size, j, t, v);
+
+  s1->recovered = true;
+  s2->recovered = true;
+
+  ret = true;
+  // Actually equals
+	for (i = 0; i < size; i++) {
+		set_inner_sol_element(s1, i, i);
+		set_inner_sol_element(s2, i, i);
+	}
+	ret &= inner_solutions_equal(s1, s2);
+	ret &= s1->last_zero == size;
+
+	// Equals
+	set_inner_sol_element(s1, size-1, 0);
+	set_inner_sol_element(s2, size-1, 0);
+	ret &= inner_solutions_equal(s1, s2);
+	ret &= s1->last_zero == size-1;
+
+	// Unrecovered
+	s1->recovered = false;
+	ret &= !inner_solutions_equal(s1, s2);
+  s1->recovered = true;
+	
+	// Differents for elements
+	set_inner_sol_element(s1, size/2, 66666);
+	ret &= !inner_solutions_equal(s1, s2);
+	set_inner_sol_element(s1, size/2, s2->sol_vector[size/2]);
+
+	// Differents for values
+	s1->value = v+1;
+	ret &= !inner_solutions_equal(s1, s2);
+	s1->value = v;
+	
+	// Different for presence
+	set_inner_sol_element(s1, size/3, 0);
+	ret &= !inner_solutions_equal(s1, s2);
+	set_inner_sol_element(s1, size/3, s2->sol_vector[size/3]);
+	
+	// Different for last zero
+	set_inner_sol_element(s1, size-2, 0);
+	ret &= !inner_solutions_equal(s1, s2);
+	ret &= s1->last_zero == size-2;
+
+	kp_free_inn_sol(s1);
+	kp_free_inn_sol(s2);
+  return ret;
+}
+
 bool test_innersol_copy() {
 	PRINT_INTRO("");
 	bool ret = true;
@@ -317,7 +384,7 @@ bool test_innersol_copy() {
 	InnerSolution s, sc;
 	kp_init_inn_sol(&s, N, j, t, v);
 	for (i = 0; i < N; i++) {
-		SET_SOL_ELEMENT(s, i, i);
+		set_inner_sol_element(s, i, i);
 	}
 	s->recovered = true;
 	kp_copy_inn_sol(&sc, s);
@@ -467,7 +534,7 @@ bool test_innersol_creation() {
 	}
 
 	for (i = 0; i < N; i++) {
-		SET_SOL_ELEMENT(s, i, i);
+		set_inner_sol_element(s, i, i);
 	}
 
 	for (i = 0; i < N; i++) {
@@ -475,7 +542,7 @@ bool test_innersol_creation() {
 		val = s->bitmap_sol_vector[i / (8 * sizeof(bitmap_t))] & 1 << (i % (8 * sizeof(bitmap_t)));
 		ret &= (i) ? val != 0 : val == 0;
 	}
-	ret &= s->last_zero == N - 1;
+	ret &= s->last_zero == N;
 
 	kp_free_inn_sol(s);
 	return ret;

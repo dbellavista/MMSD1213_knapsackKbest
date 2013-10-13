@@ -15,8 +15,8 @@
 
 #define NO_TESTS 20
 
-void print_array2(uint32_t* array, int size) {
-	uint32_t i;
+void print_array2(uint32_t* array, size_t size) {
+	size_t i;
 	printf("[ ");
 	for (i = 0; i < size; i++) {
 		printf("%u ", array[i]);
@@ -30,9 +30,15 @@ KBestSolutions singleTest(char* filename, uint32_t K, double* test_ticks,
 	clock_t ticksStart, ticksStop;
 	KProblem problem;
 	KBestSolutions solutions;
-
 	read_problem(&problem, filename);
-	//print_kproblem(problem);
+
+//  size_t i;
+//	for(i = 0; i < problem->num_var; i++) {
+//    problem->values[i] = problem->values[i] / 200 + 1;
+//  }
+//  problem->num_var = 2;
+//  problem->max_weigth = 48;
+	print_kproblem(problem);
 
 	time(&start);
 	ticksStart = clock();
@@ -55,6 +61,8 @@ void timeTest(uint32_t K, double* rAverageTick, double* rAverageTime,
 			totalTicks;
 	char filename[100];
 	uint32_t test;
+	totalTicks = 0.0;
+	totalTime = 0.0;
 	for (test = 1; test <= NO_TESTS; test++) {
 
 		sprintf(filename, "problems/test_%d.txt", test);
@@ -82,63 +90,75 @@ void timeTest(uint32_t K, double* rAverageTick, double* rAverageTime,
 	*rTotalTime = totalTime;
 }
 
-void checkForDuplicate(KBestSolutions solutions) {
-	int i;
+void check_solutions(KBestSolutions solutions) {
+	size_t i, j;
 	size_t size = solutions->problem->num_var;
+	uint32_t acc;
+
+  d_notice("Checking consistency...\n");
+  d_inc_indent();
+  for (i = 0; i < solutions->sol_count; i++) {
+    acc = 0;
+    for(j = 0; j < size; j++) {
+      acc += solutions->solutions[i]->solution_vector[j] * solutions->problem->values[j];
+    }
+    if(acc != solutions->solutions[i]->tot_value) {
+      d_error("Inconsistency! Solution %zu has value %u, should be %u\n", i, solutions->solutions[i]->tot_value, acc);
+    }
+  }
+  d_dec_indent();
+  d_notice("Consistency done!\n\n");
+
+  d_notice("Checking duplicates...\n");
+  d_inc_indent();
 	for (i = 0; i < solutions->sol_count; i++) {
 		KSolution sol1 = solutions->solutions[i];
-		int j;
 		for (j = i + 1; j < solutions->sol_count; j++) {
 			KSolution sol2 = solutions->solutions[j];
 			if (sol1->tot_value != sol2->tot_value) {
 				break;
 			}
 			if (!memcmp(sol1->solution_vector, sol2->solution_vector, size * sizeof(uint32_t))) {
-				printf("Equals [%d, %d] and [%d, %d]\n", (i+1), sol1->tot_value, (j+1),
+				d_error("Equals [%zu, %u] and [%zu, %u]\n", (i+1), sol1->tot_value, (j+1),
 						sol2->tot_value);
-				printf("\t");
-				print_array2(sol1->solution_vector, size);
-				printf("\t");
-				print_array2(sol2->solution_vector, size);
+				printf("\t\t"); print_array2(sol1->solution_vector, size);
+        printf("\t\t"); print_array2(sol2->solution_vector, size);
 			}
 		}
-
 	}
+  d_dec_indent();
+  d_notice("Duplicates done!\n\n");
 }
 
 int main(int argc, char **argv) {
 
-	double averageTick, averageTime, totalTick, totalTime;
+	double totalTick, totalTime;
 	//timeTest(2900, &averageTick, &averageTime, &totalTick, &totalTime);
 
 	char* p1 = "problems/test_1.txt";
-	char* pt = "problem.txt";
+//	char* p1 = "problem.txt";
 
 	char* filename;
 
+	set_debug_level(WARNING ^ ERROR ^ NOTICE);
 	if(argc > 1) {
-		if(!strcmp(argv[2], "d")) {
+		if(!strcmp(argv[1], "d")) {
 			set_debug_level(WARNING ^ ERROR ^ NOTICE ^ DEBUG);
-		} else {
-			set_debug_level(WARNING ^ ERROR ^ NOTICE);
 		}
 	}
 
 	if(argc > 2) {
 		filename = argv[2];
 	} else {
-		filename = pt;
+		filename = p1;
 	}
 
-	d_notice("Opening %s\n", filename);
+	d_notice("Opening and solving %s\n", filename);
 
 	KBestSolutions solutions = singleTest(filename, 2900, &totalTick, &totalTime);
-
 	print_kbest_solution(solutions);
 
-	printf("\n\nChecking for duplicates...\n");
-
-	checkForDuplicate(solutions);
+	check_solutions(solutions);
 	kp_free_kbest_sols(solutions);
 
 	return 0;

@@ -20,13 +20,15 @@ typedef unsigned long bitmap_t;
 
 
 #define BITMAP_DYNAMIC_BYTE_SIZE(sol) CEIL((sol)->dimension / 8, size_t)
-#define BITMAP_DYNAMIC_SIZE(sol) BITMAP_DYNAMIC_BYTE_SIZE(sol) / sizeof(bitmap_t)
+#define BITMAP_DYNAMIC_SIZE(sol) CEIL(BITMAP_DYNAMIC_BYTE_SIZE(sol) / sizeof(bitmap_t), size_t)
 
-#define SET_SOL_ELEMENT(iSol, var, value)\
-  iSol->sol_vector[var] = value;\
-  if(value) iSol->bitmap_sol_vector[var / (8 * sizeof(bitmap_t))] |= 1 << (var % (8 * sizeof(bitmap_t))); \
-  if (var > iSol->last_zero) iSol->last_zero = var
-
+//#define SET_SOL_ELEMENT(iSol, var, value)\
+//  iSol->sol_vector[var] = value;\
+//  if(value) iSol->bitmap_sol_vector[var / (8 * sizeof(bitmap_t))] |= 1 << (var % (8 * sizeof(bitmap_t))); \
+//  else iSol->bitmap_sol_vector[var / (8*sizeof(bitmap_t))] &= !(1<<(var % (8*sizeof(bitmap_t)))); \
+//  if (val && var > iSol->last_zero) iSol->last_zero = var;\
+//  else if(!val && var == iSol->last_zero)
+//
 struct innerSolution {
 	uint32_t* sol_vector;
 	size_t dimension;
@@ -67,15 +69,18 @@ void kp_build_initial_best_k_list(InnerSolution** ret, size_t* ret_size, int** m
 /*
  *
  */
-void kp_recover_solution(InnerSolution* solutions, size_t size, size_t K, int** matrix, KProblem problem);
+void kp_recover_solution(InnerSolution* solutions, size_t* size, size_t K, int** matrix, KProblem problem);
 
 /*
  *
  */
-void backtracking(InnerSolution* solutions, InnerSolution dest, size_t index, size_t sols_size, size_t K, int** matrix, KProblem problem);
+void backtracking(InnerSolution* solutions, InnerSolution dest, size_t index, size_t* sols_size, size_t K, int** matrix, KProblem problem);
 /*
  *
  */
-void search_alternative_solutions(size_t row_idx, size_t column_idx, uint32_t cumul_value, size_t j1, size_t index, InnerSolution* solutions, size_t sols_size, size_t K, int** matrix, KProblem problem, size_t last_var);
+void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
+    cum_val, size_t limit_var, size_t sol_index, InnerSolution auxl,
+    InnerSolution* solutions, size_t* sols_size, size_t K, int** matrix,
+    KProblem problem, size_t last_var);
 
 #endif /* KP_ALG_H_ */

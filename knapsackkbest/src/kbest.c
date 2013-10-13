@@ -9,6 +9,8 @@
 #include "kbest.h"
 #include "utility.h"
 
+KProblem static_problem;
+
 void kp_init_sol(KSolution* solution, size_t n)
 {
 	*solution = (KSolution) malloc(sizeof(struct kSolution));
@@ -78,6 +80,7 @@ void kp_solve(KBestSolutions* dest, KProblem problem, size_t best_sol_count)
 	InnerSolution* solutions;
 	size_t solutions_size;
 	int** matrix;
+	static_problem = problem;
 
 	// Matrix bxn initialization
 	allocate_matrix((void ***) &matrix, problem->max_weigth, problem->num_var,
@@ -89,7 +92,7 @@ void kp_solve(KBestSolutions* dest, KProblem problem, size_t best_sol_count)
 	kp_build_initial_best_k_list(&solutions, &solutions_size, matrix, problem,
 			best_sol_count);
 
-	kp_recover_solution(solutions, solutions_size, best_sol_count, matrix,
+	kp_recover_solution(solutions, &solutions_size, best_sol_count, matrix,
 			problem);
 
 	create_kbest_solutions_from_inner(dest, solutions, solutions_size, problem, true);

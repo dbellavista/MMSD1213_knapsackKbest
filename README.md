@@ -48,7 +48,7 @@ Example of usage from the command line. For windows it's suggested the usage of 
 
     $ cd knapsackkbest
     $ mkdir build && cd build
-    $ cmake ../CMakeList.txt -G "Unix Makefiles" -DENABLE_DEBUG_PRINTS=ON
+    $ cmake -G "Unix Makefiles" -DENABLE_DEBUG_PRINTS=ON ..
     $ make
     $ make install
 

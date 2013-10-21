@@ -74,7 +74,7 @@ void kp_recover_solution(InnerSolution* solutions, size_t* size, size_t K, int**
 /*
  *
  */
-void backtracking(InnerSolution* solutions, InnerSolution dest, size_t index, size_t* sols_size, size_t K, int** matrix, KProblem problem);
+void backtracking(InnerSolution* solutions, InnerSolution dest, size_t index, size_t* sols_size, size_t K, int** matrix, KProblem problem, bool alternative);
 /*
  *
  */

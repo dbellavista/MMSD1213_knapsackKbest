@@ -1,8 +1,10 @@
-/*
- * kp_alg.c
+/**
  *
- *  Created on: Jul 18, 2013
- *      Author: Daniele Bellavista <daniele.bellavista@studio.unibo.it>
+ * @file    kp_alg_backtrack.c
+ * @author  Daniele Bellavista (daniele.bellavista@studio.unibo.it)
+ * @date    10/21/2013 01:26:09 PM
+ * @brief   Implementation of the backtracking algorithms for solving the K-Best Knapsack problem
+ *
  */
 
 #include <stdlib.h>
@@ -10,6 +12,21 @@
 #include "kp_algorithms.h"
 #include "utility/utility.h"
 
+
+/**
+ *  @brief       Try to find a solution in \p solutions that has the same
+ *               solution vector of \p sol
+ *
+ *  @param[in]   solutions   The array of solutions to iterate.
+ *  @param[in]   sols_size   The size of \p solutions.
+ *  @param[in]   sol   The solution to search.
+ *  @param[in]   excluded The index to skip (usually the index of \p sol inside \p solutions).
+ *
+ *  @return      Returns the index of the duplicate solution if exists, -1 otherwise.
+ *
+ *  @details     A search for an alternative solution could lead to a solution
+ *               which solution vector is equals to the one of an another solution.
+ */
 ssize_t find_duplicate(InnerSolution* solutions, size_t sols_size,
     InnerSolution sol, size_t excluded);
 
@@ -37,7 +54,7 @@ ssize_t find_duplicate(InnerSolution* solutions, size_t sols_size,
 void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
     cum_val, size_t limit_var, size_t sol_index, InnerSolution auxl,
     InnerSolution* solutions, size_t* sols_size, size_t K, int** matrix,
-    KProblem problem, size_t last_var)
+    KProblem problem)
 {
 
 	ssize_t insert_idx, i;
@@ -179,7 +196,7 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
     sol_index, size_t* sols_size, size_t K, int** matrix, KProblem problem, bool alternative)
 {
 	ssize_t tmp;
-	size_t snode, var, last_var, limit_var;
+	size_t snode, var, limit_var;
 	uint32_t value, cum_val;
 
   snode = sol_dest->row_idx;
@@ -200,7 +217,6 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
 		set_inner_sol_element(sol_dest, var, sol_dest->sol_vector[var] + 1);
 
 		limit_var = sol_dest->column_idx;
-		last_var = var;
 
 		if (snode + 1 == problem->weights[var]) { // Backtrack terminated
 //			d_debug("Backtracking %d (%d): terminated with var %d\n", sol_index,
@@ -232,8 +248,7 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
     var = (size_t) tmp;
     if(alternative)
       search_alternative_solutions(snode, var, cum_val, limit_var,
-          sol_index, sol_dest, solutions, sols_size, K, matrix, problem,
-          last_var);
+          sol_index, sol_dest, solutions, sols_size, K, matrix, problem);
 
 	}
 	sol_dest->recovered = true;
@@ -259,7 +274,6 @@ void kp_recover_solution(InnerSolution* solutions, size_t* size, size_t K,
 		if (!solutions[i]->recovered) {
 
 			kp_copy_inn_sol(&auxl, solutions[i]);
-//      auxl = solutions[i];
 			backtracking(solutions, auxl, i, size, K, matrix, problem, true);
 			kp_free_inn_sol(solutions[i]);
 			solutions[i] = auxl;

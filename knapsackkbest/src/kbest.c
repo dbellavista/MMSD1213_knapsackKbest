@@ -1,16 +1,26 @@
-/*
- * kbest.c
+/**
  *
- *  Created on: Jul 17, 2013
- *      Author: Daniele Bellavista <daniele.bellavista@studio.unibo.it>
+ * @file    kbest.c
+ * @author  Daniele Bellavista (daniele.bellavista@studio.unibo.it)
+ * @date    10/21/2013 11:45:28 AM
+ * @brief   kbest.c is the implementation of the interface for solving K-Best Knapsack problems.
+ *
+ * @details
+ *
  */
-#include <stdio.h>
-#include <stdlib.h>
 #include "kbest.h"
 #include "utility/utility.h"
 #include "kp_model/kp_inner_model.h"
 #include "kp_algorithm/kp_algorithms.h"
+#include <stdio.h>
+#include <stdlib.h>
 
+
+/**
+ *  @brief          Sort the given variables of the KProblem by increasing weight.
+ *
+ *  @param[in]      problem The problem to sort
+ */
 void sort_by_weights(KProblem problem);
 
 void sort_by_weights(KProblem problem)

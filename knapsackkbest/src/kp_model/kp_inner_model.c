@@ -1,8 +1,11 @@
-/*
- * kp_alg.c
+/**
  *
- *  Created on: Jul 18, 2013
- *      Author: Daniele Bellavista <daniele.bellavista@studio.unibo.it>
+ * @file    kp_inner_model.c
+ * @author  Daniele Bellavista (daniele.bellavista@studio.unibo.it)
+ * @date    10/21/2013 12:32:05 PM
+ * @brief   Contains the model structure and utility function definition for
+ *          the model used by the internal algorithms.
+ *
  */
 
 #include <stdlib.h>

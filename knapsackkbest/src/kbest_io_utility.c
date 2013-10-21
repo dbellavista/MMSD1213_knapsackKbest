@@ -1,8 +1,10 @@
-/*
- * input.c
+/**
  *
- *  Created on: Aug 5, 2013
- *      Author: Daniele Bellavista <daniele.bellavista@studio.unibo.it>
+ * @file    kbest_io_utility.c
+ * @author  Daniele Bellavista (daniele.bellavista@studio.unibo.it)
+ * @date    10/21/2013 12:15:02 PM
+ * @brief   IO utilities for importing problems from files and printing solutions to stdout.
+ *
  */
 
 #include <string.h>
@@ -13,9 +15,19 @@
 #include "utility/debug.h"
 #include "utility/utility.h"
 
+/// Close the FILE X and return Y
 #define exit(X, Y) fclose(X); return Y;
+/// Checks if X is equals to Y. If not, exit with status code Z
 #define check(X, Y, Z) if (X != Y) { d_error("Error reading from file\n"); exit(Z, false); }
 
+
+/**
+ *  @brief          Prints an array to stdout
+ *
+ *  @param[in]      array The array to print
+ *  @param[in]     size The array size
+ *
+ */
 void print_array(uint32_t* array, size_t size);
 
 void print_array(uint32_t* array, size_t size) {

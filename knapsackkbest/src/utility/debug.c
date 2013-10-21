@@ -1,16 +1,28 @@
-/*
- * debug.c
+/**
  *
- *  Created on: Jul 28, 2013
- *      Author: Daniele Bellavista <daniele.bellavista@studio.unibo.it>
+ * @file    debug.c
+ * @author  Daniele Bellavista (daniele.bellavista@studio.unibo.it)
+ * @date    10/21/2013 03:28:37 PM
+ * @brief   Debug print utilities
+ *
  */
 
 #include <stdarg.h>
 #include <stdio.h>
 #include "debug.h"
 
+/// Current debug level
 static unsigned int debug_level = NOTICE ^ WARNING ^ ERROR ^ DEBUG;
+/// Global indentation level
 static int indent = 0;
+
+
+/**
+ *  @brief          Print the \ref indent indentations
+ *
+ *  @param[in]   stream   The stream where to print
+ */
+void printIndent(FILE* stream);
 
 void printIndent(FILE* stream) {
 	int i;

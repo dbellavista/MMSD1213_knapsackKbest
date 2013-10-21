@@ -1,8 +1,10 @@
-/*
- * kp_alg.c
+/**
  *
- *  Created on: Jul 18, 2013
- *      Author: Daniele Bellavista <daniele.bellavista@studio.unibo.it>
+ * @file    kp_alg_forward.c
+ * @author  Daniele Bellavista (daniele.bellavista@studio.unibo.it)
+ * @date    10/21/2013 01:26:09 PM
+ * @brief   Implementation of the forward algorithms for solving the K-Best Knapsack problem
+ *
  */
 
 #include <stdlib.h>

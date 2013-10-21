@@ -9,12 +9,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include "utility.h"
-#include "io_utility.h"
-#include "debug.h"
+#include "kbest_io_utility.h"
+#include "utility/debug.h"
+#include "utility/utility.h"
 
 #define exit(X, Y) fclose(X); return Y;
 #define check(X, Y, Z) if (X != Y) { d_error("Error reading from file\n"); exit(Z, false); }
+
+void print_array(uint32_t* array, size_t size);
 
 void print_array(uint32_t* array, size_t size) {
 	uint32_t i;

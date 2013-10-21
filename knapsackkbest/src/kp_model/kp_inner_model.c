@@ -1,13 +1,52 @@
 /*
- * utility.c
+ * kp_alg.c
  *
- *  Created on: Jul 17, 2013
+ *  Created on: Jul 18, 2013
  *      Author: Daniele Bellavista <daniele.bellavista@studio.unibo.it>
  */
 
 #include <stdlib.h>
 #include <string.h>
-#include "utility.h"
+#include "kp_inner_model.h"
+#include "utility/utility.h"
+
+void kp_init_inn_sol(InnerSolution* iSol, size_t n, size_t j, size_t t,
+    uint32_t v)
+{
+	*iSol = (InnerSolution) malloc(sizeof(struct innerSolution));
+	(*iSol)->dimension = n;
+	(*iSol)->column_idx = j;
+	(*iSol)->row_idx = t;
+	(*iSol)->value = v;
+	(*iSol)->recovered = false;
+	// Sets the value to 0
+	(*iSol)->sol_vector = (uint32_t*) calloc(n, sizeof(uint32_t));
+
+	(*iSol)->last_zero = 0;
+	(*iSol)->bitmap_sol_vector = (bitmap_t*) calloc(BITMAP_DYNAMIC_BYTE_SIZE(*iSol), sizeof(char));
+}
+
+void kp_free_inn_sol(InnerSolution innerSol)
+{
+	free(innerSol->sol_vector);
+	innerSol->sol_vector = NULL;
+	free(innerSol->bitmap_sol_vector);
+	innerSol->bitmap_sol_vector = NULL;
+	free(innerSol);
+}
+
+void kp_copy_inn_sol(InnerSolution* dest, InnerSolution origin)
+{
+	uint32_t i;
+	kp_init_inn_sol(dest, origin->dimension, origin->column_idx,
+			origin->row_idx, origin->value);
+	(*dest)->recovered = origin->recovered;
+	for (i = 0; i < origin->dimension; i++) {
+		(*dest)->sol_vector[i] = origin->sol_vector[i];
+	}
+	(*dest)->last_zero = origin->last_zero;
+  memcpy((*dest)->bitmap_sol_vector, origin->bitmap_sol_vector, BITMAP_DYNAMIC_BYTE_SIZE(origin));
+}
 
 void set_inner_sol_element(InnerSolution isol, size_t var, uint32_t value)
 {
@@ -149,17 +188,6 @@ ssize_t find_idx_and_prepare_insertion(InnerSolution* sol_list, size_t*
 	return idx;
 }
 
-ssize_t find_idx(int* vector, size_t fin, int value)
-{
-	uint32_t i;
-	for (i = 0; i <= fin; i++) {
-		if (vector[i] == value) {
-			return i;
-		}
-	}
-	return -1;
-}
-
 void join_inner_solutions(InnerSolution* dest, InnerSolution* sol1,
 		InnerSolution* sol2, size_t count1, size_t count2, size_t K,
 		bool free_garbage)
@@ -205,44 +233,6 @@ void sort_by_values_non_inc(InnerSolution* sol, uint32_t count)
 			}
 		}
 	}
-}
-
-void sort_by_weights(KProblem problem)
-{
-
-	byte done = 0;
-	uint32_t i, tmp;
-	while (!done) {
-		done = 1;
-		for (i = 0; i < problem->num_var - 1; i++) {
-			if (problem->weights[i] > problem->weights[i + 1]) {
-				done = 0;
-				tmp = problem->weights[i];
-				problem->weights[i] = problem->weights[i + 1];
-				problem->weights[i + 1] = tmp;
-				tmp = problem->values[i];
-				problem->values[i] = problem->values[i + 1];
-				problem->values[i + 1] = tmp;
-			}
-		}
-	}
-
-}
-
-void allocate_matrix(void*** matrix, uint32_t n_row, uint32_t n_cols, uint32_t size)
-{
-	(*matrix) = (void**) malloc(n_row * sizeof(void*));
-	void* vals = (void*) malloc(n_row * n_cols * size);
-	uint32_t i;
-	for (i = 0; i < n_row; i++) {
-		(*(char***)matrix)[i] = &(((char*)vals)[i * n_cols * size]);
-	}
-}
-
-void free_matrix(void** matrix)
-{
-	free(matrix[0]);
-	free(matrix);
 }
 
 void print_inner_solution(InnerSolution sol)

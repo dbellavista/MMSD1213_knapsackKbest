@@ -11,7 +11,9 @@
 #ifndef KBEST_H_
 #define KBEST_H_
 
-#include "data.h"
+#include <stdint.h>
+#include <stdio.h>
+#include <stdbool.h>
 
 struct kProblem {
 	size_t num_var;

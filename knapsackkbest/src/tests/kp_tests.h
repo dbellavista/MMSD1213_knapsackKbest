@@ -10,7 +10,9 @@
 
 #include <stdio.h>
 #include "test_suite.h"
-#include "data.h"
+#include "utility/data.h"
+#include "kp_model/kp_inner_model.h"
+#include "kp_algorithm/kp_algorithms.h"
 
 void do_kp_tests();
 bool test_input_file();

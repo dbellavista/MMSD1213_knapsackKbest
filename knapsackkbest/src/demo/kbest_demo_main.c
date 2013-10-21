@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "io_utility.h"
-#include "debug.h"
+#include "kbest_io_utility.h"
+#include "utility/debug.h"
 #include "kbest.h"
 
 #define NO_TESTS 20

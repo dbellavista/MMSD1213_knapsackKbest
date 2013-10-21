@@ -1,5 +1,7 @@
 include/
 build/
 bin/
+lib/
+callgrind/
 .ycm_extra_conf.py*
 *.swp

@@ -8,7 +8,7 @@
 #ifndef TEST_SUITE_H_
 #define TEST_SUITE_H_
 
-#include "data.h"
+#include "utility/data.h"
 
 #define CNRM  "\x1B[0m"
 #define CRED  "\x1B[31m"

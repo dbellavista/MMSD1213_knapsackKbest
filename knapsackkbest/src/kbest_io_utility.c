@@ -11,8 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <stdarg.h>
 #include "kbest_io_utility.h"
-#include "utility/debug.h"
 #include "utility/utility.h"
 
 /// Close the FILE X and return Y
@@ -20,6 +20,17 @@
 /// Checks if X is equals to Y. If not, exit with status code Z
 #define check(X, Y, Z) if (X != Y) { d_error("Error reading from file\n"); exit(Z, false); }
 
+/// Current debug level
+static unsigned int debug_level = NOTICE ^ WARNING ^ ERROR ^ DEBUG;
+/// Global indentation level
+static int indent = 0;
+
+/**
+ *  @brief          Print the \ref indent indentations
+ *
+ *  @param[in]   stream   The stream where to print
+ */
+void printIndent(FILE* stream);
 
 /**
  *  @brief          Prints an array to stdout
@@ -37,6 +48,13 @@ void print_array(uint32_t* array, size_t size) {
 		printf("%u ", array[i]);
 	}
 	printf("]\n");
+}
+
+void printIndent(FILE* stream) {
+	int i;
+	for(i = 0; i < indent; i++) {
+		fprintf(stream, "\t");
+	}
 }
 
 void print_kproblem(KProblem problem) {
@@ -100,4 +118,61 @@ bool read_problem(KProblem* dest, char* file) {
 	kp_init_kp(dest, N, weights, values, W);
 
 	exit(fp, true);
+}
+
+void set_debug_level(unsigned int debug) {
+	debug_level = debug;
+}
+
+void d_notice(char* format, ...) {
+	if (debug_level & NOTICE) {
+		va_list argptr;
+		va_start(argptr, format);
+		printIndent(stdout);
+		fprintf(stdout, "- NOTICE: ");
+		vfprintf(stdout, format, argptr);
+		va_end(argptr);
+	}
+}
+
+void d_warning(char* format, ...) {
+	if (debug_level & WARNING) {
+		va_list argptr;
+		va_start(argptr, format);
+		printIndent(stdout);
+		fprintf(stdout, "+ WARNING: ");
+		vfprintf(stdout, format, argptr);
+		va_end(argptr);
+	}
+}
+
+void d_error(char* format, ...) {
+	if (debug_level & ERROR) {
+		va_list argptr;
+		va_start(argptr, format);
+		printIndent(stdout);
+		fprintf(stdout, "* ERROR: ");
+		vfprintf(stdout, format, argptr);
+		va_end(argptr);
+	}
+}
+
+void d_debug(char* format, ...) {
+	if (debug_level & DEBUG) {
+		va_list argptr;
+		va_start(argptr, format);
+		printIndent(stdout);
+		fprintf(stdout, "^ DEBUG: ");
+		vfprintf(stdout, format, argptr);
+		va_end(argptr);
+	}
+}
+
+void d_inc_indent() {
+	indent++;
+}
+void d_dec_indent() {
+	if (indent) {
+		indent--;
+	}
 }

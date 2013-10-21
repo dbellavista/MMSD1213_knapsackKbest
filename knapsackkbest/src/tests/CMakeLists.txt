@@ -5,7 +5,7 @@
 #:Date: 2013-08-31 11:21
 
 ADD_EXECUTABLE(test_kbest kp_tests.c test_main.c test_suite.c
-  ../utility/debug.c ../kbest_io_utility.c ../kbest.c
+  ../kbest_io_utility.c ../kbest.c
   ../kp_algorithm/kp_alg_forward.c ../kp_algorithm/kp_alg_backtrack.c
   ../kp_model/kp_inner_model.c ../utility/utility.c)
 

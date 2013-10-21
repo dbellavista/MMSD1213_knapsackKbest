@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "kbest_io_utility.h"
-#include "utility/debug.h"
 #include "kbest.h"
 
 #define NO_TESTS 20

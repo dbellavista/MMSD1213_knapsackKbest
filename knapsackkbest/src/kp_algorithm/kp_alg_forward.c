@@ -8,7 +8,7 @@
  */
 
 #include <stdlib.h>
-#include "utility/debug.h"
+#include "kbest_io_utility.h"
 #include "kp_algorithms.h"
 #include "utility/utility.h"
 

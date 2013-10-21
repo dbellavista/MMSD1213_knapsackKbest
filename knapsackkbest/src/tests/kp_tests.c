@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include "kp_tests.h"
 #include "utility/utility.h"
-#include "utility/debug.h"
+#include "kbest_io_utility.h"
 #include "kbest_io_utility.h"
 #define N 10
 

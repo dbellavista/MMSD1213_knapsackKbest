@@ -8,10 +8,10 @@
  */
 
 #include <stdlib.h>
-#include "utility/debug.h"
+#include "kbest_io_utility.h"
 #include "kp_algorithms.h"
 #include "utility/utility.h"
-
+#include "KBestConfig.h"
 
 /**
  *  @brief       Try to find a solution in \p solutions that has the same
@@ -62,47 +62,59 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
   uint32_t newvalue;
 	InnerSolution auxl1, removed;
 
-//	d_inc_indent();
+#ifdef ENABLE_DEBUG_PRINTS
+  d_inc_indent();
+#endif
 
   // From the current node, trying to find an alternative solution by adding
   // different (feasible) variables
   var = limit_var;
 	for(var = limit_var; var + 1 != 0; var--) {
-//		d_debug(
-//				"Alternatives %d (%d): Start: (%d, %d). Limit: %d. Trying position (%d, %d) -> value: %d\n",
-//				sol_index, solutions[sol_index]->value, snode, cur_var,
-//				limit_var, snode, var, matrix[snode][var]);
+#ifdef ENABLE_DEBUG_PRINTS
+    d_debug(
+        "Alternatives %d (%d): Start: (%d, %d). Limit: %d. Trying position (%d, %d) -> value: %d\n",
+        sol_index, solutions[sol_index]->value, snode, cur_var,
+        limit_var, snode, var, matrix[snode][var]);
+#endif
 
 		if (var == cur_var || matrix[snode][var] < 0) {
-//			d_debug(
-//					"Alternatives %d (%d): Start: (%d, %d). Skipping position (%d, %d)\n",
-//					sol_index, solutions[sol_index]->value, snode, cur_var,
-//					snode, var);
+#ifdef ENABLE_DEBUG_PRINTS
+      d_debug(
+          "Alternatives %d (%d): Start: (%d, %d). Skipping position (%d, %d)\n",
+          sol_index, solutions[sol_index]->value, snode, cur_var,
+          snode, var);
+#endif
 			continue;
 		}
 
 		newvalue = matrix[snode][var] + cum_val;
 		if (newvalue < solutions[*sols_size - 1]->value) {
-//			d_debug(
-//					"Alternatives %d (%d): Start: (%d, %d). Skipping position (%d, %d) (value %d ok but not worth).\n",
-//					sol_index, solutions[sol_index]->value, snode, cur_var,
-//					snode, var, newvalue);
+#ifdef ENABLE_DEBUG_PRINTS
+      d_debug(
+          "alternatives %d (%d): start: (%d, %d). skipping position (%d, %d) (value %d ok but not worth).\n",
+          sol_index, solutions[sol_index]->value, snode, cur_var,
+          snode, var, newvalue);
+#endif
 			continue;
 		}
 		// Newvalue is worth to be backtracked!
 		
-//		d_debug(
-//				"Alternatives %d (%d): new solution from position (%d, %d): %d by adding cum value %d to %d\n",
-//				sol_index, solutions[sol_index]->value, snode, var, newvalue,
-//				cum_val, matrix[snode][var]);
+#ifdef ENABLE_DEBUG_PRINTS
+    d_debug(
+        "Alternatives %d (%d): new solution from position (%d, %d): %d by adding cum value %d to %d\n",
+        sol_index, solutions[sol_index]->value, snode, var, newvalue,
+        cum_val, matrix[snode][var]);
+#endif
 
     // Find a suitable position for the solution insertion
 		insert_idx = find_idx_and_prepare_insertion(solutions, sols_size, &removed, sol_index,
 				newvalue, K);
 		if (insert_idx == -1) { // Already have K solutions better than the new value
-//			d_debug(
-//					"Alternatives %d (%d): new solution %d not inserted, value equals to last solution and solution vector full.\n",
-//					sol_index, solutions[sol_index]->value, newvalue);
+#ifdef ENABLE_DEBUG_PRINTS
+      d_debug(
+          "Alternatives %d (%d): new solution %d not inserted, value equals to last solution and solution vector full.\n",
+          sol_index, solutions[sol_index]->value, newvalue);
+#endif
 			continue;
 		}
 		kp_init_inn_sol(&solutions[insert_idx], problem->num_var,
@@ -112,9 +124,11 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 		kp_init_inn_sol(&auxl1, problem->num_var, var, snode,
 				matrix[snode][var]);
 
-//		d_debug(
-//				"Alternatives %d (%d): inserting the new solution (%d) in position %d. Now Backtraking\n",
-//				sol_index, solutions[sol_index]->value, newvalue, insert_idx);
+#ifdef ENABLE_DEBUG_PRINTS
+    d_debug(
+        "alternatives %d (%d): inserting the new solution (%d) in position %d. now backtraking\n",
+        sol_index, solutions[sol_index]->value, newvalue, insert_idx);
+#endif
 		// Backtrack the new value in order to fill the solution vector
 		backtracking(solutions, auxl1, insert_idx, sols_size, K, matrix,
 				problem, false);
@@ -129,9 +143,11 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
     i = find_duplicate(solutions, *sols_size, solutions[insert_idx], insert_idx);
 
     if(i >= 0) {
-//      d_debug(
-//          "Alternatives %d. New solution [%zu %u] is a duplicate of solution [%zu %u].\n",
-//          sol_index, insert_idx, solutions[insert_idx]->value, i, solutions[i]->value);
+#ifdef ENABLE_DEBUG_PRINTS
+      d_debug(
+          "Alternatives %d. New solution [%zu %u] is a duplicate of solution [%zu %u].\n",
+          sol_index, insert_idx, solutions[insert_idx]->value, i, solutions[i]->value);
+#endif
 
       // removing the solution and inserting the old one
       kp_free_inn_sol(solutions[insert_idx]);
@@ -145,13 +161,17 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
         insert_idx = find_idx_and_prepare_insertion(solutions, sols_size, NULL,
             insert_idx - 1, removed->value, K);
         if(insert_idx == -1) {
-//          d_debug(
-//              "Alternatives %d. Removed value no longer worth of insertion (%d)!\n",
-//              sol_index, removed->value);
+#ifdef ENABLE_DEBUG_PRINTS
+          d_debug(
+              "Alternatives %d. Removed value no longer worth of insertion (%d)!\n",
+              sol_index, removed->value);
+#endif
         } else {
-//          d_debug(
-//              "Alternatives %d. Restoring previously removed value (%d)!\n",
-//              sol_index, removed->value);
+#ifdef ENABLE_DEBUG_PRINTS
+          d_debug(
+              "Alternatives %d. Restoring previously removed value (%d)!\n",
+              sol_index, removed->value);
+#endif
           solutions[insert_idx] = removed;
           removed = NULL;
         }
@@ -164,14 +184,18 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 		if (auxl1->value >= solutions[*sols_size - 1]->value) {
 		  // TODO: check if this is right
 		  auxl1->recovered = 1;
-//			d_debug(
-//					"Alternatives %d. Partial solution in (%d, %d) is better than last value (%d >= %d)\n",
-//					sol_index, snode, cur_var, auxl1->value, solutions[*sols_size - 1]->value);
+#ifdef ENABLE_DEBUG_PRINTS
+      d_debug(
+          "alternatives %d. partial solution in (%d, %d) is better than last value (%d >= %d)\n",
+          sol_index, snode, cur_var, auxl1->value, solutions[*sols_size - 1]->value);
+#endif
 
 			if(find_duplicate(solutions, *sols_size, auxl1, -1)) {
-//        d_debug(
-//            "Alternatives %d. Partial solution in (%d, %d) is already present!\n",
-//            sol_index, snode, cur_var);
+#ifdef ENABLE_DEBUG_PRINTS
+        d_debug(
+            "Alternatives %d. Partial solution in (%d, %d) is already present!\n",
+            sol_index, snode, cur_var);
+#endif
       } else {
         insert_idx = find_idx_and_prepare_insertion(solutions, sols_size, NULL,
             insert_idx, matrix[snode][var], K);
@@ -189,7 +213,9 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
       kp_free_inn_sol(auxl1);
 	}
 
-//	d_dec_indent();
+#ifdef ENABLE_DEBUG_PRINTS
+  d_dec_indent();
+#endif
 }
 
 void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
@@ -203,9 +229,13 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
   var = sol_dest->column_idx;
   value = sol_dest->value;
 
-//	d_inc_indent();
-//	d_debug("Backtracking %d (%d): [%d in (%d, %d)]\n", sol_index,
-//			solutions[sol_index]->value, value, snode, var);
+#ifdef ENABLE_DEBUG_PRINTS
+  d_inc_indent();
+#endif
+#ifdef ENABLE_DEBUG_PRINTS
+  d_debug("Backtracking %d (%d): [%d in (%d, %d)]\n", sol_index,
+      solutions[sol_index]->value, value, snode, var);
+#endif
 
 	cum_val = 0;
 	// Starting from the solution supernode, removes the current variable
@@ -219,8 +249,10 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
 		limit_var = sol_dest->column_idx;
 
 		if (snode + 1 == problem->weights[var]) { // Backtrack terminated
-//			d_debug("Backtracking %d (%d): terminated with var %d\n", sol_index,
-//					solutions[sol_index]->value, var);
+#ifdef ENABLE_DEBUG_PRINTS
+      d_debug("Backtracking %d (%d): terminated with var %d\n", sol_index,
+          solutions[sol_index]->value, var);
+#endif
 			break;
 		} else if(snode < problem->weights[var]) { // Algorithm error
 			d_error("Error while backtracking %d (%d): terminated with var %d\n", sol_index,
@@ -238,12 +270,14 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
 			continue;
 		}
 
-//    d_debug("Backtracking %d (%d): "
-//            "Found [%d in (%d, %d)] by subtracting var %d "
-//            "(w:%d, v:%d), cum_val: %d, limit: %d\n",
-//        sol_index, solutions[sol_index]->value, value, snode, tmp,
-//        var, problem->weights[var], problem->values[var], cum_val,
-//        limit_var);
+#ifdef ENABLE_DEBUG_PRINTS
+    d_debug("Backtracking %d (%d): "
+            "Found [%d in (%d, %d)] by subtracting var %d "
+            "(w:%d, v:%d), cum_val: %d, limit: %d\n",
+        sol_index, solutions[sol_index]->value, value, snode, tmp,
+        var, problem->weights[var], problem->values[var], cum_val,
+        limit_var);
+#endif
 
     var = (size_t) tmp;
     if(alternative)
@@ -263,9 +297,11 @@ void kp_recover_solution(InnerSolution* solutions, size_t* size, size_t K,
 	uint32_t i, steps = (*size) / 100 + 1;
 	// For each solution, backtrack
 	for (i = 0; i < *size; i++) {
-//		d_debug("Recovering for solution %d [%d in (%d, %d)]\n", i,
-//				solutions[i]->value, solutions[i]->row_idx,
-//				solutions[i]->column_idx);
+#ifdef ENABLE_DEBUG_PRINTS
+    d_debug("recovering for solution %d [%d in (%d, %d)]\n", i,
+        solutions[i]->value, solutions[i]->row_idx,
+        solutions[i]->column_idx);
+#endif
 
 		if(i % steps == 0) {
       d_notice("Recovering for solution %d of %d\n", i + 1, *size);

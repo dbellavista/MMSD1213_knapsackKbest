@@ -1,0 +1,3 @@
+/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/CMakeFiles/kbest.dir
+/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/demo/CMakeFiles/kbest_demo.dir
+/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/tests/CMakeFiles/test_kbest.dir

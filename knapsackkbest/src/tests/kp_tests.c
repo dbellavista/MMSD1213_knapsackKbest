@@ -12,8 +12,6 @@
 #include "io_utility.h"
 #define N 10
 
-extern KProblem static_problem;
-
 bool problems_equal(KProblem p1, KProblem p2);
 bool matrices_equal(int** m1, int** m2, uint32_t nrow, uint32_t ncols);
 
@@ -55,7 +53,6 @@ void set_up() {
 	}
 
 	kp_init_kp(&test_problem, TEST_N, test_weights, test_values, TEST_MAXW);
-	static_problem = test_problem;
 }
 
 void tear_down() {

@@ -10,8 +10,6 @@
 #include "kp_alg.h"
 #include "utility.h"
 
-extern KProblem static_problem;
-
 ssize_t find_duplicate(InnerSolution* solutions, size_t sols_size,
     InnerSolution sol, size_t excluded);
 

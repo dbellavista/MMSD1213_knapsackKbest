@@ -175,10 +175,10 @@ void showitems(item *f, item *l, stype c)
   stype ps, ws;
   FILE *out;
 
-  out = fopen("test.in", "w");
+  out = stdout; // fopen("test.in", "w");
   if (out == NULL) error("no file");
   fprintf(out,"%d\n", NO(f,l));
-  fprintf(out,"%d\n", c);
+  fprintf(out,"%ld\n", c);
   for (i = f; i <= l; i++) {
     fprintf(out, "%5d %5d\n", i->p, i->w);
   }

@@ -162,13 +162,14 @@ void sort_by_values_non_inc(InnerSolution* sol, uint32_t count);
  *
  *  @param[in]   sol_list   The sorted array of InnerSolution to iterate
  *  @param[in]   sols_size   The size of sol_list
+ *  @param[in]   size_max   The maximum size allowed
  *  @param[in]   lower_limit_idx   The exclusive start index (-1 for searching from the beginning).
  *  @param[in]   value  The value to be inserted
  *
  *  @return      The index where the element should be inserted, or -1 if the insertion is not possible.
  */
-ssize_t find_idx_insertion(InnerSolution* sol_list, size_t sols_size, ssize_t
-    lower_limit_idx, uint32_t value);
+ssize_t find_idx_insertion(InnerSolution* sol_list, size_t sols_size, size_t
+    size_max, ssize_t lower_limit_idx, uint32_t value);
 
 
 /**

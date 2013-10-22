@@ -81,7 +81,7 @@ bool test_input_file() {
 	uint32_t i;
 
 	KProblem problem;
-	ret &= read_problem(&problem, "test.txt");
+	ret &= read_problem(&problem, "problems/test.txt");
 	if(!problem) {
     return ret;
   }
@@ -144,28 +144,37 @@ bool test_kp_algorithm() {
 	InnerSolution* listSol;
 
 	ret = true;
+
+	printf("Forward enumeration:\n");
 	allocate_matrix((void ***) &matrix, test_problem->max_weigth,
 			test_problem->num_var, sizeof(uint32_t));
 	kp_forward_enumeration(matrix, test_problem);
-	printf("Starting checks...\n");
 
 	matrix2 = (int**) malloc(TEST_MAXW * sizeof(int *));
 	for (i = 0; i < TEST_MAXW; i++) {
 		matrix2[i] = target_matrix_forward[i];
 	}
 	ret = matrices_equal(matrix, matrix2, TEST_MAXW, TEST_N);
+	printf("\tres: %d\n", ret);
 
 	printf("Initial K solutions.\n");
 	kp_build_initial_best_k_list(&listSol, &size, matrix, test_problem, TEST_K);
-	ret &= size == TEST_K;
-	printf("Starting checks...\n");
+	tmp = size == TEST_K;
+  if(!tmp) {
+    printf("\tSize differs! Expected %u is %zu\n", TEST_K, size);
+    ret = false;
+  }
 	for (i = 0; i < size; i++) {
-		ret &= listSol[i]->value == test_initial_sol[i];
+		tmp = listSol[i]->value == test_initial_sol[i];
+		if(!tmp) {
+      printf("\tSolution %u expected %u is %u\n", i, test_initial_sol[i], listSol[i]->value);
+      ret = false;
+    }
 	}
+	printf("\tres: %d\n", ret);
 
 	printf("Recover solutions.\n");
 	kp_recover_solution(listSol, &size, TEST_K, matrix, test_problem);
-	printf("Starting checks...\n");
 	tmp = size == TEST_K;
 	if(!tmp) {
     printf("\tNumber of solutions is %d, expected %d\n", tmp, TEST_K);
@@ -263,25 +272,34 @@ bool test_find_innsol_idx() {
 	}
 	sort_by_values_non_inc(ss, size);
 
+  // [60 58 56 54 52 50 ... 4 2]
 	value_to_insert = 9;
-	g = find_idx_insertion(ss, size, -1, value_to_insert);
+	g = find_idx_insertion(ss, size, size, -1, value_to_insert);
 	ret &= ss[g]->value == 8;
 
 	value_to_insert = 3;
-	g = find_idx_insertion(ss, size, -1, value_to_insert);
+	g = find_idx_insertion(ss, size, size, -1, value_to_insert);
 	ret &= ss[g]->value == 2;
 
 	value_to_insert = 0;
-	g = find_idx_insertion(ss, size, -1, value_to_insert);
+	g = find_idx_insertion(ss, size, size, -1, value_to_insert);
 	ret &= g == -1;
 
+	value_to_insert = 0;
+	g = find_idx_insertion(ss, size, size + 1, -1, value_to_insert);
+	ret &= (g >= 0) && (size_t) g == size;
+	ret &= ss[g - 1]->value == 2;
+
+	printf("%d\n", ret);
 	value_to_insert = 1000;
-	g = find_idx_insertion(ss, size, -1, value_to_insert);
+	g = find_idx_insertion(ss, size, size, -1, value_to_insert);
 	ret &= g == 0;
+	printf("%d %zd\n", ret, g);
 
 	value_to_insert = 1000;
-	g = find_idx_insertion(ss, size, 0, value_to_insert);
+	g = find_idx_insertion(ss, size, size, 0, value_to_insert);
 	ret &= g == -1;
+	printf("%d\n", ret);
 
 
 	value_to_insert = 9;
@@ -294,6 +312,7 @@ bool test_find_innsol_idx() {
 	ret &= ss[size - 1]->value == 4;
 	ss[g] = ss[g + 1];
 
+	printf("%d\n", ret);
 	value_to_insert = 9;
 	tmp = size;
 	g = find_idx_and_prepare_insertion(ss, &tmp, NULL, 0, value_to_insert, size + 1);
@@ -303,6 +322,7 @@ bool test_find_innsol_idx() {
 	ret &= ss[g - 1]->value == 10;
 	ret &= ss[size]->value == 4;
 
+	printf("%d\n", ret);
 	for (i = 0; i < size + 1; i++) {
 		if (ss[i] != NULL) {
 			kp_free_inn_sol(ss[i]);

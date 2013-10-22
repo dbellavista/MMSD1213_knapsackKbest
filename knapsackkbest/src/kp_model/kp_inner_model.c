@@ -127,47 +127,55 @@ void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 	}
 }
 
-ssize_t find_idx_insertion(InnerSolution* sol_list, size_t sols_size, ssize_t
-    lower_limit_idx, uint32_t value)
+ssize_t find_idx_insertion(InnerSolution* sol_list, size_t sols_size, size_t
+    size_max, ssize_t lower_limit_idx, uint32_t value)
 {
-	size_t middle;
-	size_t lower = lower_limit_idx + 1;
-	size_t upper = sols_size - 1;
+	size_t middle, lower, upper;
+	bool exit;
+
+	if(sols_size == 0) {
+    return (size_max > 0) ? 0 : -1;
+  }
 
   if(lower_limit_idx >= 0 && sol_list[lower_limit_idx]->value < value) {
 		return -1;
 	}
 
-	while (true) {
+	lower = lower_limit_idx + 1;
+	upper = sols_size - 1;
+
+  exit = false;
+	while (!exit) {
+		exit = lower == upper;
 		middle = (lower + upper) / 2;
 		if (sol_list[middle]->value >= value) {
-			if (middle + 1 == sols_size || sol_list[middle + 1]->value < value) {
+			if (middle + 1 == sols_size) {
+        return (sols_size < size_max) ? middle + 1 : -1;
+      } else if(sol_list[middle + 1]->value < value) {
 				return middle + 1;
-			} else if (lower != middle) {
-				lower = middle;
 			} else {
-				return -1;
+				lower = middle + 1;
 			}
 		} else if (sol_list[middle]->value < value) {
 			if (middle == 0 || sol_list[middle - 1]->value >= value) {
 				return middle;
-			} else if (middle != upper) {
-				upper = middle;
 			} else {
-				return -1;
+				upper = middle - 1;
 			}
 		}
 	}
+	return -1;
 }
 
 ssize_t find_idx_and_prepare_insertion(InnerSolution* sol_list, size_t*
     sols_size, InnerSolution* removed, ssize_t lower_limit_idx, uint32_t value, size_t K)
 {
-	uint32_t i;
-	ssize_t idx = find_idx_insertion(sol_list, *sols_size, lower_limit_idx, value);
+	ssize_t i;
+	ssize_t idx;
+	idx = find_idx_insertion(sol_list, *sols_size, K, lower_limit_idx, value);
 
 	if (idx == -1) {
-		return -1;
+		return idx;
 	}
 
 	if (*sols_size == K) {

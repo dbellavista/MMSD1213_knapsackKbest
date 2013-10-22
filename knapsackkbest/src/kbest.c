@@ -127,4 +127,6 @@ void kp_solve(KBestSolutions* dest, KProblem problem, size_t best_sol_count)
 			problem);
 
 	create_kbest_solutions_from_inner(dest, solutions, solutions_size, problem, true);
+
+	free_matrix((void**) matrix);
 }

@@ -23,10 +23,8 @@ typedef unsigned long long bitmap_t;
 typedef unsigned long bitmap_t;
 #endif
 
-/// Returns the size in byts of InnerSolution.bitmap_sol_vector
-#define BITMAP_DYNAMIC_BYTE_SIZE(sol) CEIL((sol)->dimension / 8, size_t)
 /// Returns the size in bitmap_t of InnerSolution.bitmap_sol_vector
-#define BITMAP_DYNAMIC_SIZE(sol) CEIL(BITMAP_DYNAMIC_BYTE_SIZE(sol) / sizeof(bitmap_t), size_t)
+#define BITMAP_DYNAMIC_SIZE(sol) CEIL((sol)->dimension / 8 / sizeof(bitmap_t), size_t)
 
 /// An internal, potentially uncompleted solution. Used during the forward and
 /// backtracking phases.

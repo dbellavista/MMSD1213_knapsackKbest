@@ -117,6 +117,9 @@ bool read_problem(KProblem* dest, char* file) {
 	d_debug("Problem read\n\n");
 	kp_init_kp(dest, N, weights, values, W);
 
+	free(weights);
+	free(values);
+
 	exit(fp, true);
 }
 

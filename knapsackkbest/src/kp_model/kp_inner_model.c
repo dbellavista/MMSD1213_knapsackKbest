@@ -26,7 +26,7 @@ void kp_init_inn_sol(InnerSolution* iSol, size_t n, size_t j, size_t t,
 	(*iSol)->sol_vector = (uint32_t*) calloc(n, sizeof(uint32_t));
 
 	(*iSol)->last_zero = 0;
-	(*iSol)->bitmap_sol_vector = (bitmap_t*) calloc(BITMAP_DYNAMIC_BYTE_SIZE(*iSol), sizeof(char));
+	(*iSol)->bitmap_sol_vector = (bitmap_t*) calloc(BITMAP_DYNAMIC_SIZE(*iSol), sizeof(bitmap_t));
 }
 
 void kp_free_inn_sol(InnerSolution innerSol)
@@ -48,7 +48,7 @@ void kp_copy_inn_sol(InnerSolution* dest, InnerSolution origin)
 		(*dest)->sol_vector[i] = origin->sol_vector[i];
 	}
 	(*dest)->last_zero = origin->last_zero;
-  memcpy((*dest)->bitmap_sol_vector, origin->bitmap_sol_vector, BITMAP_DYNAMIC_BYTE_SIZE(origin));
+  memcpy((*dest)->bitmap_sol_vector, origin->bitmap_sol_vector, BITMAP_DYNAMIC_SIZE(origin) * sizeof(bitmap_t));
 }
 
 void set_inner_sol_element(InnerSolution isol, size_t var, uint32_t value)
@@ -83,7 +83,7 @@ bool inner_solutions_equal(InnerSolution sol1, InnerSolution sol2)
   if(sol1->last_zero != sol2->last_zero) {
     return false;
   }
-  if(memcmp(sol1->bitmap_sol_vector, sol2->bitmap_sol_vector, BITMAP_DYNAMIC_BYTE_SIZE(sol1))) {
+  if(memcmp(sol1->bitmap_sol_vector, sol2->bitmap_sol_vector, BITMAP_DYNAMIC_SIZE(sol1) * sizeof(bitmap_t))) {
     return false;
   }
   if(memcmp(sol1->sol_vector, sol2->sol_vector, sol1->last_zero * sizeof(*sol1->sol_vector))) {
@@ -97,17 +97,18 @@ void create_kbest_solutions_from_inner(KBestSolutions* bestSolutions,
 		bool free_inner)
 {
 	uint32_t i, k;
-	kp_init_kbest_sols(bestSolutions, problem, solutions_size);
-	for (i = 0; i < solutions_size; i++) {
-		InnerSolution is = solutions[i];
-		KSolution sol;
-		kp_init_sol(&sol, problem->num_var);
+	KSolution sol;
+  InnerSolution is;
 
+	kp_init_kbest_sols(bestSolutions, problem, solutions_size);
+
+	for (i = 0; i < solutions_size; i++) {
+		is = solutions[i];
+		sol = (*bestSolutions)->solutions[i];
 		sol->tot_value = is->value;
 		for (k = 0; k < problem->num_var; k++) {
 			sol->solution_vector[k] = is->sol_vector[k];
 		}
-		(*bestSolutions)->solutions[i] = sol;
 	}
 
 	if (free_inner) {

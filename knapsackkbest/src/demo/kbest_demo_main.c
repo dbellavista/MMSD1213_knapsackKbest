@@ -81,6 +81,7 @@ void time_test(char* res_file, char** files, size_t files_num, uint32_t
       if(i + 1 < iterations) {
         fprintf(f, ",");
       }
+      fflush(f);
     }
     printf("\r");
     d_dec_indent();

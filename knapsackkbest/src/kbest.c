@@ -107,7 +107,7 @@ void kp_free_kp(KProblem problem)
 	free(problem);
 }
 
-void kp_solve(KBestSolutions* dest, KProblem problem, size_t best_sol_count)
+void kp_solve(KBestSolutions* dest, KProblem problem, size_t K)
 {
 	InnerSolution* solutions;
 	size_t solutions_size;
@@ -121,10 +121,9 @@ void kp_solve(KBestSolutions* dest, KProblem problem, size_t best_sol_count)
 
 
 	kp_build_initial_best_k_list(&solutions, &solutions_size, matrix, problem,
-			best_sol_count);
+			K);
 
-	kp_recover_solution(solutions, &solutions_size, best_sol_count, matrix,
-			problem);
+	kp_recover_solution(solutions, &solutions_size, K, matrix, problem);
 
 	create_kbest_solutions_from_inner(dest, solutions, solutions_size, problem, true);
 

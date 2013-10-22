@@ -6,11 +6,13 @@ if [[ $# -ne 4 ]] ; then
   exit 1
 fi
 
-EXEC=./bin/generator
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if [[ ! -f $EXEC ]] ; then
+EXEC="$DIR/bin/generator"
+if [[ ! -e "$EXEC" ]] ; then
   make  || { echo 'Make failed!' ; exit 2; }
 fi
+EXEC=$(printf %q "$EXEC")
 
 NUM_ITEMS=$1
 COEFF_RANGE=$2
@@ -23,6 +25,6 @@ NAME_SUFFIX=".txt"
 
 echo "Generating..."
 for i in $(seq 0 $MAX_INSTANCE); do
-  $EXEC $NUM_ITEMS $COEFF_RANGE $TYPE $i $NUM_SERIES | tail --lines=+2 > ${NAME_PREFIX}${i}${NAME_SUFFIX}
+  eval "$EXEC" $NUM_ITEMS $COEFF_RANGE $TYPE $i $NUM_SERIES | tail --lines=+2 > ${NAME_PREFIX}${i}${NAME_SUFFIX}
 done
 echo "Done"

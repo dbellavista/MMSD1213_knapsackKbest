@@ -189,16 +189,33 @@ ssize_t find_idx_insertion(InnerSolution* sol_list, size_t sols_size, size_t
  *  @return      The index where the element has to be inserted, or -1 if the insertion was not possible.
  *
  *  @details     This function calls find_idx_insertion to find the idx. If the
- *               index exists, it moves the elements from index + 1 to sol_size
- *               toward right. If sols_size is equal to K, then there is no
- *               space for the last element: if \p removed is not NULL, then
- *               the function set its value to the last element, otherwise the
- *               last element is freed.
+ *               index exists, it calls prepare_insertion to move the elements.
+ *
  */
 ssize_t find_idx_and_prepare_insertion(InnerSolution* sol_list, size_t*
     sols_size, InnerSolution* removed, ssize_t lower_limit_idx, uint32_t value,
     size_t K);
 
+/**
+ *  @brief          Move the array elements to free the insertion index.
+ *
+ *  @param[in]   sol_list   The solution list
+ *  @param[in,out]  sols_size   A pointer to the solution size. If the size is
+ *                              modified, sols_size is modified.
+ *  @param[in]   insert_idx   The index of insertion
+ *  @param[in,out]  removed    Optional. A pointer to be filled with the
+ *                              removed element in case the index is found and
+ *                              \p sols_size is equal to \p K.
+ *  @param[in]  K    The array maximum size.
+ *
+ *  @details     It moves the elements from index + 1 to sol_size
+ *               toward right. If sols_size is equal to K, then there is no
+ *               space for the last element: if \p removed is not NULL, then
+ *               the function set its value to the last element, otherwise the
+ *               last element is freed.
+ */
+void prepare_insertion(InnerSolution* sol_list, size_t* sols_size, size_t insert_idx,
+    InnerSolution* removed, size_t K);
 
 /**
  *  @brief          Sum the \ref InnerSolution.sol_vector of \p s1 and \p s2, putting the

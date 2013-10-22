@@ -20,7 +20,8 @@
  *  @param[in]   solutions   The array of solutions to iterate.
  *  @param[in]   sols_size   The size of \p solutions.
  *  @param[in]   sol   The solution to search.
- *  @param[in]   excluded The index to skip (usually the index of \p sol inside \p solutions).
+ *  @param[in]   pivot The index to start with
+ *  @param[in]   exclude_pivot True if the pivot must be escluded from search
  *
  *  @return      Returns the index of the duplicate solution if exists, -1 otherwise.
  *
@@ -28,26 +29,36 @@
  *               which solution vector is equals to the one of an another solution.
  */
 ssize_t find_duplicate(InnerSolution* solutions, size_t sols_size,
-    InnerSolution sol, size_t excluded);
+    InnerSolution sol, size_t pivot, bool exclude_pivot);
 
 ssize_t find_duplicate(InnerSolution* solutions, size_t sols_size,
-    InnerSolution sol, size_t excluded)
+    InnerSolution sol, size_t pivot, bool exclude_pivot)
 {
   InnerSolution tmp_sol;
-  size_t i;
-
-  for(i = 0; i < sols_size; i++) {
-    if(i == excluded) {
-      continue;
-    }
+  ssize_t i;
+  size_t j;
+  i = (exclude_pivot) ? pivot - 1 : pivot;
+  for(; i >= 0; i--) {
     tmp_sol = solutions[i];
-    if(tmp_sol->value < sol->value) {
-      return -1;
+    if(tmp_sol->value > sol->value) {
+      break;
     }
-    if(inner_solutions_equal(tmp_sol, sol)) {
+    if(tmp_sol->value == sol->value && inner_solutions_equal(tmp_sol, sol)) {
       return i;
     }
   }
+
+  j = pivot + 1;
+  for(; j < sols_size; j++) {
+    tmp_sol = solutions[j];
+    if(tmp_sol->value < sol->value) {
+      break;
+    }
+    if(tmp_sol->value == sol->value && inner_solutions_equal(tmp_sol, sol)) {
+      return i;
+    }
+  }
+
   return -1;
 }
 
@@ -60,7 +71,7 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 	ssize_t insert_idx, i;
 	size_t var;
   uint32_t newvalue;
-	InnerSolution auxl1, removed;
+	InnerSolution auxl1, tmp_sol;
 
 #ifdef ENABLE_DEBUG_PRINTS
   d_inc_indent();
@@ -107,8 +118,7 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 #endif
 
     // Find a suitable position for the solution insertion
-		insert_idx = find_idx_and_prepare_insertion(solutions, sols_size, &removed, sol_index,
-				newvalue, K);
+		insert_idx = find_idx_insertion(solutions, *sols_size, K, sol_index, newvalue);
 		if (insert_idx == -1) { // Already have K solutions better than the new value
 #ifdef ENABLE_DEBUG_PRINTS
       d_debug(
@@ -117,10 +127,6 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 #endif
 			continue;
 		}
-		kp_init_inn_sol(&solutions[insert_idx], problem->num_var,
-				solutions[sol_index]->column_idx, solutions[sol_index]->row_idx,
-				newvalue);
-
 		kp_init_inn_sol(&auxl1, problem->num_var, var, snode,
 				matrix[snode][var]);
 
@@ -132,65 +138,42 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 		// Backtrack the new value in order to fill the solution vector
 		backtracking(solutions, auxl1, insert_idx, sols_size, K, matrix,
 				problem, false);
+    // Initialize the new solution
+    kp_init_inn_sol(&tmp_sol, problem->num_var,
+        solutions[sol_index]->column_idx, solutions[sol_index]->row_idx,
+        newvalue);
+    // Sum solutions vector
+    sum_solution_vectors(tmp_sol, auxl, auxl1);
+    tmp_sol->recovered = true;
 
-		solutions[insert_idx]->recovered = true;
+    // Auxl1 is recovered. Checks if the new solution is a duplicate. If not
+    // insert it in the solution vector.
+    i = find_duplicate(solutions, *sols_size, tmp_sol, insert_idx, false);
 
-    // TODO : changed instead of using solutions[sol_index], using auxl (passed from backtrack)
-//		sum_solution_vectors(solutions[insert_idx], solutions[sol_index],
-//				auxl1);
-    sum_solution_vectors(solutions[insert_idx], auxl, auxl1);
-
-    i = find_duplicate(solutions, *sols_size, solutions[insert_idx], insert_idx);
-
-    if(i >= 0) {
+    if(i < 0) {
+      // Inserting the new solution
+      prepare_insertion(solutions, sols_size, insert_idx, NULL, K);
+      solutions[insert_idx] = tmp_sol;
+      tmp_sol = NULL;
+    } else {
 #ifdef ENABLE_DEBUG_PRINTS
       d_debug(
           "Alternatives %d. New solution [%zu %u] is a duplicate of solution [%zu %u].\n",
-          sol_index, insert_idx, solutions[insert_idx]->value, i, solutions[i]->value);
+          sol_index, insert_idx, auxl1->value, i, solutions[i]->value);
 #endif
-
-      // removing the solution and inserting the old one
-      kp_free_inn_sol(solutions[insert_idx]);
-      solutions[insert_idx] = NULL;
-      for(i = insert_idx + 1; (size_t) i < *sols_size; i++) {
-        solutions[i - 1] = solutions[i];
-      }
-      *sols_size = *sols_size - 1;
-
-      if(removed) {
-        insert_idx = find_idx_and_prepare_insertion(solutions, sols_size, NULL,
-            insert_idx - 1, removed->value, K);
-        if(insert_idx == -1) {
-#ifdef ENABLE_DEBUG_PRINTS
-          d_debug(
-              "Alternatives %d. Removed value no longer worth of insertion (%d)!\n",
-              sol_index, removed->value);
-#endif
-        } else {
-#ifdef ENABLE_DEBUG_PRINTS
-          d_debug(
-              "Alternatives %d. Restoring previously removed value (%d)!\n",
-              sol_index, removed->value);
-#endif
-          solutions[insert_idx] = removed;
-          removed = NULL;
-        }
-      }
+      // Freeing it
+      kp_free_inn_sol(tmp_sol);
+      tmp_sol = NULL;
     }
 
-    if(removed)
-      kp_free_inn_sol(removed);
-
 		if (auxl1->value >= solutions[*sols_size - 1]->value) {
-		  // TODO: check if this is right
 		  auxl1->recovered = 1;
 #ifdef ENABLE_DEBUG_PRINTS
       d_debug(
           "alternatives %d. partial solution in (%d, %d) is better than last value (%d >= %d)\n",
           sol_index, snode, cur_var, auxl1->value, solutions[*sols_size - 1]->value);
 #endif
-
-			if(find_duplicate(solutions, *sols_size, auxl1, -1)) {
+			if(find_duplicate(solutions, *sols_size, auxl1, *sols_size - 1, false)) {
 #ifdef ENABLE_DEBUG_PRINTS
         d_debug(
             "Alternatives %d. Partial solution in (%d, %d) is already present!\n",
@@ -234,7 +217,7 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
 #endif
 #ifdef ENABLE_DEBUG_PRINTS
   d_debug("Backtracking %d (%d): [%d in (%d, %d)]\n", sol_index,
-      solutions[sol_index]->value, value, snode, var);
+      sol_dest->value, value, snode, var);
 #endif
 
 	cum_val = 0;
@@ -251,12 +234,12 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
 		if (snode + 1 == problem->weights[var]) { // Backtrack terminated
 #ifdef ENABLE_DEBUG_PRINTS
       d_debug("Backtracking %d (%d): terminated with var %d\n", sol_index,
-          solutions[sol_index]->value, var);
+          sol_dest->value, var);
 #endif
 			break;
 		} else if(snode < problem->weights[var]) { // Algorithm error
 			d_error("Error while backtracking %d (%d): terminated with var %d\n", sol_index,
-					solutions[sol_index]->value, var);
+					sol_dest->value, var);
 			break;
     }
 		snode -= problem->weights[var];
@@ -266,7 +249,7 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
 
 		if (tmp < 0) { // Algorithm error
 			d_error("Backtracking %d (%d): NOT Found in snode %d, value %d\n",
-					sol_index, solutions[sol_index]->value, snode, value);
+					sol_index, sol_dest->value, snode, value);
 			continue;
 		}
 
@@ -274,7 +257,7 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
     d_debug("Backtracking %d (%d): "
             "Found [%d in (%d, %d)] by subtracting var %d "
             "(w:%d, v:%d), cum_val: %d, limit: %d\n",
-        sol_index, solutions[sol_index]->value, value, snode, tmp,
+        sol_index, sol_dest->value, value, snode, tmp,
         var, problem->weights[var], problem->values[var], cum_val,
         limit_var);
 #endif
@@ -301,11 +284,11 @@ void kp_recover_solution(InnerSolution* solutions, size_t* size, size_t K,
     d_debug("recovering for solution %d [%d in (%d, %d)]\n", i,
         solutions[i]->value, solutions[i]->row_idx,
         solutions[i]->column_idx);
-#endif
 
 		if(i % steps == 0) {
       d_notice("Recovering for solution %d of %d\n", i + 1, *size);
     }
+#endif
 
 		if (!solutions[i]->recovered) {
 

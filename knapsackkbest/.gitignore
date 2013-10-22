@@ -3,6 +3,6 @@ build/
 bin/
 lib/
 callgrind/
-doc/doxygen/
+*/doc/doxygen/
 .ycm_extra_conf.py*
 *.swp

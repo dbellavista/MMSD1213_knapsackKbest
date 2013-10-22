@@ -12,9 +12,16 @@
 #include "kbest_io_utility.h"
 #include "kbest.h"
 
-#define NO_TESTS 20
+KBestSolutions single_test(char* filename, uint32_t K, double* test_ticks,
+    double* test_time, bool do_prints);
+void print_help();
+void time_test(char* res_file, char** files, size_t files_num, uint32_t
+    interaction, uint32_t K);
+void print_array2(uint32_t* array, size_t size);
+void check_solutions(KBestSolutions solutions);
 
-void print_array2(uint32_t* array, size_t size) {
+void print_array2(uint32_t* array, size_t size)
+{
 	size_t i;
 	printf("[ ");
 	for (i = 0; i < size; i++) {
@@ -23,21 +30,20 @@ void print_array2(uint32_t* array, size_t size) {
 	printf("]\n");
 }
 
-KBestSolutions singleTest(char* filename, uint32_t K, double* test_ticks,
-		double* test_time) {
+KBestSolutions single_test(char* filename, uint32_t K, double* test_ticks,
+    double* test_time, bool do_prints)
+{
 	time_t start, stop;
 	clock_t ticksStart, ticksStop;
 	KProblem problem;
 	KBestSolutions solutions;
+	if(do_prints)
+    d_notice("Reading problem %s\n", filename);
 	read_problem(&problem, filename);
-
-//  size_t i;
-//	for(i = 0; i < problem->num_var; i++) {
-//    problem->values[i] = problem->values[i] / 200 + 1;
-//  }
-//  problem->num_var = 2;
-//  problem->max_weigth = 48;
-	print_kproblem(problem);
+	if(do_prints) {
+    print_kproblem(problem);
+    d_notice("Solving problem with K=%lu\n", K);
+  }
 
 	time(&start);
 	ticksStart = clock();
@@ -47,52 +53,50 @@ KBestSolutions singleTest(char* filename, uint32_t K, double* test_ticks,
 
 	*test_ticks = ticksStop - ticksStart;
 	*test_time = difftime(stop, start);
-	// print_kbest_solution(solutions);
 	kp_free_kp(problem);
 
 	return solutions;
 }
 
-void timeTest(uint32_t K, double* rAverageTick, double* rAverageTime,
-		double* rTotalTick, double* rTotalTime) {
+void time_test(char* res_file, char** files, size_t files_num, uint32_t
+    iterations, uint32_t K)
+{
+	double test_ticks, test_time;
+	size_t fileid;
+	uint32_t i;
+	FILE* f;
 
-	double averageTick, averageTime, test_ticks, test_time, totalTime,
-			totalTicks;
-	char filename[100];
-	uint32_t test;
-	totalTicks = 0.0;
-	totalTime = 0.0;
-	for (test = 1; test <= NO_TESTS; test++) {
+	f = fopen(res_file, "w");
+  // Performing tests
+	for (fileid = 0; fileid < files_num; fileid++) {
+	  d_notice("Starting with file %s\n", files[fileid]);
+    d_inc_indent();
+    for(i = 0; i < iterations; i++) {
 
-		sprintf(filename, "problems/test_%d.txt", test);
+      printf("\r%d on %d", i, iterations);
+      fflush(stdout);
 
-		free(singleTest(filename, K, &test_ticks, &test_time));
-
-		totalTicks += test_ticks;
-		totalTime += test_time;
+      kp_free_kbest_sols(single_test(files[fileid], K, &test_ticks, &test_time, false));
+      fprintf(f, "%f", test_ticks / CLOCKS_PER_SEC);
+      if(i + 1 < iterations) {
+        fprintf(f, ",");
+      }
+    }
+    printf("\r");
+    d_dec_indent();
+    if(fileid +1 < files_num) {
+      fprintf(f, "\n");
+    }
 	}
-
-	averageTick = totalTicks / NO_TESTS;
-	averageTime = totalTime / NO_TESTS;
-
-	d_notice("Average: used %0.2f seconds of CPU time. \n",
-			(double) averageTick / CLOCKS_PER_SEC);
-	d_notice("Average: Finished in about %.0f seconds. \n", averageTime);
-
-	d_notice("Total: used %0.2f seconds of CPU time. \n",
-			(double) totalTicks / CLOCKS_PER_SEC);
-	d_notice("Total: Finished in about %.0f seconds. \n", totalTime);
-
-	*rAverageTick = averageTick;
-	*rAverageTime = averageTime;
-	*rTotalTick = totalTicks;
-	*rTotalTime = totalTime;
+  fclose(f);
 }
 
-void check_solutions(KBestSolutions solutions) {
+void check_solutions(KBestSolutions solutions)
+{
 	size_t i, j;
-	size_t size = solutions->problem->num_var;
+	size_t size;
 	uint32_t acc;
+	size = solutions->problem->num_var;
 
   d_notice("Checking consistency...\n");
   d_inc_indent();
@@ -129,37 +133,67 @@ void check_solutions(KBestSolutions solutions) {
   d_notice("Duplicates done!\n\n");
 }
 
-int main(int argc, char **argv) {
-
-	double totalTick, totalTime;
-	//timeTest(2900, &averageTick, &averageTime, &totalTick, &totalTime);
-
-	char* p1 = "problems/test_1.txt";
-//	char* p1 = "problem.txt";
-
-	char* filename;
-
-	set_debug_level(WARNING ^ ERROR ^ NOTICE);
-	if(argc > 1) {
-		if(!strcmp(argv[1], "d")) {
-			set_debug_level(WARNING ^ ERROR ^ NOTICE ^ DEBUG);
-		}
-	}
-
-	if(argc > 2) {
-		filename = argv[2];
-	} else {
-		filename = p1;
-	}
-
-	d_notice("Opening and solving %s\n", filename);
-
-	KBestSolutions solutions = singleTest(filename, 2900, &totalTick, &totalTime);
-	print_kbest_solution(solutions);
-
-	check_solutions(solutions);
-	kp_free_kbest_sols(solutions);
-
-	return 0;
+void print_help()
+{
+  d_warning(
+      "Usage: (e|t|s) [args]\n"
+      "\te <K>: example test. using ./problems/problem.txt\n"
+      "\tt <k> <res_file> <num_iterations> {file}: timing test, running num_iteration iterations on the given files\n"
+      "\ts <K> <file>: single test on the given file, prints the solution.\n"
+      );
 }
 
+int main(int argc, char **argv)
+{
+  uint32_t num_iteration, K;
+	double totalTick, totalTime;
+  KBestSolutions solutions;
+	//timeTest(2900, &averageTick, &averageTime, &totalTick, &totalTime);
+
+	set_debug_level(WARNING ^ ERROR ^ NOTICE);
+
+  if(argc < 2) {
+    print_help();
+    return 1;
+  }
+
+  switch(argv[1][0]) {
+    case 'e':
+      if(argc != 3) {
+        d_error("Mandatory parameters missing\n");
+        return 4;
+      }
+      K = strtoul(argv[2], NULL, 10);
+      solutions = single_test("problems/problem.txt", K, &totalTick, &totalTime, true);
+      print_kbest_solution(solutions);
+      check_solutions(solutions);
+      kp_free_kbest_sols(solutions);
+
+      break;
+    case 't':
+      if(argc < 5) {
+        d_error("Mandatory parameters missing\n");
+        return 3;
+      }
+      K = strtoul(argv[2], NULL, 10);
+      num_iteration = strtoul(argv[4], NULL, 10);
+      time_test(argv[3], &(argv[5]), argc - 5, num_iteration, K);
+      break;
+    case 's':
+      if(argc != 4) {
+        d_error("Mandatory parameters missing\n");
+        return 5;
+      }
+      K = strtoul(argv[2], NULL, 10);
+      solutions = single_test(argv[3], K, &totalTick, &totalTime, true);
+      print_kbest_solution(solutions);
+      check_solutions(solutions);
+      kp_free_kbest_sols(solutions);
+      break;
+    default:
+      d_error("Command not recognized...\n");
+      print_help();
+      return 2;
+  }
+	return 0;
+}

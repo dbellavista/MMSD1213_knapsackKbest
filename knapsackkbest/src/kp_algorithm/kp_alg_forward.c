@@ -15,109 +15,23 @@
 void kp_build_initial_best_k_list(InnerSolution** ret, size_t* ret_size,
 		int** matrix, KProblem problem, size_t K)
 {
-
-	uint32_t counter, P, P1;
-	int snode, var, last_snode, last_var;
-	bool fim, moreleft;
-	InnerSolution** buffer_sol;
-  InnerSolution* solutions;
-  InnerSolution* solutions1;
-  InnerSolution* tmp_solutions;
-	InnerSolution* pIS;
-
-	allocate_matrix((void***) &buffer_sol, 3, K, sizeof(InnerSolution));
-
-	solutions = buffer_sol[0];
-	solutions1 = buffer_sol[1];
-	tmp_solutions = buffer_sol[2];
-
-
+	ssize_t snode, var, idx;
+	size_t counter;
 	*ret = (InnerSolution*) malloc(sizeof(InnerSolution) * K);
-
-	fim = false;
-	moreleft = false;
 	counter = 0;
-	// Adds a solution for each opened node (at most K)
+
 	for (snode = problem->max_weigth - 1;
-			snode >= (int) problem->weights[0] - 1; snode--) {
+			snode >= problem->weights[0] - 1; snode--) {
 		for (var = problem->num_var - 1; var >= 0; var--) {
 			if (matrix[snode][var] >= 0) {
-				kp_init_inn_sol(&solutions[counter], problem->num_var, var,
-						snode, matrix[snode][var]);
-				counter++;
-				if (counter == K) {
-					last_snode = snode;
-					last_var = var;
-					moreleft = true;
-					snode = -1;
-					var = -1;
-				}
-			}
-		}
-	}
-	P = counter;
-	sort_by_values_non_inc(solutions, P);
-	// Last usable matrix index: problem->weights[0] - 1
-	if (P == K
-			&& (last_snode > (int) problem->weights[0] - 1 || last_var > 0)) {
-		fim = true;
-	}
-
-	// While there are more solutions to explore
-	while (fim) {
-		counter = 0;
-		fim = false;
-		// resuming from where it left off
-		for (snode = last_snode; snode >= (int) problem->weights[0] - 1;
-				snode--) {
-			if (moreleft) {
-				var = last_var - 1;
-				moreleft = false;
-			} else {
-				var = problem->num_var - 1;
-			}
-			for (; var >= 0; var--) {
-				// Check if the new value is better than last found solution
-				if (matrix[snode][var] > (int) solutions[K - 1]->value) {
-					kp_init_inn_sol(&solutions1[counter], problem->num_var, var,
-							snode, matrix[snode][var]);
-					counter++;
-					if (counter == K) {
-						last_snode = snode;
-						last_var = var;
-						moreleft = true;
-						snode = -1;
-						var = -1;
-					}
-				}
-			}
-		}
-
-		P1 = counter;
-		if (P1 > 0) {
-		  // Joining with the new solutions
-			sort_by_values_non_inc(solutions1, P1);
-			if (solutions1[0]->value > solutions[K - 1]->value) {
-				join_inner_solutions(tmp_solutions, solutions, solutions1, P,
-						P1, K,
-						true);
-				pIS = solutions;
-				solutions = tmp_solutions;
-				tmp_solutions = pIS;
-			}
-			if (P1 == K
-					&& (last_snode > (int) problem->weights[0] - 1 || last_var > 0)) {
-				fim = true;
-			}
-		}
-	}
-
-	for (counter = 0; counter < P; counter++) {
-		(*ret)[counter] = solutions[counter];
-	}
-
-	*ret_size = P;
-	free_matrix((void**) buffer_sol);
+        idx = find_idx_and_prepare_insertion(*ret, &counter, NULL, -1, matrix[snode][var], K);
+        if(idx >= 0) {
+          kp_init_inn_sol(&(*ret)[idx], problem->num_var, var, snode, matrix[snode][var]);
+        }
+      }
+    }
+  }
+  *ret_size = counter;
 }
 
 void kp_forward_enumeration(int** matrix, KProblem problem)

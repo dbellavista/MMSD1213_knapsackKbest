@@ -264,6 +264,7 @@
 <pathentry kind="mac" name="__EXCEPTIONS" path="" value="1"/>
 <pathentry kind="mac" name="_GNU_SOURCE" path="" value="1"/>
 <pathentry include="/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src" kind="inc" path="" system="true"/>
+<pathentry include="/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/gcc/x86_64-pc-linux-gnu/4.7.3/include" kind="inc" path="" system="true"/>
 <pathentry include="/usr/lib/gcc/x86_64-pc-linux-gnu/4.7.3/include-fixed" kind="inc" path="" system="true"/>
 <pathentry include="/usr/include" kind="inc" path="" system="true"/>
@@ -469,27 +470,6 @@
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>
-<target name="[obj] utility/debug.c.o" path="src" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/gmake</buildCommand>
-<buildArguments>-j8</buildArguments>
-<buildTarget>utility/debug.c.o</buildTarget>
-<stopOnError>true</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-</target>
-<target name="[pre] utility/debug.c.i" path="src" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/gmake</buildCommand>
-<buildArguments>-j8</buildArguments>
-<buildTarget>utility/debug.c.i</buildTarget>
-<stopOnError>true</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-</target>
-<target name="[to asm] utility/debug.c.s" path="src" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/gmake</buildCommand>
-<buildArguments>-j8</buildArguments>
-<buildTarget>utility/debug.c.s</buildTarget>
-<stopOnError>true</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-</target>
 <target name="[obj] utility/utility.c.o" path="src" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>/usr/bin/gmake</buildCommand>
 <buildArguments>-j8</buildArguments>
@@ -655,27 +635,6 @@
 <buildCommand>/usr/bin/gmake</buildCommand>
 <buildArguments>-j8</buildArguments>
 <buildTarget>__/kp_model/kp_inner_model.c.s</buildTarget>
-<stopOnError>true</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-</target>
-<target name="[obj] __/utility/debug.c.o" path="src/tests" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/gmake</buildCommand>
-<buildArguments>-j8</buildArguments>
-<buildTarget>__/utility/debug.c.o</buildTarget>
-<stopOnError>true</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-</target>
-<target name="[pre] __/utility/debug.c.i" path="src/tests" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/gmake</buildCommand>
-<buildArguments>-j8</buildArguments>
-<buildTarget>__/utility/debug.c.i</buildTarget>
-<stopOnError>true</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-</target>
-<target name="[to asm] __/utility/debug.c.s" path="src/tests" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>/usr/bin/gmake</buildCommand>
-<buildArguments>-j8</buildArguments>
-<buildTarget>__/utility/debug.c.s</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 </target>

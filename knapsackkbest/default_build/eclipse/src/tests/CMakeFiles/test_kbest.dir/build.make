@@ -121,32 +121,9 @@ src/tests/CMakeFiles/test_kbest.dir/test_suite.c.o.provides: src/tests/CMakeFile
 
 src/tests/CMakeFiles/test_kbest.dir/test_suite.c.o.provides.build: src/tests/CMakeFiles/test_kbest.dir/test_suite.c.o
 
-src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o: src/tests/CMakeFiles/test_kbest.dir/flags.make
-src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o: ../../src/utility/debug.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_4)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o"
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/tests" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test_kbest.dir/__/utility/debug.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/utility/debug.c"
-
-src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test_kbest.dir/__/utility/debug.c.i"
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/tests" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -E "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/utility/debug.c" > CMakeFiles/test_kbest.dir/__/utility/debug.c.i
-
-src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test_kbest.dir/__/utility/debug.c.s"
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/tests" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -S "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/utility/debug.c" -o CMakeFiles/test_kbest.dir/__/utility/debug.c.s
-
-src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o.requires:
-.PHONY : src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o.requires
-
-src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o.provides: src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o.requires
-	$(MAKE) -f src/tests/CMakeFiles/test_kbest.dir/build.make src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o.provides.build
-.PHONY : src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o.provides
-
-src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o.provides.build: src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o
-
 src/tests/CMakeFiles/test_kbest.dir/__/kbest_io_utility.c.o: src/tests/CMakeFiles/test_kbest.dir/flags.make
 src/tests/CMakeFiles/test_kbest.dir/__/kbest_io_utility.c.o: ../../src/kbest_io_utility.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_5)
+	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_4)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/tests/CMakeFiles/test_kbest.dir/__/kbest_io_utility.c.o"
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/tests" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test_kbest.dir/__/kbest_io_utility.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/kbest_io_utility.c"
 
@@ -169,7 +146,7 @@ src/tests/CMakeFiles/test_kbest.dir/__/kbest_io_utility.c.o.provides.build: src/
 
 src/tests/CMakeFiles/test_kbest.dir/__/kbest.c.o: src/tests/CMakeFiles/test_kbest.dir/flags.make
 src/tests/CMakeFiles/test_kbest.dir/__/kbest.c.o: ../../src/kbest.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_6)
+	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_5)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/tests/CMakeFiles/test_kbest.dir/__/kbest.c.o"
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/tests" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test_kbest.dir/__/kbest.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/kbest.c"
 
@@ -192,7 +169,7 @@ src/tests/CMakeFiles/test_kbest.dir/__/kbest.c.o.provides.build: src/tests/CMake
 
 src/tests/CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_forward.c.o: src/tests/CMakeFiles/test_kbest.dir/flags.make
 src/tests/CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_forward.c.o: ../../src/kp_algorithm/kp_alg_forward.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_7)
+	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_6)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/tests/CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_forward.c.o"
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/tests" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_forward.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/kp_algorithm/kp_alg_forward.c"
 
@@ -215,7 +192,7 @@ src/tests/CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_forward.c.o.provides.
 
 src/tests/CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_backtrack.c.o: src/tests/CMakeFiles/test_kbest.dir/flags.make
 src/tests/CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_backtrack.c.o: ../../src/kp_algorithm/kp_alg_backtrack.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_8)
+	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_7)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/tests/CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_backtrack.c.o"
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/tests" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_backtrack.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/kp_algorithm/kp_alg_backtrack.c"
 
@@ -238,7 +215,7 @@ src/tests/CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_backtrack.c.o.provide
 
 src/tests/CMakeFiles/test_kbest.dir/__/kp_model/kp_inner_model.c.o: src/tests/CMakeFiles/test_kbest.dir/flags.make
 src/tests/CMakeFiles/test_kbest.dir/__/kp_model/kp_inner_model.c.o: ../../src/kp_model/kp_inner_model.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_9)
+	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_8)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/tests/CMakeFiles/test_kbest.dir/__/kp_model/kp_inner_model.c.o"
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/tests" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test_kbest.dir/__/kp_model/kp_inner_model.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/kp_model/kp_inner_model.c"
 
@@ -261,7 +238,7 @@ src/tests/CMakeFiles/test_kbest.dir/__/kp_model/kp_inner_model.c.o.provides.buil
 
 src/tests/CMakeFiles/test_kbest.dir/__/utility/utility.c.o: src/tests/CMakeFiles/test_kbest.dir/flags.make
 src/tests/CMakeFiles/test_kbest.dir/__/utility/utility.c.o: ../../src/utility/utility.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_10)
+	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/CMakeFiles" $(CMAKE_PROGRESS_9)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/tests/CMakeFiles/test_kbest.dir/__/utility/utility.c.o"
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/eclipse/src/tests" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test_kbest.dir/__/utility/utility.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/utility/utility.c"
 
@@ -287,7 +264,6 @@ test_kbest_OBJECTS = \
 "CMakeFiles/test_kbest.dir/kp_tests.c.o" \
 "CMakeFiles/test_kbest.dir/test_main.c.o" \
 "CMakeFiles/test_kbest.dir/test_suite.c.o" \
-"CMakeFiles/test_kbest.dir/__/utility/debug.c.o" \
 "CMakeFiles/test_kbest.dir/__/kbest_io_utility.c.o" \
 "CMakeFiles/test_kbest.dir/__/kbest.c.o" \
 "CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_forward.c.o" \
@@ -301,7 +277,6 @@ test_kbest_EXTERNAL_OBJECTS =
 src/tests/test_kbest: src/tests/CMakeFiles/test_kbest.dir/kp_tests.c.o
 src/tests/test_kbest: src/tests/CMakeFiles/test_kbest.dir/test_main.c.o
 src/tests/test_kbest: src/tests/CMakeFiles/test_kbest.dir/test_suite.c.o
-src/tests/test_kbest: src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o
 src/tests/test_kbest: src/tests/CMakeFiles/test_kbest.dir/__/kbest_io_utility.c.o
 src/tests/test_kbest: src/tests/CMakeFiles/test_kbest.dir/__/kbest.c.o
 src/tests/test_kbest: src/tests/CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_forward.c.o
@@ -320,7 +295,6 @@ src/tests/CMakeFiles/test_kbest.dir/build: src/tests/test_kbest
 src/tests/CMakeFiles/test_kbest.dir/requires: src/tests/CMakeFiles/test_kbest.dir/kp_tests.c.o.requires
 src/tests/CMakeFiles/test_kbest.dir/requires: src/tests/CMakeFiles/test_kbest.dir/test_main.c.o.requires
 src/tests/CMakeFiles/test_kbest.dir/requires: src/tests/CMakeFiles/test_kbest.dir/test_suite.c.o.requires
-src/tests/CMakeFiles/test_kbest.dir/requires: src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o.requires
 src/tests/CMakeFiles/test_kbest.dir/requires: src/tests/CMakeFiles/test_kbest.dir/__/kbest_io_utility.c.o.requires
 src/tests/CMakeFiles/test_kbest.dir/requires: src/tests/CMakeFiles/test_kbest.dir/__/kbest.c.o.requires
 src/tests/CMakeFiles/test_kbest.dir/requires: src/tests/CMakeFiles/test_kbest.dir/__/kp_algorithm/kp_alg_forward.c.o.requires

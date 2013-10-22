@@ -98,32 +98,9 @@ src/CMakeFiles/kbest.dir/kbest_io_utility.c.o.provides: src/CMakeFiles/kbest.dir
 
 src/CMakeFiles/kbest.dir/kbest_io_utility.c.o.provides.build: src/CMakeFiles/kbest.dir/kbest_io_utility.c.o
 
-src/CMakeFiles/kbest.dir/utility/debug.c.o: src/CMakeFiles/kbest.dir/flags.make
-src/CMakeFiles/kbest.dir/utility/debug.c.o: ../../src/utility/debug.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/CMakeFiles" $(CMAKE_PROGRESS_3)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/CMakeFiles/kbest.dir/utility/debug.c.o"
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/src" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/kbest.dir/utility/debug.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/utility/debug.c"
-
-src/CMakeFiles/kbest.dir/utility/debug.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/kbest.dir/utility/debug.c.i"
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/src" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -E "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/utility/debug.c" > CMakeFiles/kbest.dir/utility/debug.c.i
-
-src/CMakeFiles/kbest.dir/utility/debug.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/kbest.dir/utility/debug.c.s"
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/src" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -S "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/utility/debug.c" -o CMakeFiles/kbest.dir/utility/debug.c.s
-
-src/CMakeFiles/kbest.dir/utility/debug.c.o.requires:
-.PHONY : src/CMakeFiles/kbest.dir/utility/debug.c.o.requires
-
-src/CMakeFiles/kbest.dir/utility/debug.c.o.provides: src/CMakeFiles/kbest.dir/utility/debug.c.o.requires
-	$(MAKE) -f src/CMakeFiles/kbest.dir/build.make src/CMakeFiles/kbest.dir/utility/debug.c.o.provides.build
-.PHONY : src/CMakeFiles/kbest.dir/utility/debug.c.o.provides
-
-src/CMakeFiles/kbest.dir/utility/debug.c.o.provides.build: src/CMakeFiles/kbest.dir/utility/debug.c.o
-
 src/CMakeFiles/kbest.dir/utility/utility.c.o: src/CMakeFiles/kbest.dir/flags.make
 src/CMakeFiles/kbest.dir/utility/utility.c.o: ../../src/utility/utility.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/CMakeFiles" $(CMAKE_PROGRESS_4)
+	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/CMakeFiles" $(CMAKE_PROGRESS_3)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/CMakeFiles/kbest.dir/utility/utility.c.o"
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/src" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/kbest.dir/utility/utility.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/utility/utility.c"
 
@@ -146,7 +123,7 @@ src/CMakeFiles/kbest.dir/utility/utility.c.o.provides.build: src/CMakeFiles/kbes
 
 src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_forward.c.o: src/CMakeFiles/kbest.dir/flags.make
 src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_forward.c.o: ../../src/kp_algorithm/kp_alg_forward.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/CMakeFiles" $(CMAKE_PROGRESS_5)
+	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/CMakeFiles" $(CMAKE_PROGRESS_4)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_forward.c.o"
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/src" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/kbest.dir/kp_algorithm/kp_alg_forward.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/kp_algorithm/kp_alg_forward.c"
 
@@ -169,7 +146,7 @@ src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_forward.c.o.provides.build: src/CMa
 
 src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_backtrack.c.o: src/CMakeFiles/kbest.dir/flags.make
 src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_backtrack.c.o: ../../src/kp_algorithm/kp_alg_backtrack.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/CMakeFiles" $(CMAKE_PROGRESS_6)
+	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/CMakeFiles" $(CMAKE_PROGRESS_5)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_backtrack.c.o"
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/src" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/kbest.dir/kp_algorithm/kp_alg_backtrack.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/kp_algorithm/kp_alg_backtrack.c"
 
@@ -192,7 +169,7 @@ src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_backtrack.c.o.provides.build: src/C
 
 src/CMakeFiles/kbest.dir/kp_model/kp_inner_model.c.o: src/CMakeFiles/kbest.dir/flags.make
 src/CMakeFiles/kbest.dir/kp_model/kp_inner_model.c.o: ../../src/kp_model/kp_inner_model.c
-	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/CMakeFiles" $(CMAKE_PROGRESS_7)
+	$(CMAKE_COMMAND) -E cmake_progress_report "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/CMakeFiles" $(CMAKE_PROGRESS_6)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object src/CMakeFiles/kbest.dir/kp_model/kp_inner_model.c.o"
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix/src" && /usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/kbest.dir/kp_model/kp_inner_model.c.o   -c "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/kp_model/kp_inner_model.c"
 
@@ -217,7 +194,6 @@ src/CMakeFiles/kbest.dir/kp_model/kp_inner_model.c.o.provides.build: src/CMakeFi
 kbest_OBJECTS = \
 "CMakeFiles/kbest.dir/kbest.c.o" \
 "CMakeFiles/kbest.dir/kbest_io_utility.c.o" \
-"CMakeFiles/kbest.dir/utility/debug.c.o" \
 "CMakeFiles/kbest.dir/utility/utility.c.o" \
 "CMakeFiles/kbest.dir/kp_algorithm/kp_alg_forward.c.o" \
 "CMakeFiles/kbest.dir/kp_algorithm/kp_alg_backtrack.c.o" \
@@ -228,7 +204,6 @@ kbest_EXTERNAL_OBJECTS =
 
 src/libkbest.so: src/CMakeFiles/kbest.dir/kbest.c.o
 src/libkbest.so: src/CMakeFiles/kbest.dir/kbest_io_utility.c.o
-src/libkbest.so: src/CMakeFiles/kbest.dir/utility/debug.c.o
 src/libkbest.so: src/CMakeFiles/kbest.dir/utility/utility.c.o
 src/libkbest.so: src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_forward.c.o
 src/libkbest.so: src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_backtrack.c.o
@@ -244,7 +219,6 @@ src/CMakeFiles/kbest.dir/build: src/libkbest.so
 
 src/CMakeFiles/kbest.dir/requires: src/CMakeFiles/kbest.dir/kbest.c.o.requires
 src/CMakeFiles/kbest.dir/requires: src/CMakeFiles/kbest.dir/kbest_io_utility.c.o.requires
-src/CMakeFiles/kbest.dir/requires: src/CMakeFiles/kbest.dir/utility/debug.c.o.requires
 src/CMakeFiles/kbest.dir/requires: src/CMakeFiles/kbest.dir/utility/utility.c.o.requires
 src/CMakeFiles/kbest.dir/requires: src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_forward.c.o.requires
 src/CMakeFiles/kbest.dir/requires: src/CMakeFiles/kbest.dir/kp_algorithm/kp_alg_backtrack.c.o.requires

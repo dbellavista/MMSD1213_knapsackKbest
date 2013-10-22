@@ -276,30 +276,6 @@ __/kp_model/kp_inner_model.c.s:
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix" && $(MAKE) -f src/tests/CMakeFiles/test_kbest.dir/build.make src/tests/CMakeFiles/test_kbest.dir/__/kp_model/kp_inner_model.c.s
 .PHONY : __/kp_model/kp_inner_model.c.s
 
-__/utility/debug.o: __/utility/debug.c.o
-.PHONY : __/utility/debug.o
-
-# target to build an object file
-__/utility/debug.c.o:
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix" && $(MAKE) -f src/tests/CMakeFiles/test_kbest.dir/build.make src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.o
-.PHONY : __/utility/debug.c.o
-
-__/utility/debug.i: __/utility/debug.c.i
-.PHONY : __/utility/debug.i
-
-# target to preprocess a source file
-__/utility/debug.c.i:
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix" && $(MAKE) -f src/tests/CMakeFiles/test_kbest.dir/build.make src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.i
-.PHONY : __/utility/debug.c.i
-
-__/utility/debug.s: __/utility/debug.c.s
-.PHONY : __/utility/debug.s
-
-# target to generate assembly for a file
-__/utility/debug.c.s:
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix" && $(MAKE) -f src/tests/CMakeFiles/test_kbest.dir/build.make src/tests/CMakeFiles/test_kbest.dir/__/utility/debug.c.s
-.PHONY : __/utility/debug.c.s
-
 __/utility/utility.o: __/utility/utility.c.o
 .PHONY : __/utility/utility.o
 
@@ -424,9 +400,6 @@ help:
 	@echo "... __/kp_model/kp_inner_model.o"
 	@echo "... __/kp_model/kp_inner_model.i"
 	@echo "... __/kp_model/kp_inner_model.s"
-	@echo "... __/utility/debug.o"
-	@echo "... __/utility/debug.i"
-	@echo "... __/utility/debug.s"
 	@echo "... __/utility/utility.o"
 	@echo "... __/utility/utility.i"
 	@echo "... __/utility/utility.s"

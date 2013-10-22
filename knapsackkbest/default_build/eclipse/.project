@@ -144,11 +144,6 @@
 			<location>/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/kbest_io_utility.c</location>
 		</link>
 		<link>
-			<name>[Targets]/[lib] kbest/Source Files/debug.c</name>
-			<type>1</type>
-			<location>/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/utility/debug.c</location>
-		</link>
-		<link>
 			<name>[Targets]/[lib] kbest/Source Files/utility.c</name>
 			<type>1</type>
 			<location>/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/utility/utility.c</location>
@@ -217,11 +212,6 @@
 			<name>[Targets]/[exe] test_kbest/Source Files/test_suite.c</name>
 			<type>1</type>
 			<location>/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/tests/test_suite.c</location>
-		</link>
-		<link>
-			<name>[Targets]/[exe] test_kbest/Source Files/debug.c</name>
-			<type>1</type>
-			<location>/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/src/utility/debug.c</location>
 		</link>
 		<link>
 			<name>[Targets]/[exe] test_kbest/Source Files/kbest_io_utility.c</name>

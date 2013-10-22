@@ -276,30 +276,6 @@ kp_model/kp_inner_model.c.s:
 	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix" && $(MAKE) -f src/CMakeFiles/kbest.dir/build.make src/CMakeFiles/kbest.dir/kp_model/kp_inner_model.c.s
 .PHONY : kp_model/kp_inner_model.c.s
 
-utility/debug.o: utility/debug.c.o
-.PHONY : utility/debug.o
-
-# target to build an object file
-utility/debug.c.o:
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix" && $(MAKE) -f src/CMakeFiles/kbest.dir/build.make src/CMakeFiles/kbest.dir/utility/debug.c.o
-.PHONY : utility/debug.c.o
-
-utility/debug.i: utility/debug.c.i
-.PHONY : utility/debug.i
-
-# target to preprocess a source file
-utility/debug.c.i:
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix" && $(MAKE) -f src/CMakeFiles/kbest.dir/build.make src/CMakeFiles/kbest.dir/utility/debug.c.i
-.PHONY : utility/debug.c.i
-
-utility/debug.s: utility/debug.c.s
-.PHONY : utility/debug.s
-
-# target to generate assembly for a file
-utility/debug.c.s:
-	cd "/home/daniele/Dropbox/University/Metodi e Modelli per il Supporto alle Decisioni LM/Project/knapsackkbest/default_build/unix" && $(MAKE) -f src/CMakeFiles/kbest.dir/build.make src/CMakeFiles/kbest.dir/utility/debug.c.s
-.PHONY : utility/debug.c.s
-
 utility/utility.o: utility/utility.c.o
 .PHONY : utility/utility.o
 
@@ -352,9 +328,6 @@ help:
 	@echo "... kp_model/kp_inner_model.o"
 	@echo "... kp_model/kp_inner_model.i"
 	@echo "... kp_model/kp_inner_model.s"
-	@echo "... utility/debug.o"
-	@echo "... utility/debug.i"
-	@echo "... utility/debug.s"
 	@echo "... utility/utility.o"
 	@echo "... utility/utility.i"
 	@echo "... utility/utility.s"

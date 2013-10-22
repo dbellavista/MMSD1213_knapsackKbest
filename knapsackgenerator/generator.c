@@ -230,15 +230,23 @@ int main(int argc, char *argv[])
 {
   item *f, *l;
   int n, r, type, i, S;
-  stype c;
+  stype c, cin;
 
-  if (argc == 6) {
+  if (argc == 6 || argc == 7) {
     n = atoi(argv[1]);
     r = atoi(argv[2]);
     type = atoi(argv[3]);
     i = atoi(argv[4]);
     S = atoi(argv[5]);
-    printf("generator %d %d %d %d %d\n", n, r, type, i, S);
+    c = 0;
+    if(argc == 7) {
+      cin = atoi(argv[6]);
+    }
+    if (cin == 0) {
+      printf("generator %d %d %d %d %d\n", n, r, type, i, S);
+    } else {
+      printf("generator %d %d %d %d %d %ld\n", n, r, type, i, S, cin);
+    }
   } else {
     printf("generator\n");
     printf("num_items = ");
@@ -251,11 +259,14 @@ int main(int argc, char *argv[])
     scanf("%d", &i);
     printf("number of tests in series (typically 1000) = ");
     scanf("%d", &S);
+    printf("maximum coeff sum (0 for automatic choise) = ");
+    scanf("%ld", &cin);
   }
 
   f = palloc(n, sizeof(item));
   l = f + n-1;
   c = maketest(f, l, r, type, i, S);
+  if(cin != 0) c = cin;
   showitems(f, l, c);
   pfree(f);
   return 0;

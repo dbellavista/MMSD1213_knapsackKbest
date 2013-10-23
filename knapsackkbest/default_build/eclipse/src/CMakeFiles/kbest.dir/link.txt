@@ -1,1 +1,0 @@
-/usr/bin/cc  -fPIC    -shared -Wl,-soname,libkbest.so -o libkbest.so CMakeFiles/kbest.dir/kbest.c.o CMakeFiles/kbest.dir/kbest_io_utility.c.o CMakeFiles/kbest.dir/utility/utility.c.o CMakeFiles/kbest.dir/kp_algorithm/kp_alg_forward.c.o CMakeFiles/kbest.dir/kp_algorithm/kp_alg_backtrack.c.o CMakeFiles/kbest.dir/kp_model/kp_inner_model.c.o 

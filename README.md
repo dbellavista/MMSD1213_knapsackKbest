@@ -44,15 +44,34 @@ has those options:
                         of the runtime path from the demo executable, so that
                         it can link the `kbest` library.
 
-Example of usage from the command line. For windows it's suggested the usage of `cmake-gui`:
+#### Generate an Eclipse project
 
-    $ cd knapsackkbest
-    $ mkdir build && cd build
-    $ cmake -G "Unix Makefiles" -DENABLE_DEBUG_PRINTS=ON ..
+Example of usage from the command line. For windows it's suggested the usage of `cmake-gui`.
+From the main directory (**not** inside `knapsackkbest`)
+
+    $ mkdir -p build && cd build
+    $ cmake -G "Eclipse CDT4 - Ninja" ../knapsackkbest/
+
+From eclipse go to `File->import`, then `Existing Projects into Workspace`.
+Select the path of the early generated build directory and import the project.
+
+The generated project contains a reference called `[Source directory]`, which
+contains the project source code. Compilation and execution can be performed as
+usal. Note that the provided demo requires command line parameters.
+
+#### Generate an Unix Makefile project
+
+The process is the same. After running `make`, the binaries will be in
+`./src/demo` of `./src/tests`. By setting the desired `CMAKE_INSTALL_PREFIX`,
+you can set the destination of binaries, libraries and includes. Note that if
+`CMAKE_INSTALL_PREFIX/lib` is not in your `PATH` and `STRIP_DEMO_PATH` is set
+to `ON`, the demo won't start, because the linker doesn't know where the kbest
+library is.
+
+    $ mkdir -p build && cd build
+    $ cmake -G "Unix Makefiles" ../knapsackkbest/
     $ make
-    $ make install
-
-The project includes some pregenerated builds.
+    $ ./src/demo/kbest_demo
 
 ### Directories
 

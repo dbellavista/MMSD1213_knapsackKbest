@@ -35,8 +35,6 @@ has those options:
                             `make install` will put the binary and libraries.
 * __TESTS__ (default `ON`): compile the tests.
 * __DEMO__ (default `ON`): compile the demo.
-* __ENABLE_DEBUG_PRINTS__ (default `OFF`): compile the debug prints. Then they
-                                         can be enabled using the API of `debug.h`
 * __STRIP\_DEMO\_PATH__ (default `OFF`): this is for testing. If the project is
                         installed (aka `make install`) and the
                         `CMAKE_INSTALL_PREFIX` is not in the `PATH`, by

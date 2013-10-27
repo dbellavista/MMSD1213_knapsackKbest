@@ -18,6 +18,5 @@ SET (BellavistaKBest_SRC_DIR "${BellavistaKBest_SOURCE_DIR}/src")
 SET (BellavistaKBest_TEST_DIR "${BellavistaKBest_SRC_DIR}/test")
 
 INCLUDE_DIRECTORIES (${BellavistaKBest_SRC_DIR})
-INCLUDE_DIRECTORIES (${BellavistaKBest_BINARY_DIR})
 
 ADD_SUBDIRECTORY (src)

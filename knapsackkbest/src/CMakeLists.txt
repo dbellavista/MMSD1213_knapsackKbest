@@ -13,7 +13,6 @@ SET (CMAKE_INSTALL_PREFIX "${BellavistaKBest_SOURCE_DIR}")
 
 OPTION(TESTS "Compile the tests" ON)
 OPTION(DEMO "Compile to demo" ON)
-OPTION(ENABLE_DEBUG_PRINTS "Compile with the debug prints" OFF)
 OPTION(STRIP_DEMO_RPATH "Strip the demo runtime path (to be used for deploy)" OFF)
 
 IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
@@ -25,11 +24,6 @@ ENDIF(CMAKE_BUILD_TYPE MATCHES DEBUG)
 
 MESSAGE (" KB > Install Directory is: \"" ${CMAKE_INSTALL_PREFIX} "\"")
 MESSAGE ("      \tTo change this value, set KBEST_INSTALL_PREFIX")
-IF(ENABLE_DEBUG_PRINTS)
-  MESSAGE (" KB > Compiling with debug prints")
-ELSE()
-  MESSAGE (" KB > Compiling without debug prints")
-ENDIF(ENABLE_DEBUG_PRINTS)
 
 ADD_LIBRARY(kbest SHARED ./kbest.c ./kbest_io_utility.c
   ./utility/utility.c ./kp_algorithm/kp_alg_forward.c
@@ -51,8 +45,3 @@ IF(DEMO)
   MESSAGE (" KB > Demo enabled")
   ADD_SUBDIRECTORY(demo)
 ENDIF(DEMO)
-
-CONFIGURE_FILE (
-  "${BellavistaKBest_SRC_DIR}/KBestConfig.h.in"
-  "${BellavistaKBest_BINARY_DIR}/KBestConfig.h"
-)

@@ -290,17 +290,13 @@ bool test_find_innsol_idx() {
 	ret &= (g >= 0) && (size_t) g == size;
 	ret &= ss[g - 1]->value == 2;
 
-	printf("%d\n", ret);
 	value_to_insert = 1000;
 	g = find_idx_insertion(ss, size, size, -1, value_to_insert);
 	ret &= g == 0;
-	printf("%d %zd\n", ret, g);
 
 	value_to_insert = 1000;
 	g = find_idx_insertion(ss, size, size, 0, value_to_insert);
 	ret &= g == -1;
-	printf("%d\n", ret);
-
 
 	value_to_insert = 9;
 	tmp = size;
@@ -312,7 +308,6 @@ bool test_find_innsol_idx() {
 	ret &= ss[size - 1]->value == 4;
 	ss[g] = ss[g + 1];
 
-	printf("%d\n", ret);
 	value_to_insert = 9;
 	tmp = size;
 	g = find_idx_and_prepare_insertion(ss, &tmp, 0, value_to_insert, size + 1);
@@ -322,7 +317,6 @@ bool test_find_innsol_idx() {
 	ret &= ss[g - 1]->value == 10;
 	ret &= ss[size]->value == 4;
 
-	printf("%d\n", ret);
 	for (i = 0; i < size + 1; i++) {
 		if (ss[i] != NULL) {
 			kp_free_inn_sol(ss[i]);

@@ -2,7 +2,9 @@ include/
 build/
 bin/
 lib/
+tmp/
 raw_results/
 */doc/doxygen/
+main.pdf
 .ycm_extra_conf.py*
 *.swp

@@ -1,0 +1,68 @@
+\section{Introduzione}
+
+In questo progetto ho implementato la soluzione per la determinazione delle K
+migliori soluzioni del problema monodimensionale di knapsack proposta in
+\cite{YANASSE2000}.
+
+\begin{align*}
+  \{z_1,z_2,\cdots,z_K\} \in & \{\sum\limits_{i=1}^n c_ix_i\}\\
+  z_j = \max\limits_x & \{\{\sum\limits_{i=1}^n c_ix_i\}\backslash\{z_h\}_{h=1}^{j-1}\}& j = [1,K]\\
+%
+  &\sum\limits_{i=1}^n a_ix_i \le b\\
+  &x_i\ge0, intero
+\end{align*}
+
+Dove $K$ è il numero di soluzioni richieste, $z_j$ è la $j-esima$ soluzione
+ottima, $\bar{x}$ è il vettore delle soluzioni, $\bar{c}$ è il vettore dei
+costi, $\bar{a}$ è il vettore dei pesi e $b$ è il peso massimo.
+
+Nell'articolo, gli autori propongono uno schema enumerativo di complessità
+temporale $O(Knb)$ e spaziale $O(nb)$.
+
+\section{Algoritmo}
+
+Considero $n$ elementi con pesi $\bar{w}=\{w_1, w_2, \cdots, w_n\}$ e valori
+$\bar{a}=\{a_1, a_2, \cdots,a_n\}$, tali che $w_1 \le w_2 \le \cdots \le w_n$.
+L'algoritmo si suddivide in due parti: una ricerca \emph{forward} ed una
+\emph{backward}. Poich\'e l'algoritmo è descritto in dettaglio in
+\cite{YANASSE2000}, mi limito a riportare un breve riassunto incentrato sulla
+sua implementazione piuttosto che sull'aspetto teorico.
+
+\subsection{Ricerca forward}
+
+La ricerca forward porta a determinare al più $n$ migliori
+valori per ogni $w \in [w_1;b]$. Per ogni valore non si memorizza il vettore
+delle soluzioni ma solo l'indice dell'elemento più pesante presente in
+soluzione.
+
+La ricerca si effettua utilizzando una matrice $b\times{}n$, in cui nella riga
+$i-esima$ risiedono al più $n$ migliori soluzioni con peso totale $i$.
+L'indice di colonna $j$ è uguale all'indice dell'elemento più pesante presente
+in soluzione.
+
+Il risultato della ricerca \emph{forward} sono $K$ valori, di cui il migliore
+di essi corrisponde al valore della migliore soluzione del problema.
+
+\subsection{Ricerca backward}
+
+La ricerca backward utilizza la matrice della ricerca forward per ricostruire
+il vettore delle soluzioni per ognuno dei $K$ valori individuati. Per ogni
+valore $v_{i,j}$ si conoscono gli indici $i,j$ che sono rispettivamente il peso
+della soluzione e l'elemento più pesante in soluzione. Stabilito $i' = i -
+w_j$, la matrice contiene un elemento di valore $v_{i',j'} = v_{i,j} - v_l$
+nella riga di indice $i'$, colonna $j'$. Noto il vettore soluzioni $\bar{X}$
+che porta in ${i',j'}$, si può ottenere la soluzione in ${i,j}$, aggiungengo
+$1$ ad $X_j$.
+
+La ricerca di una singola soluzione termina quando, supponendo $i,j$ gli indici
+correnti, $i - w_j = 0$.
+
+Tuttavia le soluzioni cos\`i ottenute non sono necessariamente le $K$ migliori
+soluzioni, poich\'e la matrice generata dalla ricerca forward contiene i
+migliori valori per ogni peso, ma potrebbero esistere soluzioni di peso $j_a$,
+non presenti nella matrice, con valore maggiore di soluzioni presenti in
+qualsiasi $j_b \neq j_a$.
+
+Per risolvere questo problema, durante la ricerca backward si cercano soluzioni
+alternative, esplorando gli altri valori presenti nella riga corrente, fissata
+la soluzione parziale corrente.

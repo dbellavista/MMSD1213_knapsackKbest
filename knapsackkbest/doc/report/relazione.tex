@@ -105,3 +105,26 @@ alternativa trovata precedentemente.
 Per evitare questi problemi, ho implementato un controllo efficiente per
 verificare l'univocità delle soluzioni utilizzando principalmente una bitmap in
 cui il bit $jesimo$ vale $0$ se $x_j=0$ e vale $1$ se $x_j > 0$.
+
+\section{Risultati}
+
+Non sono riuscito ad ottenere le stesse performance riportate nell'articolo.
+Generando problemi random utilizzando il generatore in
+\url{http://www.diku.dk/~pisinger/codes.html}, ho ottenuto istanze risolvibili
+in tempi irrisori perch\'e le soluzioni ottime erano composte in gran parte
+dall'elemento più leggero, mentre altre istanze erano estremamente difficili e
+i tempi largamente maggiori da quelli riportati nell'articolo.
+
+Ho effettuato un test con $20$ problemi random con $n = 500$, $b = 10.000$, $w_i
+\in [1,5.000]$, per valori di $K$ pari a $100, 200, 300, 400, \dots, 1.200$.
+
+In figura\ref{fig:var_k}, è riportato il grafico dell'andamento del tempo
+computazionale.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=12cm]{./imgs/variation_K.png}
+  \caption{Tempo computazionale al variare di $K$, con $n = 500$, $b = 10.000$
+  su $20$ problemi. Ad ogni colore corrisponde un problema}
+  \label{fig:var_k}
+\end{figure}

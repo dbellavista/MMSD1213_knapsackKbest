@@ -20,7 +20,6 @@
  *  @param[in]   sols_size   The size of \p solutions.
  *  @param[in]   sol   The solution to search.
  *  @param[in]   pivot The index to start with
- *  @param[in]   exclude_pivot True if the pivot must be escluded from search
  *
  *  @return      Returns the index of the duplicate solution if exists, -1 otherwise.
  *
@@ -28,15 +27,15 @@
  *               which solution vector is equals to the one of an another solution.
  */
 ssize_t find_duplicate(InnerSolution* solutions, size_t sols_size,
-    InnerSolution sol, size_t pivot, bool exclude_pivot);
+    InnerSolution sol, size_t pivot);
 
 ssize_t find_duplicate(InnerSolution* solutions, size_t sols_size,
-    InnerSolution sol, size_t pivot, bool exclude_pivot)
+    InnerSolution sol, size_t pivot)
 {
   InnerSolution tmp_sol;
   ssize_t i;
   size_t j;
-  i = (exclude_pivot) ? pivot - 1 : pivot;
+  i = pivot;
   for(; i >= 0; i--) {
     tmp_sol = solutions[i];
     if(tmp_sol->value > sol->value) {
@@ -111,7 +110,7 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 
     // Auxl1 is recovered. Checks if the new solution is a duplicate. If not
     // insert it in the solution vector.
-    i = find_duplicate(solutions, *sols_size, tmp_sol, insert_idx, false);
+    i = find_duplicate(solutions, *sols_size, tmp_sol, insert_idx);
 
     if(i < 0) {
       // Inserting the new solution
@@ -128,7 +127,7 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 		if (auxl1->value >= solutions[*sols_size - 1]->value) {
 		  auxl1->recovered = 1;
 			// Auxl1 can be a duplicate too!
-			if(find_duplicate(solutions, *sols_size, auxl1, *sols_size - 1, false) == -1) {
+			if(find_duplicate(solutions, *sols_size, auxl1, *sols_size - 1) == -1) {
         insert_idx = find_idx_and_prepare_insertion(solutions, sols_size, NULL,
             insert_idx, matrix[snode][var], K);
         if (insert_idx == -1) {

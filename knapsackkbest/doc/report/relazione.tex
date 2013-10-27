@@ -66,3 +66,42 @@ qualsiasi $j_b \neq j_a$.
 Per risolvere questo problema, durante la ricerca backward si cercano soluzioni
 alternative, esplorando gli altri valori presenti nella riga corrente, fissata
 la soluzione parziale corrente.
+
+\section{Implementazione}
+
+L'algoritmo è stato implmementato in \code{C}, realizzando una libreria che
+offre una interfaccia per dichiarare e risolvere il problema.
+
+Il progetto è gestito da \code{CMake} e la documentazione da \code{doxygen},
+dunque i commenti sopra le signature delle funzioni ne descrivono parametri e
+comportamento. Istruzioni su come usare \code{cmake} per creare un progetto
+sono nel \code{README.md} nella root del progetto. Il progetto è su \code{github}:
+\url{https://github.com/dbellavista/MMSD1213_knapsackKbest}.
+
+Nella cartella \code{src/demo} è presente una piccola demo che utilizza la
+libreria.
+
+\subsection{Problema di soluzioni identiche}
+
+La ricerca delle soluzioni alternative trova soluzioni che sono ottenute
+esplorando strade diverse, ma che portano allo stesso risultato, ovvero lo
+stesso vettore delle soluzioni. Questo comportamento lo si nota anche
+nell'esempio riportato dall'articolo, ma non lo si menziona. Nella sottosezione
+\emph{Recovering the K-best solutions}, paragrafo 7 (in fondo alla pagina), si
+descrive il processo di recovering di soluzioni alternative per il valore $19$.
+
+Nel processo di \emph{recovering} (ricerca backward), dalla riga $15$ si passa
+alla riga $9$, con una soluzione parziale di valore $7$. Esplorando le
+alternative, si trova un valore $11+7 = 18$, che è inserito nelle soluzioni.
+Riprendendo la ricerca backward per $19$, si sottrae $3$, arrivando alla riga
+$6$ con una soluzione parziale di valore $11$. La nuova soluzione ha un vettore
+delle soluzioni pari a $[3,0,0,1,0]$.
+
+L'articolo non lo menziona, ma esplorando le soluzioni alternative, si arriva
+ad una soluzione $7 + 11=18$ che andrebbe inserita nella lista di soluzioni, ma
+il suo vettore delle soluzioni ($[3,0,0,1,0]$) è identico alla soluzione
+alternativa trovata precedentemente.
+
+Per evitare questi problemi, ho implementato un controllo efficiente per
+verificare l'univocità delle soluzioni utilizzando principalmente una bitmap in
+cui il bit $jesimo$ vale $0$ se $x_j=0$ e vale $1$ se $x_j > 0$.

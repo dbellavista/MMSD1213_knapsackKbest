@@ -24,7 +24,7 @@ void kp_build_initial_best_k_list(InnerSolution** ret, size_t* ret_size,
 			snode >= problem->weights[0] - 1; snode--) {
 		for (var = problem->num_var - 1; var >= 0; var--) {
 			if (matrix[snode][var] >= 0) {
-        idx = find_idx_and_prepare_insertion(*ret, &counter, NULL, -1, matrix[snode][var], K);
+        idx = find_idx_and_prepare_insertion(*ret, &counter, -1, matrix[snode][var], K);
         if(idx >= 0) {
           kp_init_inn_sol(&(*ret)[idx], problem->num_var, var, snode, matrix[snode][var]);
         }

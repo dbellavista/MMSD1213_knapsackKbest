@@ -168,22 +168,15 @@ ssize_t find_idx_insertion(InnerSolution* sol_list, size_t sols_size, size_t
 	return -1;
 }
 
-void prepare_insertion(InnerSolution* sol_list, size_t* sols_size, size_t insert_idx,
-    InnerSolution* removed, size_t K)
+void prepare_insertion(InnerSolution* sol_list, size_t* sols_size, size_t
+    insert_idx, size_t K)
 {
   size_t i;
 
 	if (*sols_size == K) {
-	  if(removed == NULL) {
-      kp_free_inn_sol(sol_list[K - 1]);
-      sol_list[K - 1] = NULL;
-    } else {
-      *removed = sol_list[K - 1];
-    }
+    kp_free_inn_sol(sol_list[K - 1]);
+    sol_list[K - 1] = NULL;
 	} else {
-	  if(removed) {
-	    *removed = NULL;
-    }
 		*sols_size = *sols_size + 1;
 	}
 	for (i = *sols_size - 1; i > insert_idx; i--) {
@@ -193,7 +186,7 @@ void prepare_insertion(InnerSolution* sol_list, size_t* sols_size, size_t insert
 }
 
 ssize_t find_idx_and_prepare_insertion(InnerSolution* sol_list, size_t*
-    sols_size, InnerSolution* removed, ssize_t lower_limit_idx, uint32_t value, size_t K)
+    sols_size, ssize_t lower_limit_idx, uint32_t value, size_t K)
 {
 	ssize_t idx;
 	idx = find_idx_insertion(sol_list, *sols_size, K, lower_limit_idx, value);
@@ -202,7 +195,7 @@ ssize_t find_idx_and_prepare_insertion(InnerSolution* sol_list, size_t*
 		return idx;
 	}
 
-  prepare_insertion(sol_list, sols_size, idx, removed, K);
+  prepare_insertion(sol_list, sols_size, idx, K);
 
 	return idx;
 }

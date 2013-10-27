@@ -304,7 +304,7 @@ bool test_find_innsol_idx() {
 
 	value_to_insert = 9;
 	tmp = size;
-	g = find_idx_and_prepare_insertion(ss, &tmp, NULL, 0, value_to_insert, size);
+	g = find_idx_and_prepare_insertion(ss, &tmp, 0, value_to_insert, size);
 	ret &= size == tmp;
 	ret &= ss[g] == NULL;
 	ret &= ss[g + 1]->value == 8;
@@ -315,7 +315,7 @@ bool test_find_innsol_idx() {
 	printf("%d\n", ret);
 	value_to_insert = 9;
 	tmp = size;
-	g = find_idx_and_prepare_insertion(ss, &tmp, NULL, 0, value_to_insert, size + 1);
+	g = find_idx_and_prepare_insertion(ss, &tmp, 0, value_to_insert, size + 1);
 	ret &= tmp == size + 1;
 	ret &= ss[g] == NULL;
 	ret &= ss[g + 1]->value == 8;

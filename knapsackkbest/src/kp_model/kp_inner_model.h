@@ -177,9 +177,6 @@ ssize_t find_idx_insertion(InnerSolution* sol_list, size_t sols_size, size_t
  *  @param[in]   sol_list   The solution list
  *  @param[in,out]  sols_size   A pointer to the solution size. If the size is
  *                              modified, sols_size is modified.
- *  @param[in,out]  removed    Optional. A pointer to be filled with the
- *                              removed element in case the index is found and
- *                              \p sols_size is equal to \p K.
  *  @param[in]  lower_limit_idx    The exclusive start index
  *  @param[in]   value  The value to be inserted
  *  @param[in]  K    The array maximum size.
@@ -191,8 +188,7 @@ ssize_t find_idx_insertion(InnerSolution* sol_list, size_t sols_size, size_t
  *
  */
 ssize_t find_idx_and_prepare_insertion(InnerSolution* sol_list, size_t*
-    sols_size, InnerSolution* removed, ssize_t lower_limit_idx, uint32_t value,
-    size_t K);
+    sols_size, ssize_t lower_limit_idx, uint32_t value, size_t K);
 
 /**
  *  @brief          Move the array elements to free the insertion index.
@@ -201,19 +197,14 @@ ssize_t find_idx_and_prepare_insertion(InnerSolution* sol_list, size_t*
  *  @param[in,out]  sols_size   A pointer to the solution size. If the size is
  *                              modified, sols_size is modified.
  *  @param[in]   insert_idx   The index of insertion
- *  @param[in,out]  removed    Optional. A pointer to be filled with the
- *                              removed element in case the index is found and
- *                              \p sols_size is equal to \p K.
  *  @param[in]  K    The array maximum size.
  *
  *  @details     It moves the elements from index + 1 to sol_size
- *               toward right. If sols_size is equal to K, then there is no
- *               space for the last element: if \p removed is not NULL, then
- *               the function set its value to the last element, otherwise the
- *               last element is freed.
+ *               toward right. If sols_size is equal to K, the last element is
+ *               freed.
  */
-void prepare_insertion(InnerSolution* sol_list, size_t* sols_size, size_t insert_idx,
-    InnerSolution* removed, size_t K);
+void prepare_insertion(InnerSolution* sol_list, size_t* sols_size, size_t
+    insert_idx, size_t K);
 
 /**
  *  @brief          Sum the \ref InnerSolution.sol_vector of \p s1 and \p s2, putting the

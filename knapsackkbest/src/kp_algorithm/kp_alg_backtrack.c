@@ -114,7 +114,7 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 
     if(i < 0) {
       // Inserting the new solution
-      prepare_insertion(solutions, sols_size, insert_idx, NULL, K);
+      prepare_insertion(solutions, sols_size, insert_idx, K);
       solutions[insert_idx] = tmp_sol;
       tmp_sol = NULL;
     } else {
@@ -128,7 +128,7 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 		  auxl1->recovered = 1;
 			// Auxl1 can be a duplicate too!
 			if(find_duplicate(solutions, *sols_size, auxl1, *sols_size - 1) == -1) {
-        insert_idx = find_idx_and_prepare_insertion(solutions, sols_size, NULL,
+        insert_idx = find_idx_and_prepare_insertion(solutions, sols_size,
             insert_idx, matrix[snode][var], K);
         if (insert_idx == -1) {
           d_error(

@@ -5,7 +5,7 @@
  *      Author: Daniele Bellavista <daniele.bellavista@studio.unibo.it>
  */
 
-#include <time.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,6 +18,8 @@ KBestSolutions single_test(char* filename, uint32_t K, double* test_time, bool
 void print_help();
 void time_test(char* res_file, char** files, size_t files_num, uint32_t
     interaction, uint32_t K);
+void project_test(char* sol_file, char* time_file, char** files, size_t
+    files_num, uint32_t K);
 void print_array2(uint32_t* array, size_t size);
 void check_solutions(KBestSolutions solutions);
 
@@ -48,9 +50,53 @@ KBestSolutions single_test(char* filename, uint32_t K, double* test_time, bool d
 	kp_solve(&solutions, problem, K);
 	time_stop = get_real_time();
 
+	*test_time = time_stop - time_start;
+
 	kp_free_kp(problem);
 
 	return solutions;
+}
+
+void project_test(char* sol_file, char* time_file, char** files, size_t
+    files_num, uint32_t K)
+{
+	size_t fileid;
+	FILE *sol_f, *time_f;
+	double test_time, max_time = 0.0, min_time = INFINITY, average_time = 0.0;
+	KBestSolutions solutions;
+
+  // Performing tests
+	for (fileid = 0; fileid < files_num; fileid++) {
+	  d_notice("Solving file %s\n", files[fileid]);
+	  solutions = single_test(files[fileid], K, &test_time, false);
+    if(fileid + 1 < files_num)
+      kp_free_kbest_sols(solutions);
+    if(test_time > max_time) {
+      max_time = test_time;
+    }
+    if(test_time < min_time) {
+      min_time = test_time;
+    }
+    average_time += test_time;
+	}
+	average_time /= files_num;
+
+	time_f = fopen(time_file, "w");
+
+  fprintf(time_f, "Computational times on %zu instances:\n\n", files_num);
+  fprintf(time_f, "K = %u\n", K);
+  fprintf(time_f, "average partial time = NA\n");
+  fprintf(time_f, "average total time = %f s\n", average_time);
+  fprintf(time_f, "minimum total time = %f s\n", min_time);
+  fprintf(time_f, "maximum total time = %f s\n", max_time);
+  fprintf(time_f, "\n");
+
+	fclose(time_f);
+
+	sol_f = fopen(sol_file, "w");
+  print_kbest_solution_default_format(sol_f, solutions);
+	fclose(sol_f);
+  kp_free_kbest_sols(solutions);
 }
 
 void time_test(char* res_file, char** files, size_t files_num, uint32_t
@@ -136,6 +182,7 @@ void print_help()
       "\te <K>: example test. using ./problems/problem.txt\n"
       "\tt <k> <res_file> <num_iterations> {file}: timing test, running num_iteration iterations on the given files\n"
       "\ts <K> <file>: single test on the given file, prints the solution.\n"
+      "\tp <k> <sol_file> <time_file> {file}: total test, runs each test and prints the result in the given files\n"
       );
 }
 
@@ -161,7 +208,7 @@ int main(int argc, char **argv)
       }
       K = strtoul(argv[2], NULL, 10);
       solutions = single_test("problems/problem.txt", K, &total_time, true);
-      print_kbest_solution_default_format(solutions);
+      print_kbest_solution_default_format(NULL, solutions);
       check_solutions(solutions);
       kp_free_kbest_sols(solutions);
 
@@ -175,6 +222,14 @@ int main(int argc, char **argv)
       num_iteration = strtoul(argv[4], NULL, 10);
       time_test(argv[3], &(argv[5]), argc - 5, num_iteration, K);
       break;
+    case 'p':
+      if(argc < 5) {
+        d_error("Mandatory parameters missing\n");
+        return 6;
+      }
+      K = strtoul(argv[2], NULL, 10);
+      project_test(argv[3], argv[4], &(argv[5]), argc - 5, K);
+      break;
     case 's':
       if(argc != 4) {
         d_error("Mandatory parameters missing\n");
@@ -182,7 +237,7 @@ int main(int argc, char **argv)
       }
       K = strtoul(argv[2], NULL, 10);
       solutions = single_test(argv[3], K, &total_time, false);
-      print_kbest_solution_default_format(solutions);
+      print_kbest_solution_default_format(NULL, solutions);
       check_solutions(solutions);
       kp_free_kbest_sols(solutions);
       break;

@@ -6,7 +6,11 @@
 
 LINK_DIRECTORIES (${CMAKE_INSTALL_PREFIX}/${BellavistaKBest_LIB_DIR}/kbest)
 
-ADD_EXECUTABLE (kbest_demo kbest_demo_main.c)
+ADD_EXECUTABLE (kbest_demo kbest_demo_main.c get_real_time.c)
+
+IF(UNIX)
+  TARGET_LINK_LIBRARIES(kbest_demo rt)
+ENDIF(UNIX)
 
 IF (NOT(STRIP_DEMO_RPATH))
   MESSAGE (" KB > Demo > RPATH will be set to \""

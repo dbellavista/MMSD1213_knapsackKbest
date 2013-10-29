@@ -151,7 +151,7 @@ int main(int argc, char **argv)
   KBestSolutions solutions;
 	//timeTest(2900, &averageTick, &averageTime, &totalTick, &totalTime);
 
-	set_debug_level(WARNING ^ ERROR ^ NOTICE);
+	set_debug_level(WARNING ^ ERROR);
 
   if(argc < 2) {
     print_help();
@@ -186,7 +186,7 @@ int main(int argc, char **argv)
         return 5;
       }
       K = strtoul(argv[2], NULL, 10);
-      solutions = single_test(argv[3], K, &totalTick, &totalTime, true);
+      solutions = single_test(argv[3], K, &totalTick, &totalTime, false);
       print_kbest_solution_default_format(solutions);
       check_solutions(solutions);
       kp_free_kbest_sols(solutions);

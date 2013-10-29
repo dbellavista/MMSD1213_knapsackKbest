@@ -11,9 +11,10 @@
 #include <string.h>
 #include "kbest_io_utility.h"
 #include "kbest.h"
+#include "get_real_time.h"
 
-KBestSolutions single_test(char* filename, uint32_t K, double* test_ticks,
-    double* test_time, bool do_prints);
+KBestSolutions single_test(char* filename, uint32_t K, double* test_time, bool
+    do_prints);
 void print_help();
 void time_test(char* res_file, char** files, size_t files_num, uint32_t
     interaction, uint32_t K);
@@ -30,11 +31,9 @@ void print_array2(uint32_t* array, size_t size)
 	printf("]\n");
 }
 
-KBestSolutions single_test(char* filename, uint32_t K, double* test_ticks,
-    double* test_time, bool do_prints)
+KBestSolutions single_test(char* filename, uint32_t K, double* test_time, bool do_prints)
 {
-	time_t start, stop;
-	clock_t ticksStart, ticksStop;
+  double time_start, time_stop;
 	KProblem problem;
 	KBestSolutions solutions;
 	if(do_prints)
@@ -45,14 +44,10 @@ KBestSolutions single_test(char* filename, uint32_t K, double* test_ticks,
     d_notice("Solving problem with K=%lu\n", K);
   }
 
-	time(&start);
-	ticksStart = clock();
+	time_start = get_real_time();
 	kp_solve(&solutions, problem, K);
-	ticksStop = clock();
-	time(&stop);
+	time_stop = get_real_time();
 
-	*test_ticks = ticksStop - ticksStart;
-	*test_time = difftime(stop, start);
 	kp_free_kp(problem);
 
 	return solutions;
@@ -61,7 +56,7 @@ KBestSolutions single_test(char* filename, uint32_t K, double* test_ticks,
 void time_test(char* res_file, char** files, size_t files_num, uint32_t
     iterations, uint32_t K)
 {
-	double test_ticks, test_time;
+	double test_time;
 	size_t fileid;
 	uint32_t i;
 	FILE* f;
@@ -76,8 +71,8 @@ void time_test(char* res_file, char** files, size_t files_num, uint32_t
       printf("\r%d on %d", i, iterations);
       fflush(stdout);
 
-      kp_free_kbest_sols(single_test(files[fileid], K, &test_ticks, &test_time, false));
-      fprintf(f, "%f", test_ticks / CLOCKS_PER_SEC);
+      kp_free_kbest_sols(single_test(files[fileid], K, &test_time, false));
+      fprintf(f, "%f", test_time);
       if(i + 1 < iterations) {
         fprintf(f, ",");
       }
@@ -147,7 +142,7 @@ void print_help()
 int main(int argc, char **argv)
 {
   uint32_t num_iteration, K;
-	double totalTick, totalTime;
+	double total_time;
   KBestSolutions solutions;
 	//timeTest(2900, &averageTick, &averageTime, &totalTick, &totalTime);
 
@@ -165,7 +160,7 @@ int main(int argc, char **argv)
         return 4;
       }
       K = strtoul(argv[2], NULL, 10);
-      solutions = single_test("problems/problem.txt", K, &totalTick, &totalTime, true);
+      solutions = single_test("problems/problem.txt", K, &total_time, true);
       print_kbest_solution_default_format(solutions);
       check_solutions(solutions);
       kp_free_kbest_sols(solutions);
@@ -186,7 +181,7 @@ int main(int argc, char **argv)
         return 5;
       }
       K = strtoul(argv[2], NULL, 10);
-      solutions = single_test(argv[3], K, &totalTick, &totalTime, false);
+      solutions = single_test(argv[3], K, &total_time, false);
       print_kbest_solution_default_format(solutions);
       check_solutions(solutions);
       kp_free_kbest_sols(solutions);

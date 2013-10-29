@@ -66,7 +66,7 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
     KProblem problem)
 {
 
-	ssize_t insert_idx, i;
+	ssize_t insert_idx;
 	size_t var;
   uint32_t newvalue;
 	InnerSolution auxl1, tmp_sol;
@@ -108,41 +108,12 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
     sum_solution_vectors(tmp_sol, auxl, auxl1);
     tmp_sol->recovered = true;
 
-    // Auxl1 is recovered. Checks if the new solution is a duplicate. If not
-    // insert it in the solution vector.
-    i = find_duplicate(solutions, *sols_size, tmp_sol, insert_idx);
+    // Inserting the new solution
+    prepare_insertion(solutions, sols_size, insert_idx, K);
+    solutions[insert_idx] = tmp_sol;
+    tmp_sol = NULL;
 
-    if(i < 0) {
-      // Inserting the new solution
-      prepare_insertion(solutions, sols_size, insert_idx, K);
-      solutions[insert_idx] = tmp_sol;
-      tmp_sol = NULL;
-    } else {
-      // Duplicat found! Freeing the new solution
-      kp_free_inn_sol(tmp_sol);
-      tmp_sol = NULL;
-    }
-
-    // Checking if the solution auxl1 is worth to be inserted
-		if (auxl1->value >= solutions[*sols_size - 1]->value) {
-		  auxl1->recovered = 1;
-			// Auxl1 can be a duplicate too!
-			if(find_duplicate(solutions, *sols_size, auxl1, *sols_size - 1) == -1) {
-        insert_idx = find_idx_and_prepare_insertion(solutions, sols_size,
-            insert_idx, matrix[snode][var], K);
-        if (insert_idx == -1) {
-          d_error(
-              "Cannot find an idx for second insertion! Value: %d, SolIndex: %d\n",
-              matrix[snode][var], insert_idx);
-        } else {
-          solutions[insert_idx] = auxl1;
-          auxl1 = NULL;
-        }
-      }
-		}
-
-		if(auxl1)
-      kp_free_inn_sol(auxl1);
+    kp_free_inn_sol(auxl1);
 	}
 }
 
@@ -156,6 +127,7 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
   snode = sol_dest->row_idx;
   var = sol_dest->column_idx;
   value = sol_dest->value;
+	limit_var = sol_dest->column_idx;
 
 	cum_val = 0;
 	// Starting from the solution supernode, removes the current variable
@@ -165,8 +137,6 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
 		value -= problem->values[var];
 		cum_val += problem->values[var];
 		set_inner_sol_element(sol_dest, var, sol_dest->sol_vector[var] + 1);
-
-		limit_var = sol_dest->column_idx;
 
 		if (snode + 1 == problem->weights[var]) { // Backtrack terminated
 			break;
@@ -190,6 +160,9 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
     if(alternative)
       search_alternative_solutions(snode, var, cum_val, limit_var,
           sol_index, sol_dest, solutions, sols_size, K, matrix, problem);
+
+    // This is the cause of everything!
+    limit_var = var;
 
 	}
 	sol_dest->recovered = true;

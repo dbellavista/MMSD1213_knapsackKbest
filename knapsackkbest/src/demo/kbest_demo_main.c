@@ -166,7 +166,7 @@ int main(int argc, char **argv)
       }
       K = strtoul(argv[2], NULL, 10);
       solutions = single_test("problems/problem.txt", K, &totalTick, &totalTime, true);
-      print_kbest_solution(solutions);
+      print_kbest_solution_default_format(solutions);
       check_solutions(solutions);
       kp_free_kbest_sols(solutions);
 
@@ -187,7 +187,7 @@ int main(int argc, char **argv)
       }
       K = strtoul(argv[2], NULL, 10);
       solutions = single_test(argv[3], K, &totalTick, &totalTime, true);
-      print_kbest_solution(solutions);
+      print_kbest_solution_default_format(solutions);
       check_solutions(solutions);
       kp_free_kbest_sols(solutions);
       break;

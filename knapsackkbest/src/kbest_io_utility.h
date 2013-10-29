@@ -65,6 +65,15 @@ bool read_problem(KProblem* dest, char* file);
 void print_kproblem(KProblem problem);
 
 /**
+ *  @brief          Prints to stdout the KBestSolutions representation using
+ *                  the default format by Baldacci, Galassi and Leardini.
+ *
+ *  @param[in]      solution The solution to print
+ *
+ */
+void print_kbest_solution_default_format(KBestSolutions solution);
+
+/**
  *  @brief          Prints to stdout a KBestSolutions representation.
  *
  *  @param[in]      solution The solution to print

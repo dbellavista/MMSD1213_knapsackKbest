@@ -66,6 +66,26 @@ void print_kproblem(KProblem problem) {
 	print_array(problem->weights, size);
 }
 
+void print_kbest_solution_default_format(KBestSolutions solution)
+{
+	size_t i, k;
+	uint32_t val;
+  printf("K = %lu\n", solution->sol_count);
+  printf("\n");
+	for (i = 0; i < solution->sol_count; i++) {
+	  printf("solution %zu:\n", i);
+	  printf("value %u:\n", solution->solutions[i]->tot_value);
+	  printf("take:");
+    for(k = 0; k < solution->solutions[i]->vector_size; k++) {
+      val = solution->solutions[i]->solution_vector[k];
+      if(val) {
+        printf(" X%zu (%u times),", k, val);
+      }
+    }
+    printf("\n\n");
+	}
+}
+
 void print_kbest_solution(KBestSolutions solution) {
 	uint32_t size = solution->problem->num_var;
 	printf("Solutions:\n");

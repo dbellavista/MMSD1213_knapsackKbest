@@ -79,7 +79,7 @@ void print_kbest_solution_default_format(KBestSolutions solution)
     for(k = 0; k < solution->solutions[i]->vector_size; k++) {
       val = solution->solutions[i]->solution_vector[k];
       if(val) {
-        printf(" X%zu (%u times),", k, val);
+        printf(" X%u (%u times),", solution->problem->ids[k], val);
       }
     }
     printf("\n\n");
@@ -116,17 +116,18 @@ bool read_problem(KProblem* dest, char* file) {
 	 * <Vn> <Wn>
 	 * <Max W>
 	 */
-	uint32_t N, W, i, id;
-	uint32_t *weights, *values;
+	uint32_t N, W, i;
+	uint32_t *weights, *values, *ids;
 
 	check(fscanf(fp, "%u", &N), 1, fp);
 	d_debug("Read N = %d\n", N);
 
 	weights = (uint32_t*) malloc(N * sizeof(uint32_t));
 	values = (uint32_t*) malloc(N * sizeof(uint32_t));
+	ids = (uint32_t*) malloc(N * sizeof(uint32_t));
 
 	for (i = 0; i < N; i++) {
-		check(fscanf(fp, " %u %u %u", &id, &values[i], &weights[i]), 3, fp);
+		check(fscanf(fp, " %u %u %u", &ids[i], &values[i], &weights[i]), 3, fp);
 		d_debug("Read var V%d = %d; W%d = %d\n", (i + 1), values[i], (i + 1),
 				weights[i]);
 	}
@@ -135,7 +136,7 @@ bool read_problem(KProblem* dest, char* file) {
 	d_debug("Read W = %d\n", W);
 
 	d_debug("Problem read\n\n");
-	kp_init_kp(dest, N, weights, values, W);
+	kp_init_kp(dest, N, weights, values, ids, W);
 
 	free(weights);
 	free(values);

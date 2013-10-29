@@ -26,6 +26,8 @@ struct kProblem {
 	uint32_t* values;
 	/// The max weight for the problem
 	uint32_t max_weigth;
+	/// Array containing the ids of the variables
+	uint32_t* ids;
 };
 /// A pointer to \ref kProblem
 typedef struct kProblem* KProblem;
@@ -65,7 +67,7 @@ typedef struct kBestSolutions* KBestSolutions;
  *
  */
 void kp_init_kp(KProblem* problem, size_t n, uint32_t* weights, uint32_t*
-    values, uint32_t maxW);
+    values, uint32_t* ids, uint32_t maxW);
 
 /**
  *  @brief          Free an allocated \ref KProblem

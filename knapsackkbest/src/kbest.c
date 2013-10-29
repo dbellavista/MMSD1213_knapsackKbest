@@ -38,6 +38,9 @@ void sort_by_weights(KProblem problem)
 				tmp = problem->values[i];
 				problem->values[i] = problem->values[i + 1];
 				problem->values[i + 1] = tmp;
+				tmp = problem->ids[i];
+				problem->ids[i] = problem->ids[i + 1];
+				problem->ids[i + 1] = tmp;
 			}
 		}
 	}
@@ -60,7 +63,7 @@ void kp_init_kbest_sols(KBestSolutions* solution, KProblem problem, size_t sol_c
 {
 	size_t i;
 	*solution = (KBestSolutions) malloc(sizeof(struct kBestSolutions));
-	kp_init_kp(&(*solution)->problem, problem->num_var, problem->weights, problem->values, problem->max_weigth);
+	kp_init_kp(&(*solution)->problem, problem->num_var, problem->weights, problem->values, problem->ids, problem->max_weigth);
 	(*solution)->sol_count = sol_count;
 	(*solution)->solutions = (KSolution *) malloc(
 			sol_count * sizeof(KSolution));
@@ -81,20 +84,22 @@ void kp_free_kbest_sols(KBestSolutions solution) {
 	free(solution);
 }
 
-void kp_init_kp(KProblem* problem, size_t n, uint32_t* weights, uint32_t* values, uint32_t max_w)
+void kp_init_kp(KProblem* problem, size_t n, uint32_t* weights, uint32_t* values, uint32_t* ids, uint32_t max_w)
 {
 	uint32_t i;
-	uint32_t* vals = (uint32_t*) malloc(n * 2 * sizeof(uint32_t));
+	uint32_t* vals = (uint32_t*) malloc(n * 3 * sizeof(uint32_t));
 
 	*problem = (KProblem) malloc(sizeof(struct kProblem));
 	(*problem)->num_var = n;
 	(*problem)->weights = vals;
 	(*problem)->values = &(vals[n]);
+	(*problem)->ids = &(vals[n*2]);
 	(*problem)->max_weigth = max_w;
 
 	for (i = 0; i < n; i++) {
 		(*problem)->weights[i] = weights[i];
 		(*problem)->values[i] = values[i];
+		(*problem)->ids[i] = ids[i];
 	}
 	sort_by_weights(*problem);
 }

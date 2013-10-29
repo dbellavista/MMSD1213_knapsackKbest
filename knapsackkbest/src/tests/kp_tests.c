@@ -15,6 +15,7 @@
 bool problems_equal(KProblem p1, KProblem p2);
 bool matrices_equal(int** m1, int** m2, uint32_t nrow, uint32_t ncols);
 
+uint32_t ids[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 uint32_t weights[] = { 10, 4, 2, 7, 9, 2, 8, 37, 102, 1 };
 uint32_t values[N];
 
@@ -22,6 +23,7 @@ KProblem test_problem;
 #define TEST_N 5
 #define TEST_MAXW 15
 #define TEST_K 15
+uint32_t test_ids[] = { 1, 2, 3, 4, 5 };
 uint32_t test_weights[] = { 3, 4, 5, 6, 7 };
 uint32_t test_values[] = { 4, 3, 5, 7, 8 };
 int target_matrix_forward[TEST_MAXW][TEST_N] = { { -1, -1, -1, -1, -1 }, // 1
@@ -52,7 +54,7 @@ void set_up() {
 		values[i] = weights[i] * 10;
 	}
 
-	kp_init_kp(&test_problem, TEST_N, test_weights, test_values, TEST_MAXW);
+	kp_init_kp(&test_problem, TEST_N, test_weights, test_values, test_ids, TEST_MAXW);
 }
 
 void tear_down() {
@@ -229,7 +231,7 @@ bool test_create_kbest_from_inner() {
 	bool ret = true;
 	uint32_t size = 30, i, k;
 	KProblem problem;
-	kp_init_kp(&problem, N, weights, values, 20);
+	kp_init_kp(&problem, N, weights, values, ids, 20);
 	InnerSolution* ss = (InnerSolution*) malloc(size * sizeof(InnerSolution));
 
 	for (i = 0; i < size; i++) {
@@ -589,7 +591,7 @@ bool test_problem_creation() {
 	uint32_t i, mw = 50;
 
 	KProblem p;
-	kp_init_kp(&p, N, weights, values, mw);
+	kp_init_kp(&p, N, weights, values, ids, mw);
 
 	ret &= p->num_var == N;
 	ret &= p->max_weigth == mw;
@@ -632,7 +634,7 @@ bool test_kbestsolutions_creation() {
 	bool ret = true;
 	uint32_t sol_count = 10;
 	KProblem p;
-	kp_init_kp(&p, N, weights, values, 50);
+	kp_init_kp(&p, N, weights, values, ids, 50);
 
 	KBestSolutions s;
 	kp_init_kbest_sols(&s, p, sol_count);

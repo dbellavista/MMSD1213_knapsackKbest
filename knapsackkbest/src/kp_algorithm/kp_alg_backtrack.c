@@ -193,8 +193,6 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
 
 	}
 	sol_dest->recovered = true;
-
-	d_dec_indent();
 }
 
 void kp_recover_solution(InnerSolution* solutions, size_t* size, size_t K,

@@ -12,54 +12,6 @@
 #include "kp_algorithms.h"
 #include "utility/utility.h"
 
-/**
- *  @brief       Try to find a solution in \p solutions that has the same
- *               solution vector of \p sol
- *
- *  @param[in]   solutions   The array of solutions to iterate.
- *  @param[in]   sols_size   The size of \p solutions.
- *  @param[in]   sol   The solution to search.
- *  @param[in]   pivot The index to start with
- *
- *  @return      Returns the index of the duplicate solution if exists, -1 otherwise.
- *
- *  @details     A search for an alternative solution could lead to a solution
- *               which solution vector is equals to the one of an another solution.
- */
-ssize_t find_duplicate(InnerSolution* solutions, size_t sols_size,
-    InnerSolution sol, size_t pivot);
-
-ssize_t find_duplicate(InnerSolution* solutions, size_t sols_size,
-    InnerSolution sol, size_t pivot)
-{
-  InnerSolution tmp_sol;
-  ssize_t i;
-  size_t j;
-  i = pivot;
-  for(; i >= 0; i--) {
-    tmp_sol = solutions[i];
-    if(tmp_sol->value > sol->value) {
-      break;
-    }
-    if(tmp_sol->value == sol->value && inner_solutions_equal(tmp_sol, sol)) {
-      return i;
-    }
-  }
-
-  j = pivot + 1;
-  for(; j < sols_size; j++) {
-    tmp_sol = solutions[j];
-    if(tmp_sol->value < sol->value) {
-      break;
-    }
-    if(tmp_sol->value == sol->value && inner_solutions_equal(tmp_sol, sol)) {
-      return i;
-    }
-  }
-
-  return -1;
-}
-
 void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
     cum_val, size_t limit_var, size_t sol_index, InnerSolution auxl,
     InnerSolution* solutions, size_t* sols_size, size_t K, int** matrix,
@@ -69,7 +21,7 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 	ssize_t insert_idx;
 	size_t var;
   uint32_t newvalue;
-	InnerSolution auxl1, tmp_sol;
+	InnerSolution auxl1;
 
   // From the current node, trying to find an alternative solution by adding
   // different (feasible) variables
@@ -87,31 +39,25 @@ void search_alternative_solutions(size_t snode, size_t cur_var, uint32_t
 			continue;
 		}
 		// Newvalue is worth to be backtracked!
-
     // Finding a suitable position for the solution insertion
-		insert_idx = find_idx_insertion(solutions, *sols_size, K, sol_index, newvalue);
+		insert_idx = find_idx_and_prepare_insertion(solutions, sols_size, sol_index, newvalue, K);
 		if (insert_idx == -1) {
       // Already have K solutions better than the new value
 			continue;
 		}
 		kp_init_inn_sol(&auxl1, problem->num_var, var, snode,
 				matrix[snode][var]);
+    // Initialize the new solution
+    kp_init_inn_sol(&solutions[insert_idx], problem->num_var,
+        solutions[sol_index]->column_idx, solutions[sol_index]->row_idx,
+        newvalue);
 
 		// Backtrack the new value in order to recover the solution vector
 		backtracking(solutions, auxl1, insert_idx, sols_size, K, matrix,
 				problem, false);
-    // Initialize the new solution
-    kp_init_inn_sol(&tmp_sol, problem->num_var,
-        solutions[sol_index]->column_idx, solutions[sol_index]->row_idx,
-        newvalue);
     // Sum the solutions vector of the current solution so far and the recovered solution
-    sum_solution_vectors(tmp_sol, auxl, auxl1);
-    tmp_sol->recovered = true;
-
-    // Inserting the new solution
-    prepare_insertion(solutions, sols_size, insert_idx, K);
-    solutions[insert_idx] = tmp_sol;
-    tmp_sol = NULL;
+    sum_solution_vectors(solutions[insert_idx], auxl, auxl1);
+    solutions[insert_idx]->recovered = true;
 
     kp_free_inn_sol(auxl1);
 	}
@@ -136,7 +82,7 @@ void backtracking(InnerSolution* solutions, InnerSolution sol_dest, size_t
 
 		value -= problem->values[var];
 		cum_val += problem->values[var];
-		set_inner_sol_element(sol_dest, var, sol_dest->sol_vector[var] + 1);
+		sol_dest->sol_vector[var] = sol_dest->sol_vector[var] + 1;
 
 		if (snode + 1 == problem->weights[var]) { // Backtrack terminated
 			break;

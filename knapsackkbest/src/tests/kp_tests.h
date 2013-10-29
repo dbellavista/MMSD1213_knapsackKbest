@@ -25,7 +25,6 @@ bool test_innersol_ordering();
 bool test_innersol_join();
 bool test_find();
 bool test_innersol_copy();
-bool test_innersols_equal();
 bool test_find_innsol_idx();
 bool test_create_kbest_from_inner();
 bool test_kp_algorithm();

@@ -24,17 +24,12 @@ void kp_init_inn_sol(InnerSolution* iSol, size_t n, size_t j, size_t t,
 	(*iSol)->recovered = false;
 	// Sets the value to 0
 	(*iSol)->sol_vector = (uint32_t*) calloc(n, sizeof(uint32_t));
-
-	(*iSol)->last_zero = 0;
-	(*iSol)->bitmap_sol_vector = (bitmap_t*) calloc(BITMAP_DYNAMIC_SIZE(*iSol), sizeof(bitmap_t));
 }
 
 void kp_free_inn_sol(InnerSolution innerSol)
 {
 	free(innerSol->sol_vector);
 	innerSol->sol_vector = NULL;
-	free(innerSol->bitmap_sol_vector);
-	innerSol->bitmap_sol_vector = NULL;
 	free(innerSol);
 }
 
@@ -47,49 +42,6 @@ void kp_copy_inn_sol(InnerSolution* dest, InnerSolution origin)
 	for (i = 0; i < origin->dimension; i++) {
 		(*dest)->sol_vector[i] = origin->sol_vector[i];
 	}
-	(*dest)->last_zero = origin->last_zero;
-  memcpy((*dest)->bitmap_sol_vector, origin->bitmap_sol_vector, BITMAP_DYNAMIC_SIZE(origin) * sizeof(bitmap_t));
-}
-
-void set_inner_sol_element(InnerSolution isol, size_t var, uint32_t value)
-{
-  size_t index;
-  bitmap_t mask;
-
-  isol->sol_vector[var] = value;
-  index = var / (8 * sizeof(bitmap_t));
-  mask = 1 << (var % (8 * sizeof(bitmap_t)));
-  if(value) {
-    isol->bitmap_sol_vector[index] |= mask;
-  } else {
-    isol->bitmap_sol_vector[index] &= ~mask;
-  }
-
-  if (value && var >= isol->last_zero) {
-    isol->last_zero = var + 1;
-  } else if(value == 0 && var == isol->last_zero - 1) {
-    isol->last_zero = var;
-  }
-}
-
-bool inner_solutions_equal(InnerSolution sol1, InnerSolution sol2)
-{
-  if(!sol1->recovered || !sol2->recovered) {
-    return false;
-  }
-  if(sol1->value != sol2->value) {
-    return false;
-  }
-  if(sol1->last_zero != sol2->last_zero) {
-    return false;
-  }
-  if(memcmp(sol1->bitmap_sol_vector, sol2->bitmap_sol_vector, BITMAP_DYNAMIC_SIZE(sol1) * sizeof(bitmap_t))) {
-    return false;
-  }
-  if(memcmp(sol1->sol_vector, sol2->sol_vector, sol1->last_zero * sizeof(*sol1->sol_vector))) {
-    return false;
-  }
-  return true;
 }
 
 void create_kbest_solutions_from_inner(KBestSolutions* bestSolutions,
@@ -124,7 +76,7 @@ void sum_solution_vectors(InnerSolution dest, InnerSolution s1,
 {
 	size_t i;
 	for (i = 0; i < dest->dimension; i++) {
-		set_inner_sol_element(dest, i, s1->sol_vector[i] + s2->sol_vector[i]);
+		dest->sol_vector[i] = s1->sol_vector[i] + s2->sol_vector[i];
 	}
 }
 
@@ -168,10 +120,15 @@ ssize_t find_idx_insertion(InnerSolution* sol_list, size_t sols_size, size_t
 	return -1;
 }
 
-void prepare_insertion(InnerSolution* sol_list, size_t* sols_size, size_t
-    insert_idx, size_t K)
+ssize_t find_idx_and_prepare_insertion(InnerSolution* sol_list, size_t*
+    sols_size, ssize_t lower_limit_idx, uint32_t value, size_t K)
 {
-  size_t i;
+	ssize_t idx, i;
+	idx = find_idx_insertion(sol_list, *sols_size, K, lower_limit_idx, value);
+
+	if (idx == -1) {
+		return idx;
+	}
 
 	if (*sols_size == K) {
     kp_free_inn_sol(sol_list[K - 1]);
@@ -179,23 +136,10 @@ void prepare_insertion(InnerSolution* sol_list, size_t* sols_size, size_t
 	} else {
 		*sols_size = *sols_size + 1;
 	}
-	for (i = *sols_size - 1; i > insert_idx; i--) {
+	for (i = *sols_size - 1; i > idx; i--) {
 		sol_list[i] = sol_list[i - 1];
 	}
-	sol_list[insert_idx] = NULL;
-}
-
-ssize_t find_idx_and_prepare_insertion(InnerSolution* sol_list, size_t*
-    sols_size, ssize_t lower_limit_idx, uint32_t value, size_t K)
-{
-	ssize_t idx;
-	idx = find_idx_insertion(sol_list, *sols_size, K, lower_limit_idx, value);
-
-	if (idx == -1) {
-		return idx;
-	}
-
-  prepare_insertion(sol_list, sols_size, idx, K);
+	sol_list[idx] = NULL;
 
 	return idx;
 }
@@ -256,12 +200,6 @@ void print_inner_solution(InnerSolution sol)
   printf("\t[");
   for(i = 0; i < sol->dimension; i++) {
     printf("%3u", sol->sol_vector[i]);
-  }
-  printf("]\n");
-
-  printf("\tLZ: %zu, [", sol->last_zero);
-  for(i = 0; i < BITMAP_DYNAMIC_SIZE(sol); i++) {
-    printf("%8llx", sol->bitmap_sol_vector[i]);
   }
   printf("]\n");
 }

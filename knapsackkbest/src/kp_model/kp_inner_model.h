@@ -15,17 +15,6 @@
 
 #include "kbest.h"
 
-#if defined(__x86_64__) || defined(_M_X64)
-/// Bitmap type, used for solution comparation
-typedef unsigned long long bitmap_t;
-#else
-/// Bitmap type, used for solution comparation
-typedef unsigned long bitmap_t;
-#endif
-
-/// Returns the size in bitmap_t of InnerSolution.bitmap_sol_vector
-#define BITMAP_DYNAMIC_SIZE(sol) CEIL((sol)->dimension / 8 / sizeof(bitmap_t), size_t)
-
 /// An internal, potentially uncompleted solution. Used during the forward and
 /// backtracking phases.
 struct innerSolution {
@@ -41,12 +30,6 @@ struct innerSolution {
 	uint32_t value;
 	/// Set to true if this solution is recovered, that is \p sol_vector is full.
 	bool recovered;
-
-  /// Bitmap of the sol_vector. A bit is set iff the corresponding variable as
-  /// a value in \p sol_vector greather than 0.
-  bitmap_t *bitmap_sol_vector;
-  /// The index of the zero-variable after the last non-zero variable in \p sol_vector.
-  size_t last_zero;
 };
 /// A pointer to \p struct innerSolution
 typedef struct innerSolution* InnerSolution;
@@ -89,40 +72,6 @@ void kp_copy_inn_sol(InnerSolution* dest, InnerSolution origin);
  */
 void create_kbest_solutions_from_inner(KBestSolutions* dest, InnerSolution*
     solutions, size_t solutions_size, KProblem problem, bool free_inner);
-
-
-/**
- *  @brief          Returns true if the given InnerSolution are equals.
- *
- *  @param[in]      sol1    The first InnerSolution
- *  @param[in]      sol2    The second InnerSolution
- *
- *  @return         Returns true if the given InnerSolution are equals. That is
- *                  if they are both recovered and they have the same solution vector.
- *
- *  @details        To optimize the check, the functions uses last_zero and
- *                  bitmap to quickly discards solutions that have the same
- *                  value but different solutions vector. For instance:
- *                  @code
- *                  sv1 = [5 4 2 0 8 9 0 12 0 0 0 0]
- *                  sv2 = [5 4 2 0 8 9 0 11 1 0 0 0]
- *                  @endcode
- *                  have a different \ref InnerSolution.last_zero value. For
- *                  <tt>sv1</tt> it's 8 and for <tt>sv2</tt> it's 9. While:
- *                  @code
- *                  sv3 = [5 4 7 0 9 0 0 8 4 0 0 0]
- *                  sv4 = [5 4 2 0 8 9 0 11 1 0 0 0]
- *                  @endcode
- *                  Have the same \ref InnerSolution.last_zero value (9), but
- *                  the bitmap is different (in bits):
- *                  @code
- *                  sv3.bitmap = 1110100110000000
- *                  sv4.bitmap = 1110110110000000
- *                  @endcode
- *
- */
-bool inner_solutions_equal(InnerSolution sol1, InnerSolution sol2);
-
 
 /**
  *  @brief          Joins two inner solution array inside a new solution of size at
@@ -216,19 +165,6 @@ void prepare_insertion(InnerSolution* sol_list, size_t* sols_size, size_t
  */
 void sum_solution_vectors(InnerSolution dest, InnerSolution s1, InnerSolution
     s2);
-
-
-/**
- *  @brief          Set the element of InnerSolution.sol_vector to a certain
- *  value, changing if necessary InnserSolution.last_zero and
- *  InnerSolution.bitmap_sol_vector
- *
- *  @param[in]    isol  The inner solution
- *  @param[in]    var   The variable, that is the index in the solution vector
- *  @param[in]    value   The value to set.
- *
- */
-void set_inner_sol_element(InnerSolution isol, size_t var, uint32_t value);
 
 /**
  *  @brief          Debug/Utility function for printing to stdout an InnerSolution

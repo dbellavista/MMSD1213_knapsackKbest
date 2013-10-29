@@ -68,10 +68,11 @@ void print_kproblem(KProblem problem);
  *  @brief          Prints to stdout the KBestSolutions representation using
  *                  the default format by Baldacci, Galassi and Leardini.
  *
+ *  @param[in]      fout The FILE to write to. If NULL, stdout will be chosen.
  *  @param[in]      solution The solution to print
  *
  */
-void print_kbest_solution_default_format(KBestSolutions solution);
+void print_kbest_solution_default_format(FILE* fout, KBestSolutions solution);
 
 /**
  *  @brief          Prints to stdout a KBestSolutions representation.

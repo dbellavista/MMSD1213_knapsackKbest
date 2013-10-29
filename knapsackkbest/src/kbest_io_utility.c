@@ -66,29 +66,30 @@ void print_kproblem(KProblem problem) {
 	print_array(problem->weights, size);
 }
 
-void print_kbest_solution_default_format(KBestSolutions solution)
+void print_kbest_solution_default_format(FILE* fout, KBestSolutions solution)
 {
 	size_t i, k, j;
 	uint32_t val;
-  printf("K = %lu\n", solution->sol_count);
-  printf("\n");
+	if(fout == NULL) fout = stdout;
+  fprintf(fout, "K = %lu\n", solution->sol_count);
+  fprintf(fout, "\n");
 	for (i = 0; i < solution->sol_count; i++) {
-	  printf("solution %zu:\n", i + 1);
-	  printf("value: %u\n", solution->solutions[i]->tot_value);
-	  printf("take: ");
+	  fprintf(fout, "solution %zu:\n", i + 1);
+	  fprintf(fout, "value: %u\n", solution->solutions[i]->tot_value);
+	  fprintf(fout, "take: ");
 	  for(j = 1; j <= solution->solutions[i]->vector_size; j++) {
       for(k = 0; k < solution->solutions[i]->vector_size; k++) {
         if(solution->problem->ids[k] == j) {
           val = solution->solutions[i]->solution_vector[k];
           if(val) {
-            printf("X%u (%u times), ", solution->problem->ids[k], val);
+            fprintf(fout, "X%u (%u times), ", solution->problem->ids[k], val);
           }
           break;
         }
       }
 
     }
-    printf("\n\n");
+    fprintf(fout, "\n\n");
 	}
 }
 

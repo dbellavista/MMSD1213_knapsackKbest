@@ -110,29 +110,29 @@ bool read_problem(KProblem* dest, char* file) {
 	/*
 	 * Format:
 	 * <Num Var>
-	 * <Max W>
 	 * <V1> <W1>
 	 * <V2> <W2>
 	 * ...
 	 * <Vn> <Wn>
+	 * <Max W>
 	 */
-	uint32_t N, W, i;
+	uint32_t N, W, i, id;
 	uint32_t *weights, *values;
 
 	check(fscanf(fp, "%u", &N), 1, fp);
 	d_debug("Read N = %d\n", N);
 
-	check(fscanf(fp, "%u", &W), 1, fp);
-	d_debug("Read W = %d\n", W);
-
 	weights = (uint32_t*) malloc(N * sizeof(uint32_t));
 	values = (uint32_t*) malloc(N * sizeof(uint32_t));
 
 	for (i = 0; i < N; i++) {
-		check(fscanf(fp, "%u %u", &values[i], &weights[i]), 2, fp);
+		check(fscanf(fp, " %u %u %u", &id, &values[i], &weights[i]), 3, fp);
 		d_debug("Read var V%d = %d; W%d = %d\n", (i + 1), values[i], (i + 1),
 				weights[i]);
 	}
+
+	check(fscanf(fp, "%u", &W), 1, fp);
+	d_debug("Read W = %d\n", W);
 
 	d_debug("Problem read\n\n");
 	kp_init_kp(dest, N, weights, values, W);

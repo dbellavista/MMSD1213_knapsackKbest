@@ -73,7 +73,7 @@ void print_kbest_solution_default_format(KBestSolutions solution)
   printf("K = %lu\n", solution->sol_count);
   printf("\n");
 	for (i = 0; i < solution->sol_count; i++) {
-	  printf("solution %zu:\n", i);
+	  printf("solution %zu:\n", i + 1);
 	  printf("value %u:\n", solution->solutions[i]->tot_value);
 	  printf("take:");
     for(k = 0; k < solution->solutions[i]->vector_size; k++) {
